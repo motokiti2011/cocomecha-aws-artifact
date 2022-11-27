@@ -1,0 +1,134 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Manage myself verification environment
+
+Parameters:
+
+  # テンプレート格納先のURL
+  TemplateUrl:
+    Type: String
+    Description: TemplateURL
+
+Resources:
+
+  # DynamoDBの作成
+  
+  BrowsingHistory:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/browsingHistory.yaml'
+
+  EvaluationInfo:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/evaluationInfo.yaml'
+
+  HistoryInfoMecha:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/historyInfoMecha.yaml'
+
+  HistoryInfoOffice:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/historyInfoOffice.yaml'
+
+  MechanicInfo:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/mechanicInfo.yaml'
+
+  OfficeInfo:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/officeInfo.yaml'
+
+  SlipDetailInfo:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/slipDetailInfo.yaml'
+
+  SlipMegPrmUser:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/slipMegPrmUser.yaml'
+
+  SlipMessageInfo:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/slipMessageInfo.yaml'
+
+  SlipQuestion:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/slipQuestion.yaml'
+
+  SlipVehicle:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/slipVehicle.yaml'
+
+  UserFavorite:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/userFavorite.yaml'
+
+  UserInfo:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/userInfo.yaml'
+
+  UserMyList:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/userMyList.yaml'
+
+  UserVehicleInfo:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/userVehicleInfo.yaml'
+
