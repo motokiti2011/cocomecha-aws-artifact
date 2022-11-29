@@ -11,7 +11,7 @@ Resources:
         - AttributeName: slipNo
           AttributeType: S
       KeySchema:
-        - AttributeName: commentId
+        - AttributeName: messageId
           KeyType: HASH
         - AttributeName: slipNo
           KeyType: RANGE

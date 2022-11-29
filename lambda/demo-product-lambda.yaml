@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: IaC for Lambda
+Parameters:
+  # LambdaにアタッチするIAMロールのARN
+  LambdaRoleArn:
+    Type: String
+    Description: Role of Lambda Function
+  # S3Buket:Lambdaコードの格納先S3Buket
+  S3Buket:
+    Type: String
+    Description: S3Buket
+  # S3Key:Lambdaコードの格納先
+  S3Key:
+    Type: String
+    Description: S3Key
+Resources:
+  LambdaFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: 'demo-product'
+      Description: Function that put items to DynamoDB
+      Runtime: python3.9
+      MemorySize: '128'
+      Timeout: '5'
+      Role:
+        Ref: LambdaRoleArn
+      Handler: demo-product.lambda_handler
+      Architectures:
+        - x86_64
+      EphemeralStorage:
+        Size: '512'
+      Code:
+        S3Bucket:
+          Ref: S3Buket
+        S3Key:
+          Ref: S3Key
+Outputs:
+  # DemoProductLambdaのARN
+  DemoProductLambda:
+    Value: !GetAtt LambdaFunction.Arn
