@@ -1,0 +1,403 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: IaC for API Gateway
+Parameters:
+  # browsingHistoryLambdaのARN
+  BrowsingHistoryLambdaArn:
+    Type: String
+
+  # ProductLambdaのARN
+  ProductLambdaArn:
+    Type: String
+    Description: Product of Lambda
+
+  # evaluationInfoLambdaのARN
+  EvaluationInfoLambdaArn:
+    Type: String
+
+  # historyInfoMechaLambdaのARN
+  HistoryInfoMechaLambdaArn:
+    Type: String
+
+  # HistoryInfoOfficeLambdaのARN
+  HistoryInfoOfficeLambdaArn:
+    Type: String
+    Description: Product of Lambda
+
+  # mechanicInfoLambdaのARN
+  MechanicInfoLambdaArn:
+    Type: String
+
+  # officeInfoLambdaのARN
+  OfficeInfoLambdaArn:
+    Type: String
+
+  # slipDetailInfoLambdaのARN
+  SlipDetailInfoLambdaArn:
+    Type: String
+    Description: Product of Lambda
+
+  # slipMegPrmUserLambdaのARN
+  SlipMegPrmUserLambdaArn:
+    Type: String
+
+  # slipMessageInfoLambdaのARN
+  SlipMessageInfoLambdaArn:
+    Type: String
+
+  # slipQuestionLambdaのARN
+  SlipQuestionLambdaArn:
+    Type: String
+    Description: Product of Lambda
+
+  # slipVehicleLambdaのARN
+  SlipVehicleLambdaArn:
+    Type: String
+
+  # userFavoriteLambdaのARN
+  UserFavoriteLambdaArn:
+    Type: String
+
+  # userInfoLambdaのARN
+  UserInfoLambdaArn:
+    Type: String
+
+  # userMyListLambdaのARN
+  UserMyListLambdaArn:
+    Type: String
+
+  # userVehicleInfoLambdaのARN
+  UserVehicleInfoLambdaArn:
+    Type: String
+
+  # CognitoUserPoolのARN
+  UserPoolArn:
+    Type: String
+    Description: UserPool of Cognito
+
+Resources:
+  # RESTAPI
+  ApiGwRestAPI:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Description: This is the Description of ApiGwRestAPI
+      Name: 'demo-apigateway'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+  ApiGwDeployment:
+    Type: 'AWS::ApiGateway::Deployment'
+    Properties:
+      Description: This is the Description of ApiGwDeployment
+      RestApiId: !Ref ApiGwRestAPI
+    DependsOn:
+      - ProductItemResource
+      - PostItemResource
+      - ProductListResource
+      - SingupUserResource
+      - UsersResource
+      - PostItemMethod
+      - ProductListMethod
+      - SingupUserMethod
+      - UsersMethod
+  # ステージ
+  ApiGwStage:
+    Type: 'AWS::ApiGateway::Stage'
+    Properties:
+      RestApiId: !Ref ApiGwRestAPI
+      DeploymentId: !Ref ApiGwDeployment
+      StageName: dev
+  # オーソライザー
+  Authorizer: 
+    Type: AWS::ApiGateway::Authorizer
+    Properties: 
+      ProviderARNs: 
+        - !Ref UserPoolArn
+      AuthorizerResultTtlInSeconds: "300"
+      Type: "COGNITO_USER_POOLS"
+      IdentitySource: "method.request.header.Authorization"
+      Name: "Authorization"
+      RestApiId: !Ref ApiGwRestAPI
+  # ProductItemリソース
+  ProductItemResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt 
+        - ApiGwRestAPI
+        - RootResourceId
+      PathPart: productitem
+      RestApiId: !Ref ApiGwRestAPI
+  # PostItemリソース
+  PostItemResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref ProductItemResource
+      PathPart: postitem
+      RestApiId: !Ref ApiGwRestAPI
+  # ProductItemメソッド
+  PostItemMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref PostItemResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref ProductLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission1
+  # ProductListリソース
+  ProductListResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt 
+        - ApiGwRestAPI
+        - RootResourceId
+      PathPart: productlist
+      RestApiId: !Ref ApiGwRestAPI
+  # ProductListメソッド
+  ProductListMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref ProductListResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref ProductListLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission2
+  # SingupUserリソース
+  SingupUserResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt 
+        - ApiGwRestAPI
+        - RootResourceId
+      PathPart: singupuser
+      RestApiId: !Ref ApiGwRestAPI
+  # SingupUserメソッド
+  SingupUserMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SingupUserResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref UserLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission3
+  # Userリソース
+  UsersResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt 
+        - ApiGwRestAPI
+        - RootResourceId
+      PathPart: users
+      RestApiId: !Ref ApiGwRestAPI
+  # Userメソッド
+  UsersMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref UsersResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref UserLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission3
+
+  # LambdaPermission
+  LambdaPermission1:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: browsingHistoryLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission2:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: evaluationInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission3:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: historyInfoMechaLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission4:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: historyInfoOfficeLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission5:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: mechanicInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission6:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: officeInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+
+  LambdaPermission7:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: slipDetailInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission8:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: slipMegPrmUserLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission9:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: slipMessageInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission10:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: slipQuestionLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission11:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: slipVehicleLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission12:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: userFavoriteLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+
+  LambdaPermission13:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: userInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission14:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: userMyListLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission15:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: userVehicleInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+
+  LambdaPermission16:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: demo-product
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+
