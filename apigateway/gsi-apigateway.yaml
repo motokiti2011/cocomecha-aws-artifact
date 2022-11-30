@@ -1,18 +1,54 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: IaC for API Gateway
+
 Parameters:
-  # ProductListLambdaのARN
-  ProductListLambdaArn:
+
+  # BrowsingHistoryGSIのARN
+  BrowsingHistoryGSILambdaArn:
     Type: String
-    Description: ProductList of Lambda
-  # ProductLambdaのARN
-  ProductLambdaArn:
+    Description: BrowsingHistoryGSI of Lambda
+
+  # EvaluationInfoGSIのARN
+  EvaluationInfoGSILambdaArn:
     Type: String
-    Description: Product of Lambda
-  # UserLambdaのARN
-  UserLambdaArn:
+    Description: EvaluationInfoGSI of Lambda
+
+  # HistoryInfoMechaGSIのARN
+  HistoryInfoMechaGSILambdaArn:
     Type: String
-    Description: User of Lambda
+    Description: HistoryInfoMechaGSI of Lambda
+
+  # HistoryInfoOfficeGSIのARN
+  HistoryInfoOfficeGSILambdaArn:
+    Type: String
+    Description: HistoryInfoOfficeGSI of Lambda
+
+  # SlipMessageInfoGSIのARN
+  SlipMessageInfoGSILambdaArn:
+    Type: String
+    Description: SlipMessageInfoGSI of Lambda
+
+  # SlipQuestionGSIのARN
+  SlipQuestionGSILambdaArn:
+    Type: String
+    Description: SlipQuestionGSI of Lambda
+
+  # UserFavoriteGSIのARN
+  UserFavoriteGSILambdaArn:
+    Type: String
+    Description: UserFavoriteGSI of Lambda
+
+  # UserMyListGSIのARN
+  UserMyListGSILambdaArn:
+    Type: String
+    Description: UserMyListGSI of Lambda
+
+  # UserVehicleInfoGSIのARN
+  UserVehicleInfoGSILambdaArn:
+    Type: String
+    Description: UserVehicleInfoGSI of Lambda
+
+
   # CognitoUserPoolのARN
   UserPoolArn:
     Type: String
@@ -24,7 +60,7 @@ Resources:
     Type: 'AWS::ApiGateway::RestApi'
     Properties:
       Description: This is the Description of ApiGwRestAPI
-      Name: 'demo-apigateway'
+      Name: 'cocomecha-GSI-APIGW'
       EndpointConfiguration:
         Types:
           - REGIONAL
@@ -34,15 +70,30 @@ Resources:
       Description: This is the Description of ApiGwDeployment
       RestApiId: !Ref ApiGwRestAPI
     DependsOn:
-      - ProductItemResource
-      - PostItemResource
-      - ProductListResource
-      - SingupUserResource
-      - UsersResource
-      - PostItemMethod
-      - ProductListMethod
-      - SingupUserMethod
-      - UsersMethod
+      - V1Resource
+      - IndexSerchResource
+      - BrowsinghistoryGSIResource
+      - EvaluationInfoGSIResource
+      - HistoryInfoMechaGSIResource
+      - HistoryInfoOfficeGSIResource
+      - SlipDetailInfoGSIResource
+      - SlipMessageInfoGSIResource
+      - SlipQuestionGSIResource
+      - UserFavoriteGSIResource
+      - UserMyListGSIResource
+      - UserVehicleInfoGSIResource
+      - BrowsinghistoryGSIMethod
+      - EvaluationInfoGSIMethod
+      - HistoryInfoMechaGSIMethod
+      - HistoryInfoOfficeGSIMethod
+      - SlipDetailInfoGSIMethod
+      - SlipMessageInfoGSIMethod
+      - SlipQuestionGSIMethod
+      - UserFavoriteGSIMethod
+      - UserMyListGSIMethod
+      - UserVehicleInfoGSIMethod
+      - 
+
   # ステージ
   ApiGwStage:
     Type: 'AWS::ApiGateway::Stage'
@@ -61,28 +112,41 @@ Resources:
       IdentitySource: "method.request.header.Authorization"
       Name: "Authorization"
       RestApiId: !Ref ApiGwRestAPI
-  # ProductItemリソース
-  ProductItemResource:
+  # v1リソース
+  V1Resource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
       ParentId: !GetAtt 
         - ApiGwRestAPI
         - RootResourceId
-      PathPart: productitem
+      PathPart: v1
       RestApiId: !Ref ApiGwRestAPI
-  # PostItemリソース
-  PostItemResource:
+
+
+
+  # IndexSerchリソース
+  IndexIndexSerchResource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
-      ParentId: !Ref ProductItemResource
-      PathPart: postitem
+      ParentId: !Ref v1Resource
+      PathPart: indexserch
       RestApiId: !Ref ApiGwRestAPI
-  # ProductItemメソッド
-  PostItemMethod:
+
+
+
+  # BrowsinghistoryGSIリソース
+  BrowsinghistoryGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: browsinghistory
+      RestApiId: !Ref ApiGwRestAPI
+  # BrowsinghistorGSIyメソッド
+  BrowsinghistoryGSIMethod:
     Type: 'AWS::ApiGateway::Method'
     Properties:
       HttpMethod: POST
-      ResourceId: !Ref PostItemResource
+      ResourceId: !Ref BrowsinghistoryGSIResource
       RestApiId: !Ref ApiGwRestAPI
       AuthorizerId: !Ref Authorizer
       AuthorizationType: COGNITO_USER_POOLS
@@ -94,7 +158,7 @@ Resources:
          - - 'arn:aws:apigateway:'
            - !Ref AWS::Region
            - ':lambda:path/2015-03-31/functions/'
-           - !Ref ProductLambdaArn
+           - !Ref BrowsingHistoryGSILambdaArn
            - '/invocations'
         PassthroughBehavior: WHEN_NO_MATCH
         RequestTemplates:
@@ -108,23 +172,24 @@ Resources:
           ResponseModels:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission1
-  # ProductListリソース
-  ProductListResource:
+
+
+  # EvaluationinfoGSIリソース
+  EvaluationInfoGSIResource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
-      ParentId: !GetAtt 
-        - ApiGwRestAPI
-        - RootResourceId
-      PathPart: productlist
+      ParentId: !Ref IndexSerchResource
+      PathPart: evaluationinfo
       RestApiId: !Ref ApiGwRestAPI
-  # ProductListメソッド
-  ProductListMethod:
+  # EvaluationinfoGSIメソッド
+  EvaluationInfoGSIMethod:
     Type: 'AWS::ApiGateway::Method'
     Properties:
       HttpMethod: POST
-      ResourceId: !Ref ProductListResource
+      ResourceId: !Ref EvaluationInfoGSIResource
       RestApiId: !Ref ApiGwRestAPI
-      AuthorizationType: NONE
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
@@ -133,7 +198,7 @@ Resources:
          - - 'arn:aws:apigateway:'
            - !Ref AWS::Region
            - ':lambda:path/2015-03-31/functions/'
-           - !Ref ProductListLambdaArn
+           - !Ref EvaluationInfoGSILambdaArn
            - '/invocations'
         PassthroughBehavior: WHEN_NO_MATCH
         RequestTemplates:
@@ -147,21 +212,21 @@ Resources:
           ResponseModels:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission2
-  # SingupUserリソース
-  SingupUserResource:
+
+
+  # HistoryInfoMechaGSIリソース
+  HistoryInfoMechaGSIResource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
-      ParentId: !GetAtt 
-        - ApiGwRestAPI
-        - RootResourceId
-      PathPart: singupuser
+      ParentId: !Ref IndexSerchResource
+      PathPart: historyinfomecha
       RestApiId: !Ref ApiGwRestAPI
-  # SingupUserメソッド
-  SingupUserMethod:
+  # HistoryInfoMechaGSIメソッド
+  HistoryInfoMechaGSIMethod:
     Type: 'AWS::ApiGateway::Method'
     Properties:
       HttpMethod: POST
-      ResourceId: !Ref SingupUserResource
+      ResourceId: !Ref HistoryInfoMechaGSIResource
       RestApiId: !Ref ApiGwRestAPI
       AuthorizerId: !Ref Authorizer
       AuthorizationType: COGNITO_USER_POOLS
@@ -173,7 +238,7 @@ Resources:
          - - 'arn:aws:apigateway:'
            - !Ref AWS::Region
            - ':lambda:path/2015-03-31/functions/'
-           - !Ref UserLambdaArn
+           - !Ref HistoryInfoMechaGSILambdaArn
            - '/invocations'
         PassthroughBehavior: WHEN_NO_MATCH
         RequestTemplates:
@@ -187,21 +252,21 @@ Resources:
           ResponseModels:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission3
-  # Userリソース
-  UsersResource:
+
+
+  # HistoryInfoOfficeGSIリソース
+  HistoryInfoOfficeGSIResource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
-      ParentId: !GetAtt 
-        - ApiGwRestAPI
-        - RootResourceId
-      PathPart: users
+      ParentId: !Ref IndexSerchResource
+      PathPart: historyinfooffice
       RestApiId: !Ref ApiGwRestAPI
-  # Userメソッド
-  UsersMethod:
+  # HistoryInfoOfficeGSIメソッド
+  HistoryInfoOfficeGSIMethod:
     Type: 'AWS::ApiGateway::Method'
     Properties:
       HttpMethod: POST
-      ResourceId: !Ref UsersResource
+      ResourceId: !Ref HistoryInfoOfficeGSIResource
       RestApiId: !Ref ApiGwRestAPI
       AuthorizerId: !Ref Authorizer
       AuthorizationType: COGNITO_USER_POOLS
@@ -213,7 +278,7 @@ Resources:
          - - 'arn:aws:apigateway:'
            - !Ref AWS::Region
            - ':lambda:path/2015-03-31/functions/'
-           - !Ref UserLambdaArn
+           - !Ref HistoryInfoOfficeGSILambdaArn
            - '/invocations'
         PassthroughBehavior: WHEN_NO_MATCH
         RequestTemplates:
@@ -226,25 +291,319 @@ Resources:
         - StatusCode: '200'
           ResponseModels:
             application/json;charset=UTF-8: Empty
-    DependsOn: LambdaPermission3
+    DependsOn: LambdaPermission4
+
+
+  # SlipDetailInfoGSIリソース
+  SlipDetailInfoGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: slipdetailinfo
+      RestApiId: !Ref ApiGwRestAPI
+  # SlipDetailInfoGSIメソッド
+  SlipDetailInfoGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SlipDetailInfoGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SlipDetailInfoGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission5
+
+
+
+  # SlipMessageInfoGSIリソース
+  SlipMessageInfoGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: slipmessageinfo
+      RestApiId: !Ref ApiGwRestAPI
+  # SlipMessageInfoGSIメソッド
+  SlipMessageInfoGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SlipMessageInfoGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SlipMessageInfoGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission6
+
+
+  # SlipQuestionGSIリソース
+  SlipQuestionGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: slipquestion
+      RestApiId: !Ref ApiGwRestAPI
+  # SlipQuestionGSIメソッド
+  SlipQuestionGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SlipQuestionGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SlipQuestionGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission7
+
+
+
+  # UserFavoriteGSIリソース
+  UserFavoriteGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: userfavorite
+      RestApiId: !Ref ApiGwRestAPI
+  # UserFavoriteGSIメソッド
+  UserFavoriteGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref UserFavoriteGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref UserFavoriteGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission8
+
+
+
+  # UserMyListGSIリソース
+  UserMyListGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: usermylist
+      RestApiId: !Ref ApiGwRestAPI
+  # UserMyListGSIメソッド
+  UserMyListGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref UserMyListGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref UserMyListGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission9
+
+
+  # UserVehicleInfoGSIリソース
+  UserVehicleInfoGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: uservehicleinfo
+      RestApiId: !Ref ApiGwRestAPI
+  # UserVehicleInfoGSIメソッド
+  UserVehicleInfoGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref UserVehicleInfoGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref UserVehicleInfoGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission10
+
+
+
+
   # LambdaPermission
   LambdaPermission1:
     Type: 'AWS::Lambda::Permission'
     Properties:
-      FunctionName: demo-product
+      FunctionName: browsingHistory-gsi
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 
   LambdaPermission2:
     Type: 'AWS::Lambda::Permission'
     Properties:
-      FunctionName: demo-product-list
+      FunctionName: evaluationInfo-gsi
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 
   LambdaPermission3:
     Type: 'AWS::Lambda::Permission'
     Properties:
-      FunctionName: demo-user
+      FunctionName: historyInfoMecha-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission4:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: historyInfoOffice-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission5:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: slipDetailInfo-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission6:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: slipMessageInfo-gsi 
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission7:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: slipQuestion-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission8:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: userFavorite-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission9:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: userMyList-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission10:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: userVehicleInfo-gsi
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
