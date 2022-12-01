@@ -19,6 +19,7 @@ Parameters:
     Type: String
     Description: CognitoのmailAdress
 Resources:
+
   # Roleの作成
   Role:
     Type: AWS::CloudFormation::Stack
@@ -26,7 +27,8 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'iam/demo-role.yaml'
+          - 'iam/cocomecha-role.yaml'
+
 
   # DynamoDBの作成
   DynamoDbUser:
@@ -36,14 +38,7 @@ Resources:
         - ''
         - - !Ref TemplateUrl
           - 'dynamodb/demo-use-tbl.yaml'
-  DynamoDbProduct:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Join 
-        - ''
-        - - !Ref TemplateUrl
-          - 'dynamodb/demo-product-tbl.yaml'
-    DependsOn: Role
+
 
   # Lambdaの作成
   LambdaProduct:
@@ -60,6 +55,7 @@ Resources:
         - ''
         - - !Ref LambdaCodeDirectory
           - '/demo-product.zip'
+
   LambdaProductList:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -74,20 +70,8 @@ Resources:
         - ''
         - - !Ref LambdaCodeDirectory
           - '/demo-product-list.zip'
-  LambdaUser:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Join 
-        - ''
-        - - !Ref TemplateUrl
-          - 'lambda/dmeo-user-lambda.yaml'
-      Parameters:
-        LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
-        S3Buket: !Ref S3Buket
-        S3Key: !Join 
-        - ''
-        - - !Ref LambdaCodeDirectory
-          - '/demo-user.zip'
+
+
   # Cognitoの作成
   Cognito:
     Type: AWS::CloudFormation::Stack
@@ -95,9 +79,10 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'cognito/demo-cognito.yaml'
+          - 'cognito/cocomecha-cognito.yaml'
       Parameters:
         EmailArn: !Ref EmailArn
+
 
   # APIGatewayの作成
   ApiGateway:
@@ -113,6 +98,9 @@ Resources:
         UserLambdaArn: !GetAtt LambdaUser.Outputs.DemoUserLambda
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
+
+
+
   # S3（画像アップロード用）の作成
   S3:
     Type: AWS::CloudFormation::Stack
@@ -122,7 +110,11 @@ Resources:
         - - !Ref TemplateUrl
           - 's3/demo-s3-upload.yaml'
       Parameters:
-        S3BucketName: 'demo-s3-upload'
+        S3BucketName: 'cocomecha-s3-upload'
+
+
+
+
 
 Outputs:
   # 構築したリージョン

@@ -1,0 +1,161 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Example template including Cognito Identity Pool and User Pool.
+
+Resources:
+  # ユーザープール
+  UserPool:
+    Type: 'AWS::Cognito::UserPool'
+    Properties:
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+      UserPoolName: 'demo-user-pool'
+      MfaConfiguration: 'OFF'
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+        UnusedAccountValidityDays: 7
+      Schema:
+        - Name: email
+          Required: true
+      AliasAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+  # ユーザープールクライアント（アプリケーションクライアント）
+  UserPoolClient:
+    Type: 'AWS::Cognito::UserPoolClient'
+    Properties:
+      UserPoolId: !Ref UserPool
+      ClientName: 'demo-user-pool-client'
+      RefreshTokenValidity: 30
+      ExplicitAuthFlows:
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+  # IDプール
+  IdentityPool:
+    Type: 'AWS::Cognito::IdentityPool'
+    Properties:
+      IdentityPoolName: demo-Identity-Pool
+      AllowUnauthenticatedIdentities: true
+      CognitoIdentityProviders:
+        - ClientId: !Ref UserPoolClient
+          ProviderName: !Join 
+            - ''
+            - - cognito-idp.
+              - !Ref 'AWS::Region'
+              - .amazonaws.com/
+              - !Ref UserPool
+  # 未認証IAMポリシー
+  CognitoUnauthenticatedPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: UnauthenticatedPolicy for Cognito ID Pool.
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'iot:Connect'
+              - 'iot:Subscribe'
+              - 'iot:Receive'
+              - 'iot:Get*'
+              - 'cognito-sync:*'
+              - 'cognito-identity:*'
+            Resource:
+              - '*'
+  # 未認証IAMロール
+  CognitoUnauthenticatedRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      Description: UnauthenticatedRole for Cognito ID Pool.
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 'sts:AssumeRoleWithWebIdentity'
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Condition:
+              StringEquals:
+                'cognito-identity.amazonaws.com:aud': !Ref IdentityPool
+              'ForAnyValue:StringLike':
+                'cognito-identity.amazonaws.com:amr': unauthenticated
+      ManagedPolicyArns:
+        - !Ref CognitoUnauthenticatedPolicy
+  # 認証IAMポリシー
+  CognitoAuthenticatedPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: AuthenticatedPolicy for Cognito ID Pool.
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:PutObject'
+              - 's3:GetObject'
+              - 's3:PutObjectAcl'
+            Resource:
+              - 'arn:aws:s3:::*/*'
+  # 認証IAMロール
+  CognitoAuthenticatedRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      Description: AuthenticatedRole for Cognito ID Pool.
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 'sts:AssumeRoleWithWebIdentity'
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Condition:
+              StringEquals:
+                'cognito-identity.amazonaws.com:aud': !Ref IdentityPool
+              'ForAnyValue:StringLike':
+                'cognito-identity.amazonaws.com:amr': authenticated
+      ManagedPolicyArns:
+        - !Ref CognitoAuthenticatedPolicy
+  RoleAttachment:
+    Type: 'AWS::Cognito::IdentityPoolRoleAttachment'
+    Properties:
+      IdentityPoolId: !Ref IdentityPool
+      Roles:
+        unauthenticated: !GetAtt 
+          - CognitoUnauthenticatedRole
+          - Arn
+        authenticated: !GetAtt 
+          - CognitoAuthenticatedRole
+          - Arn
+
+Outputs:
+  # ユーザープールのARN
+  UserPoolArn: 
+    Value: !GetAtt UserPool.Arn
+  # ユーザープールID
+  UserPoolId: 
+    Value:
+      Ref: UserPool
+  # ユーザープールクライアントのID
+  UserPoolClient: 
+    Value:
+      Ref: UserPoolClient
+  # IDプールのID
+  IdentityPool: 
+    Value:
+      Ref: IdentityPool
+  # 未認証時のロール
+  UnauthenticatedRole: 
+    Value:
+      Ref: CognitoUnauthenticatedRole
+  # 認証時のロール
+  AuthenticatedRole: 
+    Value:
+      Ref: CognitoAuthenticatedRole
+

@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This CloudFormation template to create S3 Bucket
+Parameters:
+  # 画像アップロード用のS3バケット名
+  S3BucketName:
+    Description: Type of this BacketName.
+    Type: String
+Resources:
+  # S3バケット
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: BucketOwnerRead
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: False
+        BlockPublicPolicy: False
+        IgnorePublicAcls: False
+        RestrictPublicBuckets: False
+      # CORS
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - HEAD
+              - GET
+              - PUT
+              - POST
+              - DELETE
+            AllowedOrigins:
+              - '*'
+            ExposedHeaders:
+              - Date
+              - ETAG
+  # S3バケットポリシー
+  S3BucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 's3:*'
+            Effect: Allow
+            Resource: !Join 
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref S3Bucket
+                - /*
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+Outputs:
+  # S3バケット名
+  S3BucketName:
+    Value: !Ref S3Bucket
