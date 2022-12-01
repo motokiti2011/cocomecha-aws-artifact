@@ -1,0 +1,147 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Manage myself verification environment
+
+Parameters:
+  # LambdaCode格納先のS3Buketを記述
+  S3Buket:
+    Type: String
+    Description: S3Buket
+  # テンプレート格納先のURL
+  TemplateUrl:
+    Type: String
+    Description: TemplateURL
+  # Lambdaコード格納先のディレクトリ名
+  LambdaCodeDirectory:
+    Type: String
+    Description: LambdaCodeDirectory
+  # Cognitoのメールアドレス
+  EmailArn:
+    Type: String
+    Description: CognitoのmailAdress
+Resources:
+  # Roleの作成
+  Role:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'iam/demo-role.yaml'
+
+  # DynamoDBの作成
+  DynamoDbUser:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/demo-use-tbl.yaml'
+  DynamoDbProduct:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/demo-product-tbl.yaml'
+    DependsOn: Role
+
+  # Lambdaの作成
+  LambdaProduct:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/demo-product-lambda.yaml'
+      Parameters:
+        LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/demo-product.zip'
+  LambdaProductList:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/demo-product-list-lambda.yaml'
+      Parameters:
+        LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/demo-product-list.zip'
+  LambdaUser:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/dmeo-user-lambda.yaml'
+      Parameters:
+        LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/demo-user.zip'
+  # Cognitoの作成
+  Cognito:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'cognito/demo-cognito.yaml'
+      Parameters:
+        EmailArn: !Ref EmailArn
+
+  # APIGatewayの作成
+  ApiGateway:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'apigateway/demo-apigateway.yaml'
+      Parameters:
+        ProductLambdaArn: !GetAtt LambdaProduct.Outputs.DemoProductLambda
+        ProductListLambdaArn: !GetAtt LambdaProductList.Outputs.DemoProductList
+        UserLambdaArn: !GetAtt LambdaUser.Outputs.DemoUserLambda
+        UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
+
+  # S3（画像アップロード用）の作成
+  S3:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 's3/demo-s3-upload.yaml'
+      Parameters:
+        S3BucketName: 'demo-s3-upload'
+
+Outputs:
+  # 構築したリージョン
+  Region:
+    Value: !Ref AWS::Region
+    Description: Region
+  # CognitoIDプールID
+  CognitoIdentityPoolId:
+    Value: !GetAtt Cognito.Outputs.IdentityPool
+    Description: Cognito IdentityPoolId
+  # CognitoユーザープールID
+  CognitoUserPoolId:
+    Value: !GetAtt Cognito.Outputs.UserPoolId
+    Description: Cognito UserPoolId
+  # CognitoアプリケーションクライアントID
+  CognitoClientId:
+    Value: !GetAtt Cognito.Outputs.UserPoolClient
+    Description: Cognito ClientId
+  # 画像アップロード用S3バケット名
+  S3UploadBucketName:
+    Value: !GetAtt S3.Outputs.S3BucketName
+    Description: S3 Upload BucketName

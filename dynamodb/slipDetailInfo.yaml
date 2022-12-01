@@ -16,18 +16,32 @@ Resources:
           AttributeType: S
         - AttributeName: areaNo2
           AttributeType: S
+        - AttributeName: displayDiv
+          AttributeType: S
       KeySchema:
         - AttributeName: slipNo
           KeyType: HASH
         - AttributeName: deleteDiv
           KeyType: RANGE
+      LocalSecondaryIndexes:
+        - IndexName: AlbumTitleIndex
+          KeySchema:
+            - AttributeName: slipNo
+              KeyType: HASH
+            - AttributeName: displayDiv
+              KeyType: RANGE
+          Projection:
+            ProjectionType: KEYS_ONLY
       GlobalSecondaryIndexes:
         - IndexName: category-index
           KeySchema:
             - AttributeName: category
               KeyType: HASH
           Projection:
-            ProjectionType: ALL
+            NonKeyAttributes:
+              - user
+              - comment
+            ProjectionType: INCLUDE
 
         - IndexName: areaNo1-index
           KeySchema:

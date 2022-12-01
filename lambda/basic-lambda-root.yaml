@@ -1,0 +1,312 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: IaC for Lambda
+Parameters:
+  # LambdaにアタッチするIAMロールのARN
+  LambdaRoleArn:
+    Type: String
+    Description: Role of Lambda Function
+  # S3Buket:Lambdaコードの格納先S3Buket
+  S3Buket:
+    Type: String
+    Description: S3Buket
+  # S3Key:Lambdaコードの格納先
+  S3Key:
+    Type: String
+    Description: S3Key
+
+
+Resources:
+
+  BrowsingHistoryLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/browsingHistoryLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/browsingHistoryLambda.zip'
+
+  EvaluationInfoLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/evaluationInfoLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/evaluationInfoLambda.zip'
+
+  HistoryInfoMechaLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/historyInfoMechaLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/historyInfoMechaLambda.zip'
+
+  HistoryInfoOfficeLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/historyInfoOfficeLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/historyInfoOfficeLambda.zip'
+
+
+  MechanicInfoLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/mechanicInfoLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/mechanicInfoLambda.zip'
+
+  OfficeInfoLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/officeInfoLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/officeInfoLambda.zip'
+
+  SlipDetailInfoLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/slipDetailInfoLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/slipDetailInfoLambda.zip'
+
+  SlipMegPrmUserLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/slipMegPrmUserLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/slipMegPrmUserLambda.zip'
+
+  SlipMessageInfoLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/slipMessageInfoLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/slipMessageInfoLambda.zip'
+
+  SlipQuestionLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/slipQuestionLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/slipQuestionLambda.zip'
+
+  SlipVehicleLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/slipVehicleLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/slipVehicleLambda.zip'
+
+  UserFavoriteLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/userFavoriteLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/userFavoriteLambda.zip'
+
+  UserInfoLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/userInfoLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/userInfoLambda.zip'
+
+
+  UserMyListLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/userMyListLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/userMyListLambda.zip'
+
+
+  UserVehicleInfoLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/userVehicleInfoLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/userVehicleInfoLambda.zip'
+
+
+Outputs:
+
+
+
+  # BrowsingHistoryLambdaのARN
+  BrowsingHistoryLambda:
+    Value: !GetAtt BrowsingHistoryLambda.Outputs.BrowsingHistoryLambda
+
+  # EvaluationInfoLambdaのARN
+  EvaluationInfoLambda:
+    Value: !GetAtt EvaluationInfoLambda.Outputs.EvaluationInfoLambda
+
+  # HistoryInfoMechaLambdaのARN
+  HistoryInfoMechaLambda:
+    Value: !GetAtt HistoryInfoMechaLambda.Outputs.HistoryInfoMechaLambda
+
+  # HistoryInfoOfficeLambdaのARN
+  HistoryInfoOfficeLambda:
+    Value: !GetAtt HistoryInfoOfficeLambda.Outputs.HistoryInfoOfficeLambda
+
+  # MechanicInfoLambdaのARN
+  MechanicInfoLambda:
+    Value: !GetAtt MechanicInfoLambda.Outputs.MechanicInfoLambda
+
+  # OfficeInfoLambdaのARN
+  OfficeInfoLambda:
+    Value: !GetAtt OfficeInfoLambda.Outputs.OfficeInfoLambda
+
+  # SlipDetailInfoLambdaのARN
+  SlipDetailInfoLambda:
+    Value: !GetAtt SlipDetailInfoLambda.Outputs.SlipDetailInfoLambda
+
+  # SlipMegPrmUserLambdaのARN
+  SlipMegPrmUserLambda:
+    Value: !GetAtt SlipMegPrmUserLambda.Outputs.SlipMegPrmUserLambda
+
+  # SlipMessageInfoLambdaのARN
+  SlipMessageInfoLambda:
+    Value: !GetAtt SlipMessageInfoLambda.Outputs.SlipMessageInfoLambda
+
+  # SlipQuestionLambdaのARN
+  SlipQuestionLambda:
+    Value: !GetAtt SlipQuestionLambda.Outputs.SlipQuestionLambda
+
+  # SlipVehicleLambdaのARN
+  SlipVehicleLambda:
+    Value: !GetAtt SlipVehicleLambda.Outputs.SlipVehicleLambda
+
+  # UserFavoriteLambdaのARN
+  UserFavoriteLambda:
+    Value: !GetAtt UserFavoriteLambda.Outputs.UserFavoriteLambda
+
+  # UserInfoLambdaのARN
+  UserInfoLambda:
+    Value: !GetAtt UserInfoLambda.Outputs.UserInfoLambda
+
+  # UserMyListLambdaのARN
+  UserMyListLambda:
+    Value: !GetAtt UserMyListLambda.Outputs.UserMyListLambda
+
+  # UserVehicleInfoLambdaのARN
+  UserVehicleInfoLambda:
+    Value: !GetAtt UserVehicleInfoLambda.Outputs.UserVehicleInfoLambda
+
