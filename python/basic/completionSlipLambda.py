@@ -9,7 +9,7 @@ from boto3.dynamodb.conditions import Key
 # Dynamodbアクセスのためのオブジェクト取得
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
-table = dynamodb.Table("slipDetailInfo")
+table = dynamodb.Table("completionSlip")
 
 # テーブルスキャン
 def operation_scan():
@@ -32,8 +32,6 @@ def post_product(PartitionKey, event):
   putResponse = table.put_item(
     Item={
       'slipNo' : PartitionKey,
-      'deleteDiv' : event['Keys']['deleteDiv'],
-      'category' : event['Keys']['category'],
       'slipAdminUserId' : event['Keys']['slipAdminUserId'],
       'slipAdminUserName' : event['Keys']['slipAdminUserName'],
       'slipAdminOffice' : event['Keys']['slipAdminOffice'],
@@ -42,27 +40,19 @@ def post_product(PartitionKey, event):
       'slipAdminBaseName' : event['Keys']['slipAdminBaseName'],
       'adminDiv' : event['Keys']['adminDiv'],
       'title' : event['Keys']['title'],
-      'areaNo1' : event['Keys']['areaNo1'],
-      'areaNo2' : event['Keys']['areaNo2'],
       'praice' : event['Keys']['praice'],
       'bidMethod' : event['Keys']['bidMethod'],
       'bidderId' : event['Keys']['bidderId'],
       'bidEndDate' : event['Keys']['bidEndDate'],
       'explanation' : event['Keys']['explanation'],
-      'displayDiv' : event['Keys']['displayDiv'],
-      'processStatus' : event['Keys']['processStatus'],
       'targetService' : event['Keys']['targetService'],
       'targetVehicleId' : event['Keys']['targetVehicleId'],
       'targetVehicleName' : event['Keys']['targetVehicleName'],
       'targetVehicleInfo' : event['Keys']['targetVehicleInfo'],
       'workAreaInfo' : event['Keys']['workAreaInfo'],
-      'preferredDate' : event['Keys']['preferredDate'],
-      'preferredTime' : event['Keys']['preferredTime'],
       'completionDate' : event['Keys']['completionDate'],
       'transactionCompletionDate' : event['Keys']['transactionCompletionDate'],
       'imageUrlList' : event['Keys']['imageUrlList'],
-      'messageOpenLebel' : event['Keys']['messageOpenLebel'],
-      'updateUserId' : event['Keys']['updateUserId'],
       'created' : event['Keys']['created'],
       'updated' : event['Keys']['updated']
     }

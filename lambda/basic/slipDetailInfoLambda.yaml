@@ -35,6 +35,6 @@ Resources:
         S3Key:
           Ref: S3Key
 Outputs:
-  # DemoProductLambda‚ÌARN
-  DemoProductLambda:
+  # slipDetailInfoLambda‚ÌARN
+  SlipDetailInfoLambda:
     Value: !GetAtt LambdaFunction.Arn

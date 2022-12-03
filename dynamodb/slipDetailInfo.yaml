@@ -39,8 +39,24 @@ Resources:
               KeyType: HASH
           Projection:
             NonKeyAttributes:
-              - user
-              - comment
+              - slipNo
+              - category
+              - adminDiv
+              - title
+              - areaNo1
+              - areaNo2
+              - praice
+              - bidMethod
+              - bidderId
+              - bidEndDate
+              - explanation
+              - displayDiv
+              - targetService
+              - targetVehicleName
+              - workAreaInfo
+              - preferredDate
+              - preferredTime
+              - imageUrlList
             ProjectionType: INCLUDE
 
         - IndexName: areaNo1-index
@@ -48,7 +64,26 @@ Resources:
             - AttributeName: areaNo1
               KeyType: HASH
           Projection:
-            ProjectionType: ALL
+            NonKeyAttributes:
+              - slipNo
+              - category
+              - adminDiv
+              - title
+              - areaNo1
+              - areaNo2
+              - praice
+              - bidMethod
+              - bidderId
+              - bidEndDate
+              - explanation
+              - displayDiv
+              - targetService
+              - targetVehicleName
+              - workAreaInfo
+              - preferredDate
+              - preferredTime
+              - imageUrlList
+            ProjectionType: INCLUDE
 
         - IndexName: areaNo1AndAreaNo2-index
           KeySchema:
@@ -57,7 +92,26 @@ Resources:
             - AttributeName: areaNo2
               KeyType: RANGE
           Projection:
-            ProjectionType: ALL
+            NonKeyAttributes:
+              - slipNo
+              - category
+              - adminDiv
+              - title
+              - areaNo1
+              - areaNo2
+              - praice
+              - bidMethod
+              - bidderId
+              - bidEndDate
+              - explanation
+              - displayDiv
+              - targetService
+              - targetVehicleName
+              - workAreaInfo
+              - preferredDate
+              - preferredTime
+              - imageUrlList
+            ProjectionType: INCLUDE
 
         - IndexName: categoryAndAreaNo1-index
           KeySchema:
@@ -66,7 +120,26 @@ Resources:
             - AttributeName: areaNo1
               KeyType: RANGE
           Projection:
-            ProjectionType: ALL
+            NonKeyAttributes:
+              - slipNo
+              - category
+              - adminDiv
+              - title
+              - areaNo1
+              - areaNo2
+              - praice
+              - bidMethod
+              - bidderId
+              - bidEndDate
+              - explanation
+              - displayDiv
+              - targetService
+              - targetVehicleName
+              - workAreaInfo
+              - preferredDate
+              - preferredTime
+              - imageUrlList
+            ProjectionType: INCLUDE
 
         - IndexName: areaNo1AndCategory-index
           KeySchema:
@@ -75,6 +148,103 @@ Resources:
             - AttributeName: category
               KeyType: RANGE
           Projection:
-            ProjectionType: ALL
+            NonKeyAttributes:
+              - slipNo
+              - category
+              - adminDiv
+              - title
+              - areaNo1
+              - areaNo2
+              - praice
+              - bidMethod
+              - bidderId
+              - bidEndDate
+              - explanation
+              - displayDiv
+              - targetService
+              - targetVehicleName
+              - workAreaInfo
+              - preferredDate
+              - preferredTime
+              - imageUrlList
+            ProjectionType: INCLUDE
+
+        - IndexName: slipAdminUserId-index
+          KeySchema:
+            - AttributeName: slipAdminUserId
+              KeyType: HASH
+          Projection:
+            NonKeyAttributes:
+              - slipNo
+              - category
+              - adminDiv
+              - title
+              - areaNo1
+              - areaNo2
+              - praice
+              - bidMethod
+              - bidderId
+              - bidEndDate
+              - explanation
+              - displayDiv
+              - targetService
+              - targetVehicleName
+              - workAreaInfo
+              - preferredDate
+              - preferredTime
+              - imageUrlList
+            ProjectionType: INCLUDE
+
+        - IndexName: slipAdminOffice-index
+          KeySchema:
+            - AttributeName: slipAdminOffice
+              KeyType: HASH
+          Projection:
+            NonKeyAttributes:
+              - slipNo
+              - category
+              - adminDiv
+              - title
+              - areaNo1
+              - areaNo2
+              - praice
+              - bidMethod
+              - bidderId
+              - bidEndDate
+              - explanation
+              - displayDiv
+              - targetService
+              - targetVehicleName
+              - workAreaInfo
+              - preferredDate
+              - preferredTime
+              - imageUrlList
+            ProjectionType: INCLUDE
+
+        - IndexName: slipAdminBaseId-index
+          KeySchema:
+            - AttributeName: slipAdminBaseId
+              KeyType: HASH
+          Projection:
+            NonKeyAttributes:
+              - slipNo
+              - category
+              - adminDiv
+              - title
+              - areaNo1
+              - areaNo2
+              - praice
+              - bidMethod
+              - bidderId
+              - bidEndDate
+              - explanation
+              - displayDiv
+              - targetService
+              - targetVehicleName
+              - workAreaInfo
+              - preferredDate
+              - preferredTime
+              - imageUrlList
+            ProjectionType: INCLUDE
 
       TableName: slipDetailInfo

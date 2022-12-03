@@ -32,6 +32,21 @@ Resources:
         - - !Ref LambdaCodeDirectory
           - '/browsingHistory-gsi.zip'
 
+  CompletionSlip-gsi:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/completionSlip-gsi.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/completionSlip-gsi.zip'
+
   EvaluationInfo-gsi:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -108,6 +123,22 @@ Resources:
         - - !Ref LambdaCodeDirectory
           - '/slipQuestion-gsi.zip'
 
+  TransactionSlip-gsi:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/transactionSlip-gsi.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/transactionSlip-gsi.zip'
+
+
   UserFavorite-gsi:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -160,40 +191,48 @@ Outputs:
 
   # BrowsingHistory-gsi‚ÌARN
   BrowsingHistory-gsi:
-    Value: !GetAtt BrowsingHistory-gsi.Outputs.BrowsingHistory-gsi
+    Value: !GetAtt BrowsingHistory-gsi.Outputs.BrowsingHistoryGSILambda
+
+  # CompletionSlip-gsi‚ÌARN
+  CompletionSlip-gsi:
+    Value: !GetAtt CompletionSlip-gsi.Outputs.CompletionSlipGSILambda
 
   # EvaluationInfo-gsi‚ÌARN
   EvaluationInfo-gsi:
-    Value: !GetAtt EvaluationInfo-gsi.Outputs.EvaluationInfo-gsi
+    Value: !GetAtt EvaluationInfo-gsi.Outputs.EvaluationInfoGSILambda
 
   # HistoryInfoMecha-gsi‚ÌARN
   HistoryInfoMecha-gsi:
-    Value: !GetAtt HistoryInfoMecha-gsi.Outputs.HistoryInfoMecha-gsi
+    Value: !GetAtt HistoryInfoMecha-gsi.Outputs.HistoryInfoMechaGSILambda
 
   # HistoryInfoOffice-gsi‚ÌARN
   HistoryInfoOffice-gsi:
-    Value: !GetAtt HistoryInfoOffice-gsi.Outputs.HistoryInfoOffice-gsi
+    Value: !GetAtt HistoryInfoOffice-gsi.Outputs.HistoryInfoOfficeGSILambda
 
   # SlipDetailInfo-gsi‚ÌARN
   SlipDetailInfo-gsi:
-    Value: !GetAtt SlipDetailInfo-gsi.Outputs.SlipDetailInfo-gsi
+    Value: !GetAtt SlipDetailInfo-gsi.Outputs.SlipDetailInfoGSILambda
 
   # SlipMessageInfo-gsi ‚ÌARN
   SlipMessageInfo-gsi :
-    Value: !GetAtt SlipMessageInfo-gsi .Outputs.SlipMessageInfo-gsi 
+    Value: !GetAtt SlipMessageInfo-gsi .Outputs.SlipMessageInfoGSILambda
 
   # SlipQuestion-gsi‚ÌARN
   SlipQuestion-gsi:
-    Value: !GetAtt SlipQuestion-gsi.Outputs.SlipQuestion-gsi
+    Value: !GetAtt SlipQuestion-gsi.Outputs.SlipQuestionGSILambda
+
+  # TransactionSlip--gsi‚ÌARN
+  TransactionSlip-gsi:
+    Value: !GetAtt TransactionSlip-gsi.Outputs.TransactionSlipGSILambda
 
   # UserFavorite-gsi‚ÌARN
   UserFavorite-gsi:
-    Value: !GetAtt UserFavorite-gsi.Outputs.UserFavorite-gsi
+    Value: !GetAtt UserFavorite-gsi.Outputs.UserFavoriteGSILambda
 
   # UserMyList-gsi‚ÌARN
   UserMyList-gsi:
-    Value: !GetAtt UserMyList-gsi.Outputs.UserMyList-gsi
+    Value: !GetAtt UserMyList-gsi.Outputs.UserMyListGSILambda
 
   # UserVehicleInfo-gsi‚ÌARN
   UserVehicleInfo-gsi:
-    Value: !GetAtt UserVehicleInfo-gsi.Outputs.UserVehicleInfo-gsi
+    Value: !GetAtt UserVehicleInfo-gsi.Outputs.UserVehicleInfoGSILambda

@@ -35,6 +35,6 @@ Resources:
         S3Key:
           Ref: S3Key
 Outputs:
-  # DemoProductLambda‚ÌARN
-  DemoProductLambda:
+  # HistoryInfoMechaGSILambda‚ÌARN
+  HistoryInfoMechaGSILambda:
     Value: !GetAtt LambdaFunction.Arn

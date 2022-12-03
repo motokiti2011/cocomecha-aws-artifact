@@ -1,5 +1,8 @@
 ÅyÉpÉâÉÅÅ[É^Åz
 BrowsingHistoryLambdaArn
+
+CompletionSlipLambdaArn
+
 EvaluationInfoLambdaArn
 HistoryInfoMechaLambdaArn
 HistoryInfoOfficeLambdaArn
@@ -10,6 +13,9 @@ SlipMegPrmUserLambdaArn
 SlipMessageInfoLambdaArn
 SlipQuestionLambdaArn
 SlipVehicleLambdaArn
+
+TransactionSlipLambdaArn
+
 UserFavoriteLambdaArn
 UserInfoLambdaArn
 UserMyListLambdaArn
@@ -23,6 +29,9 @@ V1Resource
 SerchResource
 IndexSerchResource
 BrowsinghistoryResource
+
+CompletionSlipResource
+
 EvaluationInfoResource
 HistoryInfoMechaResource
 HistoryInfoOfficeResource
@@ -33,6 +42,9 @@ SlipMegPrmUserResource
 SlipMessageInfoResource
 SlipQuestionResource
 SlipVehicleResource
+
+TransactionSlipResource
+
 UserFavoriteResource
 UserInfoResource
 UserMyListResource
@@ -42,6 +54,9 @@ UserVehicleInfoResource
 ÅyÉÅÉ\ÉbÉhÅz
 
 BrowsinghistoryMethod
+
+CompletionSlipMethod
+
 EvaluationInfoMethod
 HistoryInfoMechaMethod
 HistoryInfoOfficeMethod
@@ -52,6 +67,9 @@ SlipMegPrmUserMethod
 SlipMessageInfoMethod
 SlipQuestionMethod
 SlipVehicleMethod
+
+TransactionSlipMethod
+
 UserFavoriteMethod
 UserInfoMethod
 UserMyListMethod

@@ -15,6 +15,15 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/browsingHistory.yaml'
 
+
+  completionSlip:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/completionSlip.yaml'
+
   evaluationInfo:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -93,6 +102,15 @@ Resources:
         - ''
         - - !Ref TemplateUrl
           - 'dynamodb/slipVehicle.yaml'
+
+
+  transactionSlip:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/transactionSlip.yaml'
 
   userFavorite:
     Type: AWS::CloudFormation::Stack

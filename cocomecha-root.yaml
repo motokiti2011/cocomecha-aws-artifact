@@ -14,10 +14,8 @@ Parameters:
   LambdaCodeDirectory:
     Type: String
     Description: LambdaCodeDirectory
-  # Cognitoのメールアドレス
-  EmailArn:
-    Type: String
-    Description: CognitoのmailAdress
+
+
 Resources:
 
   # Roleの作成
@@ -37,39 +35,34 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'dynamodb/demo-use-tbl.yaml'
+          - 'tbl-root.yaml'
 
 
   # Lambdaの作成
-  LambdaProduct:
+  BasicLambdaRoot:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/demo-product-lambda.yaml'
+          - 'basic-lambda-root.yaml'
       Parameters:
         LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
         S3Buket: !Ref S3Buket
-        S3Key: !Join 
-        - ''
-        - - !Ref LambdaCodeDirectory
-          - '/demo-product.zip'
+        S3Key: !Ref LambdaCodeDirectory
 
-  LambdaProductList:
+
+  GsiLambdaRoot:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/demo-product-list-lambda.yaml'
+          - 'gsi-lambda-root.yaml'
       Parameters:
         LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
         S3Buket: !Ref S3Buket
-        S3Key: !Join 
-        - ''
-        - - !Ref LambdaCodeDirectory
-          - '/demo-product-list.zip'
+        S3Key: !Ref LambdaCodeDirectory
 
 
   # Cognitoの作成
@@ -85,21 +78,57 @@ Resources:
 
 
   # APIGatewayの作成
-  ApiGateway:
+  BasicApigateway:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'apigateway/demo-apigateway.yaml'
+          - 'basic-apigateway.yaml'
       Parameters:
-        ProductLambdaArn: !GetAtt LambdaProduct.Outputs.DemoProductLambda
-        ProductListLambdaArn: !GetAtt LambdaProductList.Outputs.DemoProductList
-        UserLambdaArn: !GetAtt LambdaUser.Outputs.DemoUserLambda
+        BrowsingHistoryLambdaArn: !GetAtt BasicLambdaRoot.Outputs.BrowsingHistoryLambda
+        CompletionSlipLambdaArn: !GetAtt BasicLambdaRoot.Outputs.CompletionSlipLambda
+        EvaluationInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.EvaluationInfoLambda
+        HistoryInfoMechaLambdaArn: !GetAtt BasicLambdaRoot.Outputs.HistoryInfoMechaLambda
+        HistoryInfoOfficeLambdaArn: !GetAtt BasicLambdaRoot.Outputs.HistoryInfoOfficeLambda
+        MechanicInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.MechanicInfoLambda
+        OfficeInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.OfficeInfoLambda
+        SlipDetailInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.SlipDetailInfoLambda
+        SlipMegPrmUserLambdaArn: !GetAtt BasicLambdaRoot.Outputs.SlipMegPrmUserLambda
+        SlipMessageInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.SlipMessageInfoLambda
+        SlipQuestionLambdaArn: !GetAtt BasicLambdaRoot.Outputs.SlipQuestionLambda
+        SlipVehicleLambdaArn: !GetAtt BasicLambdaRoot.Outputs.SlipVehicleLambda
+        TransactionSlipLambdaArn: !GetAtt BasicLambdaRoot.Outputs.TransactionSlipLambda
+        UserFavoriteLambdaArn: !GetAtt BasicLambdaRoot.Outputs.UserFavoriteLambda
+        UserInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.UserInfoLambda
+        UserMyListLambdaArn: !GetAtt BasicLambdaRoot.Outputs.UserMyListLambda
+        UserVehicleInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.UserVehicleInfoLambda
+
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
+  GsiApigateway:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'gsi-apigateway.yaml'
+      Parameters:
+        UserLambdaArn: !GetAtt LambdaUser.Outputs.DemoUserLambda
+        BrowsingHistoryGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.BrowsingHistoryGSILambda
+        CompletionSlipGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.CompletionSlipGSILambda
+        EvaluationInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.EvaluationInfoGSILambda
+        HistoryInfoMechaGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.HistoryInfoMechaGSILambda
+        HistoryInfoOfficeGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.HistoryInfoOfficeGSILambda
+        SlipDetailInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SlipDetailInfoGSILambda
+        SlipMessageInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SlipMessageInfoGSILambda
+        SlipQuestionGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SlipQuestionGSILambda
+        TransactionSlipGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.TransactionSlipGSILambda
+        UserFavoriteGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.UserFavoriteGSILambda
+        UserMyListGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.UserMyListGSILambda
+        UserVehicleInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.UserVehicleInfoGSILambda
 
-
+        UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
   # S3（画像アップロード用）の作成
   S3:
@@ -111,9 +140,6 @@ Resources:
           - 's3/demo-s3-upload.yaml'
       Parameters:
         S3BucketName: 'cocomecha-s3-upload'
-
-
-
 
 
 Outputs:

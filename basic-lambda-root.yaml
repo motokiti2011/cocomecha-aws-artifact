@@ -32,6 +32,23 @@ Resources:
         - - !Ref LambdaCodeDirectory
           - '/browsingHistoryLambda.zip'
 
+
+  CompletionSlipLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/completionSlipLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/completionSlipLambda.zip'
+
+
   EvaluationInfoLambda:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -183,6 +200,21 @@ Resources:
         - - !Ref LambdaCodeDirectory
           - '/slipVehicleLambda.zip'
 
+  TransactionSlipLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/transactionSlipLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/transactionSlipLambda.zip'
+
   UserFavoriteLambda:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -229,7 +261,6 @@ Resources:
         - - !Ref LambdaCodeDirectory
           - '/userMyListLambda.zip'
 
-
   UserVehicleInfoLambda:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -245,7 +276,6 @@ Resources:
         - - !Ref LambdaCodeDirectory
           - '/userVehicleInfoLambda.zip'
 
-
 Outputs:
 
 
@@ -253,6 +283,10 @@ Outputs:
   # BrowsingHistoryLambda‚ÌARN
   BrowsingHistoryLambda:
     Value: !GetAtt BrowsingHistoryLambda.Outputs.BrowsingHistoryLambda
+
+  # CompletionSlipLambda‚ÌARN
+  CompletionSlipLambda:
+    Value: !GetAtt CompletionSlipLambda.Outputs.CompletionSlipLambda
 
   # EvaluationInfoLambda‚ÌARN
   EvaluationInfoLambda:
@@ -293,6 +327,10 @@ Outputs:
   # SlipVehicleLambda‚ÌARN
   SlipVehicleLambda:
     Value: !GetAtt SlipVehicleLambda.Outputs.SlipVehicleLambda
+
+  # TransactionSlipLambda‚ÌARN
+  TransactionSlipLambda:
+    Value: !GetAtt TransactionSlipLambda.Outputs.TransactionSlipLambda
 
   # UserFavoriteLambda‚ÌARN
   UserFavoriteLambda:

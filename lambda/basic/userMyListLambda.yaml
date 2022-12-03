@@ -35,6 +35,6 @@ Resources:
         S3Key:
           Ref: S3Key
 Outputs:
-  # DemoProductLambda‚ÌARN
-  DemoProductLambda:
+  # userMyListLambda‚ÌARN
+  UserMyListLambda:
     Value: !GetAtt LambdaFunction.Arn

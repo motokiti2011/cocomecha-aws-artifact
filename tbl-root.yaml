@@ -1,18 +1,13 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: Manage myself verification environment
+AWSTemplateFormatVersion: 2010-09-09
+Description: IaC for DynamoDB
 
 Parameters:
-
-  # テンプレート格納先のURL
   TemplateUrl:
     Type: String
     Description: TemplateURL
 
 Resources:
-
-  # DynamoDBの作成
-  
-  BrowsingHistory:
+  browsingHistory:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
@@ -20,7 +15,16 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/browsingHistory.yaml'
 
-  EvaluationInfo:
+
+  completionSlip:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/completionSlip.yaml'
+
+  evaluationInfo:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
@@ -28,7 +32,7 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/evaluationInfo.yaml'
 
-  HistoryInfoMecha:
+  historyInfoMecha:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
@@ -36,7 +40,7 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/historyInfoMecha.yaml'
 
-  HistoryInfoOffice:
+  historyInfoOffice:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
@@ -44,15 +48,14 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/historyInfoOffice.yaml'
 
-  MechanicInfo:
+  mechanicInfo:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
           - 'dynamodb/mechanicInfo.yaml'
-
-  OfficeInfo:
+  officeInfo:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
@@ -60,7 +63,7 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/officeInfo.yaml'
 
-  SlipDetailInfo:
+  slipDetailInfo:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
@@ -68,7 +71,7 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/slipDetailInfo.yaml'
 
-  SlipMegPrmUser:
+  slipMegPrmUser:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
@@ -76,7 +79,7 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/slipMegPrmUser.yaml'
 
-  SlipMessageInfo:
+  slipMessageInfo:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
@@ -84,7 +87,7 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/slipMessageInfo.yaml'
 
-  SlipQuestion:
+  slipQuestion:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
@@ -92,7 +95,7 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/slipQuestion.yaml'
 
-  SlipVehicle:
+  slipVehicle:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
@@ -100,7 +103,16 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/slipVehicle.yaml'
 
-  UserFavorite:
+
+  transactionSlip:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/transactionSlip.yaml'
+
+  userFavorite:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
@@ -108,7 +120,7 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/userFavorite.yaml'
 
-  UserInfo:
+  userInfo:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
@@ -116,7 +128,7 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/userInfo.yaml'
 
-  UserMyList:
+  userMyList:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
@@ -124,7 +136,7 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/userMyList.yaml'
 
-  UserVehicleInfo:
+  userVehicleInfo:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 

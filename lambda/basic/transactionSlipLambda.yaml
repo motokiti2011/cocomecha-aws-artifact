@@ -17,14 +17,14 @@ Resources:
   LambdaFunction:
     Type: 'AWS::Lambda::Function'
     Properties:
-      FunctionName: 'userVehicleInfoLambda'
+      FunctionName: 'slipDetailInfoLambda'
       Description: Function that put items to DynamoDB
       Runtime: python3.9
       MemorySize: '128'
       Timeout: '5'
       Role:
         Ref: LambdaRoleArn
-      Handler: userVehicleInfoLambda.lambda_handler
+      Handler: transactionSlipLambda.lambda_handler
       Architectures:
         - x86_64
       EphemeralStorage:
@@ -35,6 +35,6 @@ Resources:
         S3Key:
           Ref: S3Key
 Outputs:
-  # userVehicleInfoLambda‚ÌARN
-  UserVehicleInfoLambda:
+  # transactionSlipLambda‚ÌARN
+  TransactionSlipLambda:
     Value: !GetAtt LambdaFunction.Arn

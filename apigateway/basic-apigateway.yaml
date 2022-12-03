@@ -5,6 +5,10 @@ Parameters:
   BrowsingHistoryLambdaArn:
     Type: String
 
+  # completionSlipLambdaのARN
+  CompletionSlipLambdaArn:
+    Type: String
+
   # evaluationInfoLambdaのARN
   EvaluationInfoLambdaArn:
     Type: String
@@ -48,6 +52,10 @@ Parameters:
   SlipVehicleLambdaArn:
     Type: String
 
+  # transactionSlipLambdaのARN
+  TransactionSlipLambdaArn:
+    Type: String
+
   # userFavoriteLambdaのARN
   UserFavoriteLambdaArn:
     Type: String
@@ -89,6 +97,7 @@ Resources:
       - SerchResource
       - IndexSerchResource
       - BrowsinghistoryResource
+      - CompletionSlipResource
       - EvaluationInfoResource
       - HistoryInfoMechaResource
       - HistoryInfoOfficeResource
@@ -99,11 +108,13 @@ Resources:
       - SlipMessageInfoResource
       - SlipQuestionResource
       - SlipVehicleResource
+      - TransactionSlipResource
       - UserFavoriteResource
       - UserInfoResource
       - UserMyListResource
       - UserVehicleInfoResource
       - BrowsinghistoryMethod
+      - CompletionSlipMethod
       - EvaluationInfoMethod
       - HistoryInfoMechaMethod
       - HistoryInfoOfficeMethod
@@ -114,6 +125,7 @@ Resources:
       - SlipMessageInfoMethod
       - SlipQuestionMethod
       - SlipVehicleMethod
+      - TransactionSlipMethod
       - UserFavoriteMethod
       - UserInfoMethod
       - UserMyListMethod
@@ -193,6 +205,45 @@ Resources:
           ResponseModels:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission1
+
+  # CompletionSlipリソース
+  CompletionSlipResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SerchResource
+      PathPart: completionslip
+      RestApiId: !Ref ApiGwRestAPI
+  # CompletionSlipメソッド
+  CompletionSlipMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref CompletionSlipResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref CompletionSlipLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission17
 
 
   # Evaluationinfoリソース
@@ -595,6 +646,45 @@ Resources:
     DependsOn: LambdaPermission11
 
 
+  # TransactionSlipリソース
+  TransactionSlipResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SerchResource
+      PathPart: transactionslip
+      RestApiId: !Ref ApiGwRestAPI
+  # TransactionSlipメソッド
+  TransactionSlipMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref TransactionSlipResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref TransactionSlipLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission18
+
   # UserFavoriteリソース
   UserFavoriteResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -883,4 +973,16 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 
+  LambdaPermission17:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: userVehicleInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
 
+  LambdaPermission18:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: demo-product
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
