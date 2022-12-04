@@ -29,14 +29,17 @@ Resources:
 
 
   # DynamoDBの作成
-  DynamoDbUser:
+  DynamoDBRoot:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
           - 'tbl-root.yaml'
-
+      Parameters:
+        TemplateUrl: !Join 
+        - ''
+        - - !Ref TemplateUrl
 
   # Lambdaの作成
   BasicLambdaRoot:
@@ -49,8 +52,12 @@ Resources:
       Parameters:
         LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
         S3Buket: !Ref S3Buket
-        S3Key: !Ref LambdaCodeDirectory
-
+        LambdaCodeDirectory: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+        TemplateUrl: !Join 
+        - ''
+        - - !Ref TemplateUrl
 
   GsiLambdaRoot:
     Type: AWS::CloudFormation::Stack
@@ -62,8 +69,12 @@ Resources:
       Parameters:
         LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
         S3Buket: !Ref S3Buket
-        S3Key: !Ref LambdaCodeDirectory
-
+        LambdaCodeDirectory: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+        TemplateUrl: !Join 
+        - ''
+        - - !Ref TemplateUrl
 
   # Cognitoの作成
   Cognito:
@@ -73,8 +84,6 @@ Resources:
         - ''
         - - !Ref TemplateUrl
           - 'cognito/cocomecha-cognito.yaml'
-      Parameters:
-        EmailArn: !Ref EmailArn
 
 
   # APIGatewayの作成
@@ -114,7 +123,6 @@ Resources:
         - - !Ref TemplateUrl
           - 'gsi-apigateway.yaml'
       Parameters:
-        UserLambdaArn: !GetAtt LambdaUser.Outputs.DemoUserLambda
         BrowsingHistoryGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.BrowsingHistoryGSILambda
         CompletionSlipGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.CompletionSlipGSILambda
         EvaluationInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.EvaluationInfoGSILambda
@@ -137,7 +145,7 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 's3/demo-s3-upload.yaml'
+          - 's3/cocomecha-s3-upload.yaml'
       Parameters:
         S3BucketName: 'cocomecha-s3-upload'
 

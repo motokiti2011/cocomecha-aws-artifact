@@ -552,7 +552,6 @@ Resources:
     DependsOn: LambdaPermission8
 
 
-
   # UserMyListGSIÉäÉ\Å[ÉX
   UserMyListGSIResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -703,7 +702,6 @@ Resources:
       FunctionName: userVehicleInfo-gsi
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
-
 
   LambdaPermission11:
     Type: 'AWS::Lambda::Permission'

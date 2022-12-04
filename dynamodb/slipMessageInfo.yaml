@@ -6,7 +6,7 @@ Resources:
     Properties:
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
-        - AttributeName: commentId
+        - AttributeName: messageId
           AttributeType: S
         - AttributeName: slipNo
           AttributeType: S

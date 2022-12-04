@@ -9,10 +9,14 @@ Parameters:
   S3Buket:
     Type: String
     Description: S3Buket
-  # S3Key:Lambdaコードの格納先
-  S3Key:
+  # Lambdaコード格納先のディレクトリ名
+  LambdaCodeDirectory:
     Type: String
-    Description: S3Key
+    Description: LambdaCodeDirectory
+  # テンプレート格納先のURL
+  TemplateUrl:
+    Type: String
+    Description: TemplateURL
 
 
 Resources:
@@ -23,13 +27,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/browsingHistoryLambda.yaml'
+          - 'lambda/basic/browsingHistoryLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/browsingHistoryLambda.zip'
 
 
@@ -39,13 +44,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/completionSlipLambda.yaml'
+          - 'lambda/basic/completionSlipLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/completionSlipLambda.zip'
 
 
@@ -55,13 +61,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/evaluationInfoLambda.yaml'
+          - 'lambda/basic/evaluationInfoLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/evaluationInfoLambda.zip'
 
   HistoryInfoMechaLambda:
@@ -70,13 +77,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/historyInfoMechaLambda.yaml'
+          - 'lambda/basic/historyInfoMechaLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/historyInfoMechaLambda.zip'
 
   HistoryInfoOfficeLambda:
@@ -85,13 +93,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/historyInfoOfficeLambda.yaml'
+          - 'lambda/basic/historyInfoOfficeLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/historyInfoOfficeLambda.zip'
 
 
@@ -101,13 +110,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/mechanicInfoLambda.yaml'
+          - 'lambda/basic/mechanicInfoLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/mechanicInfoLambda.zip'
 
   OfficeInfoLambda:
@@ -116,13 +126,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/officeInfoLambda.yaml'
+          - 'lambda/basic/officeInfoLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/officeInfoLambda.zip'
 
   SlipDetailInfoLambda:
@@ -131,13 +142,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/slipDetailInfoLambda.yaml'
+          - 'lambda/basic/slipDetailInfoLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/slipDetailInfoLambda.zip'
 
   SlipMegPrmUserLambda:
@@ -146,13 +158,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/slipMegPrmUserLambda.yaml'
+          - 'lambda/basic/slipMegPrmUserLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/slipMegPrmUserLambda.zip'
 
   SlipMessageInfoLambda:
@@ -161,13 +174,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/slipMessageInfoLambda.yaml'
+          - 'lambda/basic/slipMessageInfoLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/slipMessageInfoLambda.zip'
 
   SlipQuestionLambda:
@@ -176,13 +190,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/slipQuestionLambda.yaml'
+          - 'lambda/basic/slipQuestionLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/slipQuestionLambda.zip'
 
   SlipVehicleLambda:
@@ -191,13 +206,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/slipVehicleLambda.yaml'
+          - 'lambda/basic/slipVehicleLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/slipVehicleLambda.zip'
 
   TransactionSlipLambda:
@@ -206,13 +222,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/transactionSlipLambda.yaml'
+          - 'lambda/basic/transactionSlipLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/transactionSlipLambda.zip'
 
   UserFavoriteLambda:
@@ -221,13 +238,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/userFavoriteLambda.yaml'
+          - 'lambda/basic/userFavoriteLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/userFavoriteLambda.zip'
 
   UserInfoLambda:
@@ -236,13 +254,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/userInfoLambda.yaml'
+          - 'lambda/basic/userInfoLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/userInfoLambda.zip'
 
 
@@ -252,13 +271,14 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/userMyListLambda.yaml'
+          - 'lambda/basic/userMyListLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/userMyListLambda.zip'
 
   UserVehicleInfoLambda:
@@ -267,18 +287,17 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/userVehicleInfoLambda.yaml'
+          - 'lambda/basic/userVehicleInfoLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
           - '/userVehicleInfoLambda.zip'
 
 Outputs:
-
-
 
   # BrowsingHistoryLambdaのARN
   BrowsingHistoryLambda:

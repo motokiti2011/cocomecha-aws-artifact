@@ -9,230 +9,239 @@ Parameters:
   S3Buket:
     Type: String
     Description: S3Buket
-  # S3Key:Lambdaコードの格納先
-  S3Key:
+  # Lambdaコード格納先のディレクトリ名
+  LambdaCodeDirectory:
     Type: String
-    Description: S3Key
+    Description: LambdaCodeDirectory
+  # テンプレート格納先のURL
+  TemplateUrl:
+    Type: String
+    Description: TemplateURL
 
 
 Resources:
 
-  BrowsingHistory-gsi:
+  BrowsingHistoryGSI:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/browsingHistory-gsi.yaml'
+          - 'lambda/gsi/browsingHistory-gsi.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
           - '/browsingHistory-gsi.zip'
 
-  CompletionSlip-gsi:
+  CompletionSlipGSI:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/completionSlip-gsi.yaml'
+          - 'lambda/gsi/completionSlip-gsi.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
           - '/completionSlip-gsi.zip'
 
-  EvaluationInfo-gsi:
+  EvaluationInfoGSI:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/evaluationInfo-gsi.yaml'
+          - 'lambda/gsi/evaluationInfo-gsi.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
           - '/evaluationInfo-gsi.zip'
 
-  HistoryInfoMecha-gsi:
+  HistoryInfoMechaGSI:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/historyInfoMecha-gsi.yaml'
+          - 'lambda/gsi/historyInfoMecha-gsi.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
           - '/historyInfoMecha-gsi.zip'
 
-  HistoryInfoOffice-gsi:
+  HistoryInfoOfficeGSI:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/historyInfoOffice-gsi.yaml'
+          - 'lambda/gsi/historyInfoOffice-gsi.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
           - '/historyInfoOffice-gsi.zip'
 
 
-  SlipDetailInfo-gsi:
+  SlipDetailInfoGSI:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/slipDetailInfo-gsi.yaml'
+          - 'lambda/gsi/slipDetailInfo-gsi.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
           - '/slipDetailInfo-gsi.zip'
 
-  SlipQuestion-gsi:
+  SlipQuestionGSI:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/slipQuestion-gsi.yaml'
+          - 'lambda/gsi/slipQuestion-gsi.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
           - '/slipQuestion-gsi.zip'
 
-  TransactionSlip-gsi:
+  TransactionSlipGSI:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/transactionSlip-gsi.yaml'
+          - 'lambda/gsi/transactionSlip-gsi.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
           - '/transactionSlip-gsi.zip'
 
 
-  UserFavorite-gsi:
+  UserFavoriteGSI:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/userFavorite-gsi.yaml'
+          - 'lambda/gsi/userFavorite-gsi.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
           - '/userFavorite-gsi.zip'
 
-  UserMyList-gsi:
+  UserMyListGSI:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/userMyList-gsi.yaml'
+          - 'lambda/gsi/userMyList-gsi.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
           - '/userMyList-gsi.zip'
 
-  UserVehicleInfo-gsi:
+  UserVehicleInfoGSI:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/userVehicleInfo-gsi.yaml'
+          - 'lambda/gsi/userVehicleInfo-gsi.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
           - '/userVehicleInfo-gsi.zip'
 
 
 Outputs:
 
-
-
   # BrowsingHistory-gsiのARN
-  BrowsingHistory-gsi:
-    Value: !GetAtt BrowsingHistory-gsi.Outputs.BrowsingHistoryGSILambda
+  BrowsingHistoryGSI:
+    Value: !GetAtt BrowsingHistoryGSI.Outputs.BrowsingHistoryGSILambda
 
   # CompletionSlip-gsiのARN
-  CompletionSlip-gsi:
-    Value: !GetAtt CompletionSlip-gsi.Outputs.CompletionSlipGSILambda
+  CompletionSlipGSI:
+    Value: !GetAtt CompletionSlipGSI.Outputs.CompletionSlipGSILambda
 
   # EvaluationInfo-gsiのARN
-  EvaluationInfo-gsi:
-    Value: !GetAtt EvaluationInfo-gsi.Outputs.EvaluationInfoGSILambda
+  EvaluationInfoGSI:
+    Value: !GetAtt EvaluationInfoGSI.Outputs.EvaluationInfoGSILambda
 
   # HistoryInfoMecha-gsiのARN
-  HistoryInfoMecha-gsi:
-    Value: !GetAtt HistoryInfoMecha-gsi.Outputs.HistoryInfoMechaGSILambda
+  HistoryInfoMechaGSI:
+    Value: !GetAtt HistoryInfoMechaGSI.Outputs.HistoryInfoMechaGSILambda
 
   # HistoryInfoOffice-gsiのARN
-  HistoryInfoOffice-gsi:
-    Value: !GetAtt HistoryInfoOffice-gsi.Outputs.HistoryInfoOfficeGSILambda
+  HistoryInfoOfficeGSI:
+    Value: !GetAtt HistoryInfoOfficeGSI.Outputs.HistoryInfoOfficeGSILambda
 
   # SlipDetailInfo-gsiのARN
-  SlipDetailInfo-gsi:
-    Value: !GetAtt SlipDetailInfo-gsi.Outputs.SlipDetailInfoGSILambda
-
-  # SlipMessageInfo-gsi のARN
-  SlipMessageInfo-gsi :
-    Value: !GetAtt SlipMessageInfo-gsi .Outputs.SlipMessageInfoGSILambda
+  SlipDetailInfoGSI:
+    Value: !GetAtt SlipDetailInfoGSI.Outputs.SlipDetailInfoGSILambda
 
   # SlipQuestion-gsiのARN
-  SlipQuestion-gsi:
-    Value: !GetAtt SlipQuestion-gsi.Outputs.SlipQuestionGSILambda
+  SlipQuestionGSI:
+    Value: !GetAtt SlipQuestionGSI.Outputs.SlipQuestionGSILambda
 
   # TransactionSlip--gsiのARN
-  TransactionSlip-gsi:
-    Value: !GetAtt TransactionSlip-gsi.Outputs.TransactionSlipGSILambda
+  TransactionSlipGSI:
+    Value: !GetAtt TransactionSlipGSI.Outputs.TransactionSlipGSILambda
 
   # UserFavorite-gsiのARN
-  UserFavorite-gsi:
-    Value: !GetAtt UserFavorite-gsi.Outputs.UserFavoriteGSILambda
+  UserFavoriteGSI:
+    Value: !GetAtt UserFavoriteGSI.Outputs.UserFavoriteGSILambda
 
   # UserMyList-gsiのARN
-  UserMyList-gsi:
-    Value: !GetAtt UserMyList-gsi.Outputs.UserMyListGSILambda
+  UserMyListGSI:
+    Value: !GetAtt UserMyListGSI.Outputs.UserMyListGSILambda
 
   # UserVehicleInfo-gsiのARN
-  UserVehicleInfo-gsi:
-    Value: !GetAtt UserVehicleInfo-gsi.Outputs.UserVehicleInfoGSILambda
+  UserVehicleInfoGSI:
+    Value: !GetAtt UserVehicleInfoGSI.Outputs.UserVehicleInfoGSILambda

@@ -18,6 +18,9 @@ Resources:
           AttributeType: S
         - AttributeName: displayDiv
           AttributeType: S
+        - AttributeName: slipAdminUserId
+          AttributeType: S
+
       KeySchema:
         - AttributeName: slipNo
           KeyType: HASH
@@ -41,19 +44,14 @@ Resources:
             NonKeyAttributes:
               - slipNo
               - category
-              - adminDiv
               - title
               - areaNo1
               - areaNo2
               - praice
               - bidMethod
-              - bidderId
               - bidEndDate
               - explanation
-              - displayDiv
               - targetService
-              - targetVehicleName
-              - workAreaInfo
               - preferredDate
               - preferredTime
               - imageUrlList
@@ -67,19 +65,14 @@ Resources:
             NonKeyAttributes:
               - slipNo
               - category
-              - adminDiv
               - title
               - areaNo1
               - areaNo2
               - praice
               - bidMethod
-              - bidderId
               - bidEndDate
               - explanation
-              - displayDiv
               - targetService
-              - targetVehicleName
-              - workAreaInfo
               - preferredDate
               - preferredTime
               - imageUrlList
@@ -95,19 +88,14 @@ Resources:
             NonKeyAttributes:
               - slipNo
               - category
-              - adminDiv
               - title
               - areaNo1
               - areaNo2
               - praice
               - bidMethod
-              - bidderId
               - bidEndDate
               - explanation
-              - displayDiv
               - targetService
-              - targetVehicleName
-              - workAreaInfo
               - preferredDate
               - preferredTime
               - imageUrlList
@@ -123,19 +111,14 @@ Resources:
             NonKeyAttributes:
               - slipNo
               - category
-              - adminDiv
               - title
               - areaNo1
               - areaNo2
               - praice
               - bidMethod
-              - bidderId
               - bidEndDate
               - explanation
-              - displayDiv
               - targetService
-              - targetVehicleName
-              - workAreaInfo
               - preferredDate
               - preferredTime
               - imageUrlList
@@ -157,13 +140,9 @@ Resources:
               - areaNo2
               - praice
               - bidMethod
-              - bidderId
               - bidEndDate
               - explanation
-              - displayDiv
               - targetService
-              - targetVehicleName
-              - workAreaInfo
               - preferredDate
               - preferredTime
               - imageUrlList
@@ -183,65 +162,9 @@ Resources:
               - areaNo2
               - praice
               - bidMethod
-              - bidderId
               - bidEndDate
               - explanation
-              - displayDiv
               - targetService
-              - targetVehicleName
-              - workAreaInfo
-              - preferredDate
-              - preferredTime
-              - imageUrlList
-            ProjectionType: INCLUDE
-
-        - IndexName: slipAdminOffice-index
-          KeySchema:
-            - AttributeName: slipAdminOffice
-              KeyType: HASH
-          Projection:
-            NonKeyAttributes:
-              - slipNo
-              - category
-              - adminDiv
-              - title
-              - areaNo1
-              - areaNo2
-              - praice
-              - bidMethod
-              - bidderId
-              - bidEndDate
-              - explanation
-              - displayDiv
-              - targetService
-              - targetVehicleName
-              - workAreaInfo
-              - preferredDate
-              - preferredTime
-              - imageUrlList
-            ProjectionType: INCLUDE
-
-        - IndexName: slipAdminBaseId-index
-          KeySchema:
-            - AttributeName: slipAdminBaseId
-              KeyType: HASH
-          Projection:
-            NonKeyAttributes:
-              - slipNo
-              - category
-              - adminDiv
-              - title
-              - areaNo1
-              - areaNo2
-              - praice
-              - bidMethod
-              - bidderId
-              - bidEndDate
-              - explanation
-              - displayDiv
-              - targetService
-              - targetVehicleName
-              - workAreaInfo
               - preferredDate
               - preferredTime
               - imageUrlList

@@ -8,6 +8,13 @@ Resources:
       AttributeDefinitions:
         - AttributeName: slipNo
           AttributeType: S
+        - AttributeName: slipAdminUserId
+          AttributeType: S
+        - AttributeName: slipAdminOffice
+          AttributeType: S
+        - AttributeName: slipAdminBaseId
+          AttributeType: S
+
 
       KeySchema:
         - AttributeName: slipNo
