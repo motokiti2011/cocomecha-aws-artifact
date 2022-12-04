@@ -163,7 +163,7 @@ Resources:
   SerchResource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
-      ParentId: !Ref v1Resource
+      ParentId: !Ref V1Resource
       PathPart: serch
       RestApiId: !Ref ApiGwRestAPI
 

@@ -35,6 +35,6 @@ Resources:
         S3Key:
           Ref: S3Key
 Outputs:
-  # EvaluationInfo-gsiLambda‚ÌARN
+  # EvaluationInfoGSILambda‚ÌARN
   EvaluationInfoGSILambda:
     Value: !GetAtt LambdaFunction.Arn

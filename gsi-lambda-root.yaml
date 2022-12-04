@@ -203,45 +203,45 @@ Resources:
 Outputs:
 
   # BrowsingHistory-gsi‚ÌARN
-  BrowsingHistoryGSI:
+  BrowsingHistoryGSILambda:
     Value: !GetAtt BrowsingHistoryGSI.Outputs.BrowsingHistoryGSILambda
 
   # CompletionSlip-gsi‚ÌARN
-  CompletionSlipGSI:
+  CompletionSlipGSILambda:
     Value: !GetAtt CompletionSlipGSI.Outputs.CompletionSlipGSILambda
 
   # EvaluationInfo-gsi‚ÌARN
-  EvaluationInfoGSI:
+  EvaluationInfoGSILambda:
     Value: !GetAtt EvaluationInfoGSI.Outputs.EvaluationInfoGSILambda
 
   # HistoryInfoMecha-gsi‚ÌARN
-  HistoryInfoMechaGSI:
+  HistoryInfoMechaGSILambda:
     Value: !GetAtt HistoryInfoMechaGSI.Outputs.HistoryInfoMechaGSILambda
 
   # HistoryInfoOffice-gsi‚ÌARN
-  HistoryInfoOfficeGSI:
+  HistoryInfoOfficeGSILambda:
     Value: !GetAtt HistoryInfoOfficeGSI.Outputs.HistoryInfoOfficeGSILambda
 
   # SlipDetailInfo-gsi‚ÌARN
-  SlipDetailInfoGSI:
+  SlipDetailInfoGSILambda:
     Value: !GetAtt SlipDetailInfoGSI.Outputs.SlipDetailInfoGSILambda
 
   # SlipQuestion-gsi‚ÌARN
-  SlipQuestionGSI:
+  SlipQuestionGSILambda:
     Value: !GetAtt SlipQuestionGSI.Outputs.SlipQuestionGSILambda
 
   # TransactionSlip--gsi‚ÌARN
-  TransactionSlipGSI:
+  TransactionSlipGSILambda:
     Value: !GetAtt TransactionSlipGSI.Outputs.TransactionSlipGSILambda
 
   # UserFavorite-gsi‚ÌARN
-  UserFavoriteGSI:
+  UserFavoriteGSILambda:
     Value: !GetAtt UserFavoriteGSI.Outputs.UserFavoriteGSILambda
 
   # UserMyList-gsi‚ÌARN
-  UserMyListGSI:
+  UserMyListGSILambda:
     Value: !GetAtt UserMyListGSI.Outputs.UserMyListGSILambda
 
   # UserVehicleInfo-gsi‚ÌARN
-  UserVehicleInfoGSI:
+  UserVehicleInfoGSILambda:
     Value: !GetAtt UserVehicleInfoGSI.Outputs.UserVehicleInfoGSILambda

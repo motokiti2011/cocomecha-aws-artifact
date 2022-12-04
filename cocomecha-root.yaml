@@ -129,7 +129,6 @@ Resources:
         HistoryInfoMechaGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.HistoryInfoMechaGSILambda
         HistoryInfoOfficeGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.HistoryInfoOfficeGSILambda
         SlipDetailInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SlipDetailInfoGSILambda
-        SlipMessageInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SlipMessageInfoGSILambda
         SlipQuestionGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SlipQuestionGSILambda
         TransactionSlipGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.TransactionSlipGSILambda
         UserFavoriteGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.UserFavoriteGSILambda
