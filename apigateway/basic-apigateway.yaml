@@ -163,7 +163,7 @@ Resources:
   SerchResource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
-      ParentId: !Ref v1Resource
+      ParentId: !Ref V1Resource
       PathPart: serch
       RestApiId: !Ref ApiGwRestAPI
 
@@ -243,7 +243,7 @@ Resources:
         - StatusCode: '200'
           ResponseModels:
             application/json;charset=UTF-8: Empty
-    DependsOn: LambdaPermission17
+    DependsOn: LambdaPermission16
 
 
   # Evaluationinfoリソース
@@ -683,7 +683,7 @@ Resources:
         - StatusCode: '200'
           ResponseModels:
             application/json;charset=UTF-8: Empty
-    DependsOn: LambdaPermission18
+    DependsOn: LambdaPermission17
 
   # UserFavoriteリソース
   UserFavoriteResource:
@@ -850,11 +850,9 @@ Resources:
   IndexSerchResource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
-      ParentId: !Ref v1Resource
+      ParentId: !Ref V1Resource
       PathPart: indexserch
       RestApiId: !Ref ApiGwRestAPI
-
-
 
 
   # LambdaPermission
@@ -965,24 +963,16 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 
-
   LambdaPermission16:
     Type: 'AWS::Lambda::Permission'
     Properties:
-      FunctionName: demo-product
+      FunctionName: completionSlipLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 
   LambdaPermission17:
     Type: 'AWS::Lambda::Permission'
     Properties:
-      FunctionName: userVehicleInfoLambda
-      Action: 'lambda:InvokeFunction'
-      Principal: apigateway.amazonaws.com
-
-  LambdaPermission18:
-    Type: 'AWS::Lambda::Permission'
-    Properties:
-      FunctionName: demo-product
+      FunctionName: transactionSlipLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com

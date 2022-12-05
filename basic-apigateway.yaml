@@ -850,11 +850,9 @@ Resources:
   IndexSerchResource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
-      ParentId: !Ref v1Resource
+      ParentId: !Ref V1Resource
       PathPart: indexserch
       RestApiId: !Ref ApiGwRestAPI
-
-
 
 
   # LambdaPermission

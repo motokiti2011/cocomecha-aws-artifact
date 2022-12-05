@@ -33,11 +33,6 @@ Parameters:
     Type: String
     Description: SlipDetailInfoGSI of Lambda
 
-  # SlipMessageInfoGSIのARN
-  SlipMessageInfoGSILambdaArn:
-    Type: String
-    Description: SlipMessageInfoGSI of Lambda
-
   # SlipQuestionGSIのARN
   SlipQuestionGSILambdaArn:
     Type: String
@@ -93,7 +88,6 @@ Resources:
       - HistoryInfoMechaGSIResource
       - HistoryInfoOfficeGSIResource
       - SlipDetailInfoGSIResource
-      - SlipMessageInfoGSIResource
       - SlipQuestionGSIResource
       - TransactionSlipGSIResource
       - UserFavoriteGSIResource
@@ -105,13 +99,11 @@ Resources:
       - HistoryInfoMechaGSIMethod
       - HistoryInfoOfficeGSIMethod
       - SlipDetailInfoGSIMethod
-      - SlipMessageInfoGSIMethod
       - SlipQuestionGSIMethod
       - TransactionSlipGSIMethod
       - UserFavoriteGSIMethod
       - UserMyListGSIMethod
       - UserVehicleInfoGSIMethod
-      - 
 
   # ステージ
   ApiGwStage:
@@ -190,46 +182,6 @@ Resources:
           ResponseModels:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission1
-
-
-  # CompletionSlipGSIリソース
-  CompletionSlipGSIResource:
-    Type: 'AWS::ApiGateway::Resource'
-    Properties:
-      ParentId: !Ref IndexSerchResource
-      PathPart: completionslip
-      RestApiId: !Ref ApiGwRestAPI
-  # CompletionSlipGSIメソッド
-  CompletionSlipGSIMethod:
-    Type: 'AWS::ApiGateway::Method'
-    Properties:
-      HttpMethod: POST
-      ResourceId: !Ref CompletionSlipGSIResource
-      RestApiId: !Ref ApiGwRestAPI
-      AuthorizerId: !Ref Authorizer
-      AuthorizationType: COGNITO_USER_POOLS
-      Integration:
-        Type: AWS
-        IntegrationHttpMethod: POST
-        Uri:  !Join 
-         - ''
-         - - 'arn:aws:apigateway:'
-           - !Ref AWS::Region
-           - ':lambda:path/2015-03-31/functions/'
-           - !Ref CompletionSlipGSILambdaArn
-           - '/invocations'
-        PassthroughBehavior: WHEN_NO_MATCH
-        RequestTemplates:
-          application/json: $input.json('$')
-        IntegrationResponses:
-          - StatusCode: '200'
-            ResponseTemplates:
-              application/json;charset=UTF-8: $input.json('$')
-      MethodResponses:
-        - StatusCode: '200'
-          ResponseModels:
-            application/json;charset=UTF-8: Empty
-    DependsOn: LambdaPermission11
 
 
   # EvaluationinfoGSIリソース
@@ -391,47 +343,6 @@ Resources:
     DependsOn: LambdaPermission5
 
 
-
-  # SlipMessageInfoGSIリソース
-  SlipMessageInfoGSIResource:
-    Type: 'AWS::ApiGateway::Resource'
-    Properties:
-      ParentId: !Ref IndexSerchResource
-      PathPart: slipmessageinfo
-      RestApiId: !Ref ApiGwRestAPI
-  # SlipMessageInfoGSIメソッド
-  SlipMessageInfoGSIMethod:
-    Type: 'AWS::ApiGateway::Method'
-    Properties:
-      HttpMethod: POST
-      ResourceId: !Ref SlipMessageInfoGSIResource
-      RestApiId: !Ref ApiGwRestAPI
-      AuthorizerId: !Ref Authorizer
-      AuthorizationType: COGNITO_USER_POOLS
-      Integration:
-        Type: AWS
-        IntegrationHttpMethod: POST
-        Uri:  !Join 
-         - ''
-         - - 'arn:aws:apigateway:'
-           - !Ref AWS::Region
-           - ':lambda:path/2015-03-31/functions/'
-           - !Ref SlipMessageInfoGSILambdaArn
-           - '/invocations'
-        PassthroughBehavior: WHEN_NO_MATCH
-        RequestTemplates:
-          application/json: $input.json('$')
-        IntegrationResponses:
-          - StatusCode: '200'
-            ResponseTemplates:
-              application/json;charset=UTF-8: $input.json('$')
-      MethodResponses:
-        - StatusCode: '200'
-          ResponseModels:
-            application/json;charset=UTF-8: Empty
-    DependsOn: LambdaPermission6
-
-
   # SlipQuestionGSIリソース
   SlipQuestionGSIResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -469,46 +380,6 @@ Resources:
           ResponseModels:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission7
-
-
-  # TransactionSlipGSIリソース
-  TransactionSlipGSIResource:
-    Type: 'AWS::ApiGateway::Resource'
-    Properties:
-      ParentId: !Ref IndexSerchResource
-      PathPart: slipquestion
-      RestApiId: !Ref ApiGwRestAPI
-  # TransactionSlipGSIメソッド
-  TransactionSlipGSIMethod:
-    Type: 'AWS::ApiGateway::Method'
-    Properties:
-      HttpMethod: POST
-      ResourceId: !Ref TransactionSlipGSIResource
-      RestApiId: !Ref ApiGwRestAPI
-      AuthorizerId: !Ref Authorizer
-      AuthorizationType: COGNITO_USER_POOLS
-      Integration:
-        Type: AWS
-        IntegrationHttpMethod: POST
-        Uri:  !Join 
-         - ''
-         - - 'arn:aws:apigateway:'
-           - !Ref AWS::Region
-           - ':lambda:path/2015-03-31/functions/'
-           - !Ref TransactionSlipGSILambdaArn
-           - '/invocations'
-        PassthroughBehavior: WHEN_NO_MATCH
-        RequestTemplates:
-          application/json: $input.json('$')
-        IntegrationResponses:
-          - StatusCode: '200'
-            ResponseTemplates:
-              application/json;charset=UTF-8: $input.json('$')
-      MethodResponses:
-        - StatusCode: '200'
-          ResponseModels:
-            application/json;charset=UTF-8: Empty
-    DependsOn: LambdaPermission12
 
 
   # UserFavoriteGSIリソース
@@ -631,6 +502,85 @@ Resources:
     DependsOn: LambdaPermission10
 
 
+  # CompletionSlipGSIリソース
+  CompletionSlipGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: completionslip
+      RestApiId: !Ref ApiGwRestAPI
+  # CompletionSlipGSIメソッド
+  CompletionSlipGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref CompletionSlipGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref CompletionSlipGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission11
+
+  # TransactionSlipGSIリソース
+  TransactionSlipGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: transactionslip
+      RestApiId: !Ref ApiGwRestAPI
+  # TransactionSlipGSIメソッド
+  TransactionSlipGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref TransactionSlipGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref TransactionSlipGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission12
+
+
   # LambdaPermission
   LambdaPermission1:
     Type: 'AWS::Lambda::Permission'
@@ -664,13 +614,6 @@ Resources:
     Type: 'AWS::Lambda::Permission'
     Properties:
       FunctionName: slipDetailInfo-gsi
-      Action: 'lambda:InvokeFunction'
-      Principal: apigateway.amazonaws.com
-
-  LambdaPermission6:
-    Type: 'AWS::Lambda::Permission'
-    Properties:
-      FunctionName: slipMessageInfo-gsi 
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 

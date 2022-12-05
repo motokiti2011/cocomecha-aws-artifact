@@ -230,7 +230,7 @@ Outputs:
   SlipQuestionGSILambda:
     Value: !GetAtt SlipQuestionGSI.Outputs.SlipQuestionGSILambda
 
-  # TransactionSlip--gsi‚ÌARN
+  # TransactionSlip-gsi‚ÌARN
   TransactionSlipGSILambda:
     Value: !GetAtt TransactionSlipGSI.Outputs.TransactionSlipGSILambda
 
