@@ -6,12 +6,12 @@ Resources:
     Properties:
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
-        - AttributeName: useId
+        - AttributeName: userId
           AttributeType: S
         - AttributeName: userValidDiv
           AttributeType: S
       KeySchema:
-        - AttributeName: useId
+        - AttributeName: userId
           KeyType: HASH
         - AttributeName: userValidDiv
           KeyType: RANGE

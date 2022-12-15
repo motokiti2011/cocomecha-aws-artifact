@@ -54,7 +54,7 @@ Resources:
               - targetService
               - preferredDate
               - preferredTime
-              - imageUrlList
+              - thumbnailUrl
             ProjectionType: INCLUDE
 
         - IndexName: areaNo1-index
@@ -75,7 +75,7 @@ Resources:
               - targetService
               - preferredDate
               - preferredTime
-              - imageUrlList
+              - thumbnailUrl
             ProjectionType: INCLUDE
 
         - IndexName: areaNo1AndAreaNo2-index
@@ -98,7 +98,7 @@ Resources:
               - targetService
               - preferredDate
               - preferredTime
-              - imageUrlList
+              - thumbnailUrl
             ProjectionType: INCLUDE
 
         - IndexName: categoryAndAreaNo1-index
@@ -121,7 +121,7 @@ Resources:
               - targetService
               - preferredDate
               - preferredTime
-              - imageUrlList
+              - thumbnailUrl
             ProjectionType: INCLUDE
 
         - IndexName: areaNo1AndCategory-index
@@ -145,7 +145,7 @@ Resources:
               - targetService
               - preferredDate
               - preferredTime
-              - imageUrlList
+              - thumbnailUrl
             ProjectionType: INCLUDE
 
         - IndexName: slipAdminUserId-index
@@ -167,7 +167,7 @@ Resources:
               - targetService
               - preferredDate
               - preferredTime
-              - imageUrlList
+              - thumbnailUrl
             ProjectionType: INCLUDE
 
       TableName: slipDetailInfo

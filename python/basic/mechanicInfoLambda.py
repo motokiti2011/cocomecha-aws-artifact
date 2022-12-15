@@ -76,10 +76,8 @@ def lambda_handler(event, context):
   OperationType = event['OperationType']
 
   try:
-    if OperationType == 'SCAN':
-      return operation_scan()
 
-    elif OperationType == 'QUERY':
+    if OperationType == 'QUERY':
       PartitionKey = event['Keys']['mechanicId']
       return operation_query(PartitionKey)
 

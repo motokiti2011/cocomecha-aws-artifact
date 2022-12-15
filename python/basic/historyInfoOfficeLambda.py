@@ -35,7 +35,6 @@ def post_product(PartitionKey, event):
       'historyId' : event['Keys']['historyId'],
       'officeId' : event['Keys']['officeId'],
       'baseId' : event['Keys']['baseId'],
-      'slipNo' : event['Keys']['slipNo'],
       'completionDate' : event['Keys']['completionDate'],
       'displayDiv' : event['Keys']['displayDiv'],
       'created' : event['Keys']['created'],
@@ -70,15 +69,9 @@ def lambda_handler(event, context):
   OperationType = event['OperationType']
 
   try:
-    if OperationType == 'SCAN':
-      return operation_scan()
 
-    elif OperationType == 'QUERY':
+    if OperationType == 'PUT':
       PartitionKey = event['Keys']['slipNo']
-      return operation_query(PartitionKey)
-
-    elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['slipNo'] + str(now)
       return post_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':

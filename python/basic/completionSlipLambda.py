@@ -33,11 +33,8 @@ def post_product(PartitionKey, event):
     Item={
       'slipNo' : PartitionKey,
       'slipAdminUserId' : event['Keys']['slipAdminUserId'],
-      'slipAdminUserName' : event['Keys']['slipAdminUserName'],
       'slipAdminOffice' : event['Keys']['slipAdminOffice'],
-      'slipAdminOfficeName' : event['Keys']['slipAdminOfficeName'],
       'slipAdminBaseId' : event['Keys']['slipAdminBaseId'],
-      'slipAdminBaseName' : event['Keys']['slipAdminBaseName'],
       'adminDiv' : event['Keys']['adminDiv'],
       'title' : event['Keys']['title'],
       'praice' : event['Keys']['praice'],
@@ -52,6 +49,7 @@ def post_product(PartitionKey, event):
       'workAreaInfo' : event['Keys']['workAreaInfo'],
       'completionDate' : event['Keys']['completionDate'],
       'transactionCompletionDate' : event['Keys']['transactionCompletionDate'],
+      'thumbnailUrl' : event['Keys']['thumbnailUrl'],
       'imageUrlList' : event['Keys']['imageUrlList'],
       'created' : event['Keys']['created'],
       'updated' : event['Keys']['updated']
@@ -85,10 +83,8 @@ def lambda_handler(event, context):
   OperationType = event['OperationType']
 
   try:
-    if OperationType == 'SCAN':
-      return operation_scan()
 
-    elif OperationType == 'QUERY':
+    if OperationType == 'QUERY':
       PartitionKey = event['Keys']['slipNo']
       return operation_query(PartitionKey)
 

@@ -67,14 +67,10 @@ def operation_delete(partitionKey):
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()
-  print('åªéûçè')
   print(now)
   OperationType = event['OperationType']
 
   try:
-    if OperationType == 'SCAN':
-      return operation_scan()
-
     elif OperationType == 'QUERY':
       PartitionKey = event['Keys']['id']
       return operation_query(PartitionKey)

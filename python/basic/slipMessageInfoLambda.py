@@ -71,15 +71,13 @@ def lambda_handler(event, context):
   OperationType = event['OperationType']
 
   try:
-    if OperationType == 'SCAN':
-      return operation_scan()
 
-    elif OperationType == 'QUERY':
+    if OperationType == 'QUERY':
       PartitionKey = event['Keys']['commentId']
       return operation_query(PartitionKey)
 
     elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['commentId'] + str(now)
+      PartitionKey = event['Keys']['commentId']
       return post_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':

@@ -21,7 +21,7 @@ def operation_scan():
 # ÉåÉRÅ[Éhåüçı
 def operation_query(partitionKey):
     queryData = table.query(
-        KeyConditionExpression = Key("useId").eq(partitionKey)
+        KeyConditionExpression = Key("userId").eq(partitionKey)
     )
     items=queryData['Items']
     print(items)
@@ -31,7 +31,7 @@ def operation_query(partitionKey):
 def post_product(PartitionKey, event):
   putResponse = table.put_item(
     Item={
-      'useId' : PartitionKey,
+      'userId' : PartitionKey,
       'userValidDiv' : event['Keys']['userValidDiv'],
       'corporationDiv' : event['Keys']['corporationDiv'],
       'userName' : event['Keys']['userName'],
@@ -79,15 +79,13 @@ def lambda_handler(event, context):
   OperationType = event['OperationType']
 
   try:
-    if OperationType == 'SCAN':
-      return operation_scan()
 
-    elif OperationType == 'QUERY':
-      PartitionKey = event['Keys']['useId']
+    if OperationType == 'QUERY':
+      PartitionKey = event['Keys']['userId']
       return operation_query(PartitionKey)
 
     elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['useId']
+      PartitionKey = event['Keys']['userId']
       return post_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':

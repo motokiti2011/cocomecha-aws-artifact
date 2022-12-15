@@ -31,8 +31,6 @@ def lambda_handler(event, context):
     OperationType = event['OperationType']
     IndexType = event['IndexType']
     try:
-        if OperationType == 'SCAN':
-            return operation_scan()
 
         PartitionKey = event['Keys']['userId']
         if OperationType == 'USERID-INDEX':

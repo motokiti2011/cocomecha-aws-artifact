@@ -35,11 +35,8 @@ def post_product(PartitionKey, event):
       'deleteDiv' : event['Keys']['deleteDiv'],
       'category' : event['Keys']['category'],
       'slipAdminUserId' : event['Keys']['slipAdminUserId'],
-      'slipAdminUserName' : event['Keys']['slipAdminUserName'],
       'slipAdminOffice' : event['Keys']['slipAdminOffice'],
-      'slipAdminOfficeName' : event['Keys']['slipAdminOfficeName'],
       'slipAdminBaseId' : event['Keys']['slipAdminBaseId'],
-      'slipAdminBaseName' : event['Keys']['slipAdminBaseName'],
       'adminDiv' : event['Keys']['adminDiv'],
       'title' : event['Keys']['title'],
       'areaNo1' : event['Keys']['areaNo1'],
@@ -60,6 +57,7 @@ def post_product(PartitionKey, event):
       'preferredTime' : event['Keys']['preferredTime'],
       'completionDate' : event['Keys']['completionDate'],
       'transactionCompletionDate' : event['Keys']['transactionCompletionDate'],
+      'thumbnailUrl' : event['Keys']['thumbnailUrl'],
       'imageUrlList' : event['Keys']['imageUrlList'],
       'messageOpenLebel' : event['Keys']['messageOpenLebel'],
       'updateUserId' : event['Keys']['updateUserId'],
@@ -95,10 +93,8 @@ def lambda_handler(event, context):
   OperationType = event['OperationType']
 
   try:
-    if OperationType == 'SCAN':
-      return operation_scan()
 
-    elif OperationType == 'QUERY':
+    if OperationType == 'QUERY':
       PartitionKey = event['Keys']['slipNo']
       return operation_query(PartitionKey)
 
