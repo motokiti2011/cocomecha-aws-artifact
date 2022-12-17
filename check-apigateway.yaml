@@ -1,0 +1,118 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: IaC for API Gateway
+Parameters:
+  # slipMegPrmUserCheckLambdaのARN
+  SlipMegPrmUserCheckLambdaArn:
+    Type: String
+
+  # CognitoUserPoolのARN
+  UserPoolArn:
+    Type: String
+    Description: UserPool of Cognito
+
+Resources:
+  # RESTAPI
+  ApiGwRestAPI:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Description: This is the Description of ApiGwRestAPI
+      Name: 'cocomecha-APICHECK'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+  ApiGwDeployment:
+    Type: 'AWS::ApiGateway::Deployment'
+    Properties:
+      Description: This is the Description of ApiGwDeployment
+      RestApiId: !Ref ApiGwRestAPI
+    DependsOn:
+      - V1Resource
+      - SerchResource
+      - CheckResource
+      - SlipMegPrmUserResource
+      - SlipMegPrmUserMethod
+
+
+  # ステージ
+  ApiGwStage:
+    Type: 'AWS::ApiGateway::Stage'
+    Properties:
+      RestApiId: !Ref ApiGwRestAPI
+      DeploymentId: !Ref ApiGwDeployment
+      StageName: dev
+  # オーソライザー
+  Authorizer: 
+    Type: AWS::ApiGateway::Authorizer
+    Properties: 
+      ProviderARNs: 
+        - !Ref UserPoolArn
+      AuthorizerResultTtlInSeconds: "300"
+      Type: "COGNITO_USER_POOLS"
+      IdentitySource: "method.request.header.Authorization"
+      Name: "Authorization"
+      RestApiId: !Ref ApiGwRestAPI
+
+  # v1リソース
+  V1Resource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt 
+        - ApiGwRestAPI
+        - RootResourceId
+      PathPart: v1
+      RestApiId: !Ref ApiGwRestAPI
+
+  # Checkリソース
+  CheckResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref V1Resource
+      PathPart: check
+      RestApiId: !Ref ApiGwRestAPI
+
+  # SlipMegPrmUserリソース
+  SlipMegPrmUserResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SerchResource
+      PathPart: slipmegprmuser
+      RestApiId: !Ref ApiGwRestAPI
+  # SlipMegPrmUserメソッド
+  SlipMegPrmUserMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SlipMegPrmUserResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SlipMegPrmUserCheckLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission18
+
+
+  # LambdaPermission
+  LambdaPermission1:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: slipMegPrmUserCheckLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com

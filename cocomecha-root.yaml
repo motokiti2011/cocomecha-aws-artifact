@@ -59,6 +59,7 @@ Resources:
         - ''
         - - !Ref TemplateUrl
 
+
   GsiLambdaRoot:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -75,6 +76,24 @@ Resources:
         TemplateUrl: !Join 
         - ''
         - - !Ref TemplateUrl
+
+  CheckLambdaRoot:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'gsi-lambda-root.yaml'
+      Parameters:
+        LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
+        S3Buket: !Ref S3Buket
+        LambdaCodeDirectory: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+        TemplateUrl: !Join 
+        - ''
+        - - !Ref TemplateUrl
+
 
   # Cognitoの作成
   Cognito:
@@ -138,6 +157,20 @@ Resources:
         UserVehicleInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.UserVehicleInfoGSILambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
+
+
+  CheckApigateway:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'check-apigateway.yaml'
+      Parameters:
+        SlipMegPrmUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.SlipMegPrmUserLambda
+
+        UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
+
 
   # S3（画像アップロード用）の作成
   S3:
