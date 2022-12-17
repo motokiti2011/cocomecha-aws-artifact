@@ -72,6 +72,14 @@ Parameters:
   UserVehicleInfoLambdaArn:
     Type: String
 
+  # getSlipLambdaArnのARN
+  GetSlipLambdaArn:
+    Type: String
+
+  # messageParmRequestLambdaArnのARN
+  MessageParmRequestLambdaArn:
+    Type: String
+
   # CognitoUserPoolのARN
   UserPoolArn:
     Type: String
@@ -113,6 +121,8 @@ Resources:
       - UserInfoResource
       - UserMyListResource
       - UserVehicleInfoResource
+      - GetSlipResource
+      - MessageParmRequestResource
       - BrowsinghistoryMethod
       - CompletionSlipMethod
       - EvaluationInfoMethod
@@ -130,6 +140,10 @@ Resources:
       - UserInfoMethod
       - UserMyListMethod
       - UserVehicleInfoMethod
+      - GetSlipMethod
+      - MessageParmRequestMethod
+
+
   # ステージ
   ApiGwStage:
     Type: 'AWS::ApiGateway::Stage'
@@ -486,6 +500,45 @@ Resources:
     DependsOn: LambdaPermission7
 
 
+  # GetSlipリソース
+  GetSlipResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SlipDetailInfoResource
+      PathPart: getslip
+      RestApiId: !Ref ApiGwRestAPI
+  # GetSlipメソッド
+  GetSlipMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref GetSlipResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref GetSlipLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission18
+
+
   # SlipMegPrmUserリソース
   SlipMegPrmUserResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -524,6 +577,46 @@ Resources:
           ResponseModels:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission8
+
+
+  # MessageParmRequestリソース
+  MessageParmRequestResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SlipMegPrmUserResource
+      PathPart: messageparmrequest 
+      RestApiId: !Ref ApiGwRestAPI
+  # MessageParmRequestメソッド
+  MessageParmRequestMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref MessageParmRequestResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref MessageParmRequestLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission19
+
 
 
   # SlipMessageInfoリソース
@@ -974,5 +1067,19 @@ Resources:
     Type: 'AWS::Lambda::Permission'
     Properties:
       FunctionName: transactionSlipLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission18:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: getSlipLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission19:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: messageParmRequestLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com

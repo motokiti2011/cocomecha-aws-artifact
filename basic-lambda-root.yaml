@@ -297,6 +297,38 @@ Resources:
           - '/basic/zip'
           - '/userVehicleInfoLambda.zip'
 
+  GetSlipLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/basic/getSlipLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
+          - '/getSlipLambda.zip'
+
+  MessageParmRequestLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/basic/messageParmRequestLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
+          - '/messageParmRequestLambda.zip'
+
 Outputs:
 
   # BrowsingHistoryLambda‚ÌARN
@@ -366,4 +398,13 @@ Outputs:
   # UserVehicleInfoLambda‚ÌARN
   UserVehicleInfoLambda:
     Value: !GetAtt UserVehicleInfoLambda.Outputs.UserVehicleInfoLambda
+
+  # GetSlipLambda‚ÌARN
+  GetSlipLambda:
+    Value: !GetAtt GetSlipLambda.Outputs.GetSlipLambda
+
+  # MessageParmRequestLambda‚ÌARN
+  MessageParmRequestLambda:
+    Value: !GetAtt MessageParmRequestLambda.Outputs.MessageParmRequestLambda
+
 

@@ -112,6 +112,8 @@ Resources:
         UserInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.UserInfoLambda
         UserMyListLambdaArn: !GetAtt BasicLambdaRoot.Outputs.UserMyListLambda
         UserVehicleInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.UserVehicleInfoLambda
+        GetSlipLambdaArn: !GetAtt BasicLambdaRoot.Outputs.GetSlipLambda
+        MessageParmRequestLambdaArn: !GetAtt BasicLambdaRoot.Outputs.MessageParmRequestLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 

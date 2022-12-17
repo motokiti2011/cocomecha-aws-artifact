@@ -37,7 +37,7 @@ def post_product(PartitionKey, event):
       'slipAdminBaseId' : event['Keys']['slipAdminBaseId'],
       'adminDiv' : event['Keys']['adminDiv'],
       'title' : event['Keys']['title'],
-      'praice' : event['Keys']['praice'],
+      'price' : event['Keys']['price'],
       'bidMethod' : event['Keys']['bidMethod'],
       'bidderId' : event['Keys']['bidderId'],
       'bidEndDate' : event['Keys']['bidEndDate'],

@@ -20,7 +20,6 @@ Resources:
           AttributeType: S
         - AttributeName: slipAdminUserId
           AttributeType: S
-
       KeySchema:
         - AttributeName: slipNo
           KeyType: HASH
@@ -47,7 +46,7 @@ Resources:
               - title
               - areaNo1
               - areaNo2
-              - praice
+              - price
               - bidMethod
               - bidEndDate
               - explanation
@@ -68,7 +67,7 @@ Resources:
               - title
               - areaNo1
               - areaNo2
-              - praice
+              - price
               - bidMethod
               - bidEndDate
               - explanation
@@ -91,7 +90,7 @@ Resources:
               - title
               - areaNo1
               - areaNo2
-              - praice
+              - price
               - bidMethod
               - bidEndDate
               - explanation
@@ -114,7 +113,7 @@ Resources:
               - title
               - areaNo1
               - areaNo2
-              - praice
+              - price
               - bidMethod
               - bidEndDate
               - explanation
@@ -138,7 +137,7 @@ Resources:
               - title
               - areaNo1
               - areaNo2
-              - praice
+              - price
               - bidMethod
               - bidEndDate
               - explanation
@@ -160,7 +159,7 @@ Resources:
               - title
               - areaNo1
               - areaNo2
-              - praice
+              - price
               - bidMethod
               - bidEndDate
               - explanation

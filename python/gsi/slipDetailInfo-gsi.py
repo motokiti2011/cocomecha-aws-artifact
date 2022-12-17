@@ -69,7 +69,6 @@ def areaNo1AndCategory_query(partitionKey, sortKey):
 
 def lambda_handler(event, context):
     print("Received event: " + json.dumps(event))
-    OperationType = event['OperationType']
     IndexType = event['IndexType']
     try:
 

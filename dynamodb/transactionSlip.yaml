@@ -34,7 +34,7 @@ Resources:
               - title
               - areaNo1
               - areaNo2
-              - praice
+              - price
               - bidMethod
               - bidderId
               - bidEndDate
@@ -60,7 +60,7 @@ Resources:
               - title
               - areaNo1
               - areaNo2
-              - praice
+              - price
               - bidMethod
               - bidderId
               - bidEndDate
@@ -86,7 +86,7 @@ Resources:
               - title
               - areaNo1
               - areaNo2
-              - praice
+              - price
               - bidMethod
               - bidderId
               - bidEndDate

@@ -276,6 +276,23 @@ Resources:
         - - !Ref LambdaCodeDirectory
           - '/userVehicleInfoLambda.zip'
 
+
+  GetSlipLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/getSlipLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/getSlipLambda.zip'
+
+
 Outputs:
 
 
@@ -347,4 +364,8 @@ Outputs:
   # UserVehicleInfoLambda‚ÌARN
   UserVehicleInfoLambda:
     Value: !GetAtt UserVehicleInfoLambda.Outputs.UserVehicleInfoLambda
+
+  # GetSlipLambda‚ÌARN
+  GetSlipLambda:
+    Value: !GetAtt GetSlipLambda.Outputs.GetSlipLambda
 

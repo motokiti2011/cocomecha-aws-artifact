@@ -27,7 +27,6 @@ def mechanicId_query(partitionKey):
 
 def lambda_handler(event, context):
     print("Received event: " + json.dumps(event))
-    OperationType = event['OperationType']
     IndexType = event['IndexType']
     try:
 

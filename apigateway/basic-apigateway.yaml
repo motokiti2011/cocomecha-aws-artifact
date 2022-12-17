@@ -72,6 +72,10 @@ Parameters:
   UserVehicleInfoLambdaArn:
     Type: String
 
+  # getSlipLambdaArnのARN
+  GetSlipLambdaArn:
+    Type: String
+
   # CognitoUserPoolのARN
   UserPoolArn:
     Type: String
@@ -453,6 +457,7 @@ Resources:
       ParentId: !Ref SerchResource
       PathPart: slipdetailinfo
       RestApiId: !Ref ApiGwRestAPI
+
   # SlipDetailInfoメソッド
   SlipDetailInfoMethod:
     Type: 'AWS::ApiGateway::Method'
@@ -484,6 +489,44 @@ Resources:
           ResponseModels:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission7
+
+  # GetSlipリソース
+  SlipDetailInfoResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SlipDetailInfoResource
+      PathPart: getslip
+      RestApiId: !Ref ApiGwRestAPI      
+  # GetSlipメソッド
+  GetSlipMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SlipDetailInfoResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref GetSlipLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission18
 
 
   # SlipMegPrmUserリソース
@@ -974,5 +1017,12 @@ Resources:
     Type: 'AWS::Lambda::Permission'
     Properties:
       FunctionName: transactionSlipLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission18:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: getSlipLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
