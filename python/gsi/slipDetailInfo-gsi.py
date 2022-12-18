@@ -66,6 +66,16 @@ def areaNo1AndCategory_query(partitionKey, sortKey):
     print(items)
     return queryData
 
+# 6ÉåÉRÅ[Éhåüçı adminUserId-Index
+def slipAdminUser_query(partitionKey):
+    queryData = table.query(
+        IndexName = 'slipAdminUserId-index',
+        KeyConditionExpression = Key("slipAdminUserId").eq(partitionKey)
+    )
+    items=queryData['Items']
+    print(items)
+    return queryData
+
 
 def lambda_handler(event, context):
     print("Received event: " + json.dumps(event))
