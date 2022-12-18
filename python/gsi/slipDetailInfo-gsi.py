@@ -8,12 +8,6 @@ from boto3.dynamodb.conditions import Key
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("slipDetailInfo")
-# テーブルスキャン
-def operation_scan():
-    scanData = table.scan()
-    items=scanData['Items']
-    print(items)
-    return scanData
 
 # 1レコード検索 areaNo1-index
 def areaNo1_query(partitionKey):
@@ -23,7 +17,7 @@ def areaNo1_query(partitionKey):
     )
     items=queryData['Items']
     print(items)
-    return queryData
+    return items
 
 # 2レコード検索 areaNo1AndAreaNo2-index
 def areaNo1AndAreaNo2_query(partitionKey, sortKey):
@@ -33,7 +27,7 @@ def areaNo1AndAreaNo2_query(partitionKey, sortKey):
     )
     items=queryData['Items']
     print(items)
-    return queryData
+    return items
 
 # 3レコード検索 category-index
 def category_query(partitionKey):
@@ -43,7 +37,7 @@ def category_query(partitionKey):
     )
     items=queryData['Items']
     print(items)
-    return queryData
+    return items
 
 # 4レコード検索 categoryAndAreaNo1-index
 def categoryAndAreaNo1_query(partitionKey, sortKey):
@@ -53,7 +47,7 @@ def categoryAndAreaNo1_query(partitionKey, sortKey):
     )
     items=queryData['Items']
     print(items)
-    return queryData
+    return items
 
 
 # 5レコード検索 areaNo1AndCategory-index
@@ -64,7 +58,7 @@ def areaNo1AndCategory_query(partitionKey, sortKey):
     )
     items=queryData['Items']
     print(items)
-    return queryData
+    return items
 
 # 6レコード検索 adminUserId-Index
 def slipAdminUser_query(partitionKey):
@@ -74,7 +68,7 @@ def slipAdminUser_query(partitionKey):
     )
     items=queryData['Items']
     print(items)
-    return queryData
+    return items
 
 
 def lambda_handler(event, context):

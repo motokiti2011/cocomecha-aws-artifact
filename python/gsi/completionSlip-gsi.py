@@ -8,12 +8,6 @@ from boto3.dynamodb.conditions import Key
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("completionSlip")
-# テーブルスキャン
-def operation_scan():
-    scanData = table.scan()
-    items=scanData['Items']
-    print(items)
-    return scanData
 
 # 1レコード検索 slipAdminUserId-index
 def slipAdminUserId_query(partitionKey):
@@ -23,7 +17,7 @@ def slipAdminUserId_query(partitionKey):
     )
     items=queryData['Items']
     print(items)
-    return queryData
+    return items
 
 # 2レコード検索 slipAdminOffice-index
 def slipAdminOffice_query(partitionKey):
@@ -33,7 +27,7 @@ def slipAdminOffice_query(partitionKey):
     )
     items=queryData['Items']
     print(items)
-    return queryData
+    return items
 
 # 3レコード検索 slipAdminBaseId-index
 def slipAdminBaseId_query(partitionKey):
@@ -43,7 +37,7 @@ def slipAdminBaseId_query(partitionKey):
     )
     items=queryData['Items']
     print(items)
-    return queryData
+    return items
 
 
 def lambda_handler(event, context):

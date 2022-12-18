@@ -8,12 +8,6 @@ from boto3.dynamodb.conditions import Key
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("slipQuestion")
-# テーブルスキャン
-def operation_scan():
-    scanData = table.scan()
-    items=scanData['Items']
-    print(items)
-    return scanData
 
 # レコード検索 slipNo-index
 def mechanicId_query(partitionKey):
@@ -23,7 +17,7 @@ def mechanicId_query(partitionKey):
     )
     items=queryData['Items']
     print(items)
-    return queryData
+    return items
 
 def lambda_handler(event, context):
     print("Received event: " + json.dumps(event))

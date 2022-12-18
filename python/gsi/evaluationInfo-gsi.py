@@ -8,12 +8,6 @@ from boto3.dynamodb.conditions import Key
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("evaluationInfo")
-# テーブルスキャン
-def operation_scan():
-    scanData = table.scan()
-    items=scanData['Items']
-    print(items)
-    return scanData
 
 # レコード検索 mechanicId-index
 def mechanicId_query(partitionKey):
@@ -23,7 +17,7 @@ def mechanicId_query(partitionKey):
     )
     items=queryData['Items']
     print(items)
-    return queryData
+    return items
 
 # レコード検索 officeId-index
 def officeId_query(partitionKey):
@@ -33,7 +27,7 @@ def officeId_query(partitionKey):
     )
     items=queryData['Items']
     print(items)
-    return queryData
+    return items
 
 
 def lambda_handler(event, context):

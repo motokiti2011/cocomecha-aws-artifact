@@ -11,13 +11,6 @@ dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("browsingHistory")
 
-# テーブルスキャン
-def operation_scan():
-    scanData = table.scan()
-    items=scanData['Items']
-    print(items)
-    return scanData
-
 # レコード検索
 def operation_query(partitionKey):
     queryData = table.query(
@@ -25,7 +18,7 @@ def operation_query(partitionKey):
     )
     items=queryData['Items']
     print(items)
-    return queryData
+    return items
 
 # レコード追加
 def post_product(PartitionKey, event):
@@ -48,7 +41,7 @@ def post_product(PartitionKey, event):
     print(putResponse)
   else:
     print('Post Successed.')
-  return putResponse
+  return putResponse['Items']
   
   # レコード削除
 def operation_delete(partitionKey):
