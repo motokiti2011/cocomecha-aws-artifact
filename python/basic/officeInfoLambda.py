@@ -46,7 +46,7 @@ def post_product(PartitionKey, event):
       'adminIdList' : event['Keys']['adminIdList'],
       'employeeList' : event['Keys']['employeeList'],
       'officePR' : event['Keys']['officePR'],
-      'officePRimageURLList' : event['Keys']['officePRimageURLList'],
+      'officePRimageURL' : event['Keys']['officePRimageURL'],
       'created' : event['Keys']['created'],
       'updated' : event['Keys']['updated']
     }
