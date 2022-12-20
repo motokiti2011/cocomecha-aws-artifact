@@ -49,7 +49,7 @@ def post_product(PartitionKey, event):
     print(putResponse)
   else:
     print('Post Successed.')
-  return putResponse['Items']
+  return putResponse
   
   # ƒŒƒR[ƒhíœ
 def operation_delete(partitionKey):
@@ -62,7 +62,7 @@ def operation_delete(partitionKey):
         print(delResponse)
     else:
         print('DEL Successed.')
-    return delResponse['Items']
+    return delResponse
 
 
 def lambda_handler(event, context):

@@ -27,7 +27,6 @@ Resources:
       RestApiId: !Ref ApiGwRestAPI
     DependsOn:
       - V1Resource
-      - SerchResource
       - CheckResource
       - SlipMegPrmUserResource
       - SlipMegPrmUserMethod
@@ -74,7 +73,7 @@ Resources:
   SlipMegPrmUserResource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
-      ParentId: !Ref SerchResource
+      ParentId: !Ref CheckResource
       PathPart: slipmegprmuser
       RestApiId: !Ref ApiGwRestAPI
   # SlipMegPrmUserÉÅÉ\ÉbÉh
@@ -106,7 +105,7 @@ Resources:
         - StatusCode: '200'
           ResponseModels:
             application/json;charset=UTF-8: Empty
-    DependsOn: LambdaPermission18
+    DependsOn: LambdaPermission1
 
 
   # LambdaPermission

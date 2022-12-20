@@ -64,7 +64,7 @@ def post_product(PartitionKey, event):
     print(putResponse)
   else:
     print('Post Successed.')
-  return putResponse['Items']
+  return putResponse['Item']
   
   # ƒŒƒR[ƒhíœ
 def operation_delete(partitionKey):

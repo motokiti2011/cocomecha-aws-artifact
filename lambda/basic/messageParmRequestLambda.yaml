@@ -36,5 +36,5 @@ Resources:
           Ref: S3Key
 Outputs:
   # messageParmRequestLambda‚ÌARN
-  GetSlipLambda:
+  MessageParmRequestLambda:
     Value: !GetAtt LambdaFunction.Arn

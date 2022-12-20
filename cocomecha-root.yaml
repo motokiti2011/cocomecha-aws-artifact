@@ -83,7 +83,7 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'gsi-lambda-root.yaml'
+          - 'check-lambda-root.yaml'
       Parameters:
         LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
         S3Buket: !Ref S3Buket
@@ -154,6 +154,7 @@ Resources:
         TransactionSlipGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.TransactionSlipGSILambda
         UserFavoriteGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.UserFavoriteGSILambda
         UserMyListGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.UserMyListGSILambda
+        MechanicInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.MechanicInfoGSILambda
         UserVehicleInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.UserVehicleInfoGSILambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
@@ -167,7 +168,7 @@ Resources:
         - - !Ref TemplateUrl
           - 'check-apigateway.yaml'
       Parameters:
-        SlipMegPrmUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.SlipMegPrmUserLambda
+        SlipMegPrmUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.SlipMegPrmUserCheckLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 

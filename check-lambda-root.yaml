@@ -21,28 +21,27 @@ Parameters:
 
 Resources:
 
-  SlipMegPrmUserLambda:
+  SlipMegPrmUserCheckLambda:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/basic/slipMegPrmUserCheckLambda.yaml'
+          - 'lambda/check/slipMegPrmUserCheckLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
         S3Key: !Join 
         - ''
         - - !Ref LambdaCodeDirectory
-          - '/basic/zip'
+          - '/check/zip'
           - '/slipMegPrmUserCheckLambda.zip'
 
 
 Outputs:
-
-  # SlipMegPrmUserLambda‚ÌARN
-  SlipMegPrmUserLambda:
-    Value: !GetAtt SlipMegPrmUserLambda.Outputs.SlipMegPrmUserLambda
+  # SlipMegPrmUserCheckLambda‚ÌARN
+  SlipMegPrmUserCheckLambda:
+    Value: !GetAtt SlipMegPrmUserCheckLambda.Outputs.SlipMegPrmUserCheckLambda
 
 
 
