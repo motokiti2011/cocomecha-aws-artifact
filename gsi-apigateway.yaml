@@ -58,6 +58,10 @@ Parameters:
     Type: String
     Description: UserVehicleInfoGSI of Lambda
 
+  # MechanicInfoGSIのARN
+  MechanicInfoGSILambdaArn:
+    Type: String
+    Description: MechanicInfoGSI of Lambda
 
   # CognitoUserPoolのARN
   UserPoolArn:
@@ -302,6 +306,46 @@ Resources:
           ResponseModels:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission4
+
+
+  # MechanicInfoGSIリソース
+  MechanicInfoGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: mechanicinfo
+      RestApiId: !Ref ApiGwRestAPI
+  # MechanicInfoGSIメソッド
+  MechanicInfoGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref MechanicInfoGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref MechanicInfoGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission13
 
 
   # SlipDetailInfoGSIリソース
@@ -656,5 +700,12 @@ Resources:
     Type: 'AWS::Lambda::Permission'
     Properties:
       FunctionName: transactionSlip-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission13:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: mechanicInfo-gsi
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com

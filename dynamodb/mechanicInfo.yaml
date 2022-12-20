@@ -10,9 +10,30 @@ Resources:
           AttributeType: S
         - AttributeName: validDiv
           AttributeType: S
+        - AttributeName: adminUserId
+          AttributeType: S
+        - AttributeName: officeId
+          AttributeType: S
       KeySchema:
         - AttributeName: mechanicId
           KeyType: HASH
         - AttributeName: validDiv
           KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: adminUserId-index
+          KeySchema:
+            - AttributeName: adminUserId
+              KeyType: HASH
+            - AttributeName: validDiv
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: officeId-index
+          KeySchema:
+            - AttributeName: officeId
+              KeyType: HASH
+            - AttributeName: validDiv
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
       TableName: mechanicInfo

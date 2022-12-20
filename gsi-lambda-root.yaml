@@ -102,6 +102,23 @@ Resources:
           - '/historyInfoOffice-gsi.zip'
 
 
+  MechanicInfoGSI:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/gsi/mechanicInfo-gsi.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
+          - '/mechanicInfo-gsi.zip'
+
+
   SlipDetailInfoGSI:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -221,6 +238,10 @@ Outputs:
   # HistoryInfoOffice-gsi‚ÌARN
   HistoryInfoOfficeGSILambda:
     Value: !GetAtt HistoryInfoOfficeGSI.Outputs.HistoryInfoOfficeGSILambda
+
+  # MechanicInfo-gsi‚ÌARN
+  MechanicInfoGSILambda:
+    Value: !GetAtt MechanicInfoGSI.Outputs.MechanicInfoGSILambda
 
   # SlipDetailInfo-gsi‚ÌARN
   SlipDetailInfoGSILambda:

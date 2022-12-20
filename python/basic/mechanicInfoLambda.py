@@ -30,6 +30,7 @@ def post_product(PartitionKey, event):
       'mechanicName' : event['Keys']['mechanicName'],
       'adminUserId' : event['Keys']['adminUserId'],
       'adminAddressDiv' : event['Keys']['adminAddressDiv'],
+      'telList' : event['Keys']['telList'],
       'mailAdress' : event['Keys']['mailAdress'],
       'officeConnectionDiv' : event['Keys']['officeConnectionDiv'],
       'officeId' : event['Keys']['officeId'],
@@ -37,7 +38,7 @@ def post_product(PartitionKey, event):
       'specialtyWork' : event['Keys']['specialtyWork'],
       'profileImageUrl' : event['Keys']['profileImageUrl'],
       'Introduction' : event['Keys']['Introduction'],
-      'evaluationUserID' : event['Keys']['evaluationUserID'],
+      'evaluationInfoIdList' : event['Keys']['evaluationInfoIdList'],
       'updateUserId' : event['Keys']['updateUserId'],
       'created' : event['Keys']['created'],
       'updated' : event['Keys']['updated']
