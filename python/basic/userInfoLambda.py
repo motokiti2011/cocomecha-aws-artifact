@@ -36,6 +36,7 @@ def post_product(PartitionKey, event):
       'areaNo2' : event['Keys']['areaNo2'],
       'adress' : event['Keys']['adress'],
       'postCode' : event['Keys']['postCode'],
+      'mechanicId' : event['Keys']['mechanicId'],
       'officeId' : event['Keys']['officeId'],
       'baseId' : event['Keys']['baseId'],
       'officeRole' : event['Keys']['officeRole'],

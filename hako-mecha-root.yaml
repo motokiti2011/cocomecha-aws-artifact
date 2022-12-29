@@ -133,7 +133,8 @@ Resources:
         UserVehicleInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.UserVehicleInfoLambda
         GetSlipLambdaArn: !GetAtt BasicLambdaRoot.Outputs.GetSlipLambda
         MessageParmRequestLambdaArn: !GetAtt BasicLambdaRoot.Outputs.MessageParmRequestLambda
-
+        InitPostSlipLambdaArn: !GetAtt BasicLambdaRoot.Outputs.InitPostSlipLambda
+        InitMechanicUserLambdaArn: !GetAtt BasicLambdaRoot.Outputs.InitMechanicUserLambda
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
   GsiApigateway:

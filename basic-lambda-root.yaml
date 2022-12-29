@@ -329,6 +329,38 @@ Resources:
           - '/basic/zip'
           - '/messageParmRequestLambda.zip'
 
+  InitPostSlipLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/basic/initPostSlipLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
+          - '/initPostSlipLambda.zip'
+
+  InitMechanicUserLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/basic/initMechanicUserLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
+          - '/initMechanicUserLambda.zip'
+
 Outputs:
 
   # BrowsingHistoryLambda‚ÌARN
@@ -407,4 +439,11 @@ Outputs:
   MessageParmRequestLambda:
     Value: !GetAtt MessageParmRequestLambda.Outputs.MessageParmRequestLambda
 
+  # InitPostSlipLambda‚ÌARN
+  InitPostSlipLambda:
+    Value: !GetAtt InitPostSlipLambda.Outputs.InitPostSlipLambda
+
+  # InitMechanicUserLambda‚ÌARN
+  InitMechanicUserLambda:
+    Value: !GetAtt InitMechanicUserLambda.Outputs.InitMechanicUserLambda
 

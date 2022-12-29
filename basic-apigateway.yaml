@@ -80,10 +80,22 @@ Parameters:
   MessageParmRequestLambdaArn:
     Type: String
 
+
+  # initPostSlipLambdaArnのARN
+  InitPostSlipLambdaArn:
+    Type: String
+
+
+  # initMechanicUserLambdaArnのARN
+  InitMechanicUserLambdaArn:
+    Type: String
+
+
   # CognitoUserPoolのARN
   UserPoolArn:
     Type: String
     Description: UserPool of Cognito
+
 
 Resources:
   # RESTAPI
@@ -123,6 +135,8 @@ Resources:
       - UserVehicleInfoResource
       - GetSlipResource
       - MessageParmRequestResource
+      - PostSlipResource
+      - InitMechanicUpResource
       - BrowsinghistoryMethod
       - CompletionSlipMethod
       - EvaluationInfoMethod
@@ -142,7 +156,8 @@ Resources:
       - UserVehicleInfoMethod
       - GetSlipMethod
       - MessageParmRequestMethod
-
+      - PostSlipMethod
+      - InitMechanicUpMethod
 
   # ステージ
   ApiGwStage:
@@ -420,6 +435,46 @@ Resources:
     DependsOn: LambdaPermission5
 
 
+  # InitMechanicUpリソース
+  InitMechanicUpResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref MechanicInfoResource
+      PathPart: initmechanicup
+      RestApiId: !Ref ApiGwRestAPI
+  # InitMechanicUpメソッド
+  InitMechanicUpMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref InitMechanicUpResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref InitMechanicUserLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission21
+
+
   # OfficeInfoリソース
   OfficeInfoResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -537,6 +592,47 @@ Resources:
           ResponseModels:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission18
+
+
+
+  # PostSlip リソース
+  PostSlipResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SlipDetailInfoResource
+      PathPart: initpostslip
+      RestApiId: !Ref ApiGwRestAPI
+  # PostSlipメソッド
+  PostSlipMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref PostSlipResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref InitPostSlipLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission20
 
 
   # SlipMegPrmUserリソース
@@ -1081,5 +1177,19 @@ Resources:
     Type: 'AWS::Lambda::Permission'
     Properties:
       FunctionName: messageParmRequestLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission20:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: initPostSlipLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission21:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: initMechanicUserLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
