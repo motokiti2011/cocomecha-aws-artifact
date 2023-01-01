@@ -34,6 +34,7 @@ def post_product(PartitionKey, event):
       'mailAdress' : event['Keys']['mailAdress'],
       'officeConnectionDiv' : event['Keys']['officeConnectionDiv'],
       'officeId' : event['Keys']['officeId'],
+      'associationOfficeList': event['Keys']['associationOfficeList'],
       'qualification' : event['Keys']['qualification'],
       'specialtyWork' : event['Keys']['specialtyWork'],
       'profileImageUrl' : event['Keys']['profileImageUrl'],

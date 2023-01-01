@@ -7,7 +7,7 @@ from boto3.dynamodb.conditions import Key
 # Dynamodbアクセスのためのオブジェクト取得
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
-table = dynamodb.Table("slipDetailInfo")
+table = dynamodb.Table("salesServiceInfo")
 
 # 1レコード検索 areaNo1-index
 def areaNo1_query(partitionKey):
@@ -30,11 +30,22 @@ def areaNo1AndAreaNo2_query(partitionKey, sortKey):
     return items
 
 
-# 3レコード検索 adminUserId-Index
-def slipAdminUser_query(partitionKey):
+# 3レコード検索 slipAdminOffice-Index
+def slipAdminOffice_query(partitionKey, sortKey):
     queryData = table.query(
-        IndexName = 'slipAdminUserId-index',
-        KeyConditionExpression = Key("slipAdminUserId").eq(partitionKey)
+        IndexName = 'slipAdminOfficeId-index',
+        KeyConditionExpression = Key("slipAdminOfficeId").eq(partitionKey) & Key("deleteDiv").eq("sortKey")
+    )
+    items=queryData['Items']
+    print(items)
+    return items
+
+
+# 4レコード検索 slipAdminMechanic-Index
+def slipAdminMechanic_query(partitionKey, sortKey):
+    queryData = table.query(
+        IndexName = 'slipAdminMechanic-index',
+        KeyConditionExpression = Key("slipAdminMechanicId").eq(partitionKey) & Key("deleteDiv").eq("sortKey")
     )
     items=queryData['Items']
     print(items)
@@ -55,9 +66,15 @@ def lambda_handler(event, context):
           SortKey = event['Keys']['areaNo2']
           return areaNo1AndAreaNo2_query(PartitionKey, SortKey)
 
-        elif IndexType == 'ADMINUSERID-INDEX':
-          PartitionKey = event['Keys']['slipAdminUserId']
-          return slipAdminUser_query(PartitionKey)
+        elif IndexType == 'SLIPADMINOFFICEID-INDEX':
+          PartitionKey = event['Keys']['slipAdminOfficeId']
+          SortKey = event['Keys']['deleteDiv']
+          return slipAdminOffice_query(PartitionKey, SortKey)
+
+        elif IndexType == 'SLIPADMINMECHANIC-INDEX':
+          PartitionKey = event['Keys']['slipAdminMechanicId']
+          SortKey = event['Keys']['deleteDiv']
+          return slipAdminMechanic_query(PartitionKey, SortKey):
 
     except Exception as e:
         print("Error Exception.")

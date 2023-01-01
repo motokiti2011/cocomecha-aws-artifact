@@ -1,30 +1,36 @@
-
 import json
 import boto3
 
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# 伝票登録初回
+# Keyオブジェクトを利用できるようにする
 
-# Dynamodb
+# Dynamodbアクセスのためのオブジェクト取得
 dynamodb = boto3.resource('dynamodb')
-
-table1 = dynamodb.Table("slipDetailInfo")
-table2 = dynamodb.Table("slipMegPrmUser")
-
+# 指定テーブルのアクセスオブジェクト取得
+table = dynamodb.Table("salesServiceInfo")
 
 
+# レコード検索
+def operation_query(partitionKey):
+    queryData = table.query(
+        KeyConditionExpression = Key("slipNo").eq(partitionKey)
+    )
+    items=queryData['Items']
+    print(items)
+    return items
+
+# レコード追加
 def post_product(PartitionKey, event):
-  # slipDetailInfoのPOST
-  slipDetailInfoPutResponse = table1.put_item(
+  putResponse = table.put_item(
     Item={
       'slipNo' : PartitionKey,
       'deleteDiv' : event['Keys']['deleteDiv'],
       'category' : event['Keys']['category'],
       'slipAdminUserId' : event['Keys']['slipAdminUserId'],
-      'slipAdminOffice' : event['Keys']['slipAdminOffice'],
-      'slipAdminBaseId' : event['Keys']['slipAdminBaseId'],
+      'slipAdminOfficeId' : event['Keys']['slipAdminOfficeId'],
+      'slipAdminMechanicId' : event['Keys']['slipAdminMechanicId'],
       'adminDiv' : event['Keys']['adminDiv'],
       'title' : event['Keys']['title'],
       'areaNo1' : event['Keys']['areaNo1'],
@@ -54,41 +60,44 @@ def post_product(PartitionKey, event):
     }
   )
   
-  if slipDetailInfoPutResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
-    print(slipDetailInfoPutResponse)
+  if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+    print(putResponse)
   else:
-    print('slipDetailInfo : Post Successed.')
-
+    print('Post Successed.')
+  return putResponse['Item']
   
-  slipMegPrmUserPutResponse = table2.put_item(
-    Item={
-      'slipNo' : PartitionKey,
-      'slipAdminUserId' : event['Keys']['slipAdminUserId'],
-      'slipAdminUserName' : "",
-      'permissionUserList' : [],
-      'created' : event['Keys']['created'],
-      'updated' : event['Keys']['updated']
-    }
-  )
-
-  if slipMegPrmUserPutResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
-    print(slipMegPrmUserPutResponse)
-  else:
-    print('slipMegPrmUser : Post Successed.')
-    return slipMegPrmUserPutResponse['ResponseMetadata']['HTTPStatusCode']
-
+  # レコード削除
+def operation_delete(partitionKey):
+    delResponse = table.delete_item(
+       key={
+           'slipNo': partitionKey,
+       }
+    )
+    if delResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+        print(delResponse)
+    else:
+        print('DEL Successed.')
+    return delResponse['Items']
 
 
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()
+  print(now)
   OperationType = event['OperationType']
 
   try:
 
-    if OperationType == 'INITSLIPPOST':
+    if OperationType == 'QUERY':
+      PartitionKey = event['Keys']['slipNo']
+      return operation_query(PartitionKey)
+
+    elif OperationType == 'PUT':
       PartitionKey = event['Keys']['slipNo'] + str(now)
       return post_product(PartitionKey, event)
+
+    elif OperationType == 'DELETE':
+      return operation_delete(PartitionKey)
 
   except Exception as e:
       print("Error Exception.")

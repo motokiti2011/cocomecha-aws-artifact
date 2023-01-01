@@ -84,7 +84,7 @@ def user_post(userId, mechanicId, officeId, officeDiv, event):
     Item={
       'userId' : userId,
       'userValidDiv' : items[0]['userValidDiv'],
-      'corporationDiv' : items[0]]['corporationDiv'],
+      'corporationDiv' : items[0]['corporationDiv'],
       'userName' : items[0]['userName'],
       'mailAdress' : items[0]['mailAdress'],
       'TelNo1' : items[0]['TelNo1'],
@@ -163,7 +163,7 @@ def lambda_handler(event, context):
     else:
       print('PUT Successed.user')
         
-    return mechanicResponse
+    return mechanicResponse['ResponseMetadata']['HTTPStatusCode']
 
   except Exception as e:
       print("Error Exception.")

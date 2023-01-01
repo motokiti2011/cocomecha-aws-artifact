@@ -1,0 +1,394 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: IaC for API Gateway
+Parameters:
+
+  # getSlipLambdaArnのARN
+  GetSlipLambdaArn:
+    Type: String
+
+  # messageParmRequestLambdaArnのARN
+  MessageParmRequestLambdaArn:
+    Type: String
+
+
+  # initPostSlipLambdaArnのARN
+  InitPostSlipLambdaArn:
+    Type: String
+
+
+  # initMechanicUserLambdaArnのARN
+  InitMechanicUserLambdaArn:
+    Type: String
+
+
+  # initOfficeLambdaArnのARN
+  InitOfficeLambdaArn:
+    Type: String
+
+
+  # initSalesServiceLambdaArnのARN
+  InitSalesServiceLambdaArn:
+    Type: String
+
+
+  # CognitoUserPoolのARN
+  UserPoolArn:
+    Type: String
+    Description: UserPool of Cognito
+
+
+Resources:
+  # RESTAPI
+  ApiGwRestAPI:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Description: This is the Description of ApiGwRestAPI
+      Name: 'cocomecha-UNIQUE-APIGW'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+  ApiGwDeployment:
+    Type: 'AWS::ApiGateway::Deployment'
+    Properties:
+      Description: This is the Description of ApiGwDeployment
+      RestApiId: !Ref ApiGwRestAPI
+    DependsOn:
+      - V1Resource
+      - UnitOptionResource
+
+      - GetSlipResource
+      - MessageParmRequestResource
+      - InitPostSlipResource
+      - InitMechanicUpResource
+      - InitOfficeUpResource
+      - InitSalesServiceResource
+
+      - GetSlipMethod
+      - MessageParmRequestMethod
+      - InitPostSlipMethod
+      - InitMechanicUpMethod
+      - InitOfficeUpMethod
+      - InitSalesServiceMethod
+
+  # ステージ
+  ApiGwStage:
+    Type: 'AWS::ApiGateway::Stage'
+    Properties:
+      RestApiId: !Ref ApiGwRestAPI
+      DeploymentId: !Ref ApiGwDeployment
+      StageName: dev
+  # オーソライザー
+  Authorizer: 
+    Type: AWS::ApiGateway::Authorizer
+    Properties: 
+      ProviderARNs: 
+        - !Ref UserPoolArn
+      AuthorizerResultTtlInSeconds: "300"
+      Type: "COGNITO_USER_POOLS"
+      IdentitySource: "method.request.header.Authorization"
+      Name: "Authorization"
+      RestApiId: !Ref ApiGwRestAPI
+
+  # v1リソース
+  V1Resource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt 
+        - ApiGwRestAPI
+        - RootResourceId
+      PathPart: v1
+      RestApiId: !Ref ApiGwRestAPI
+
+
+  # unitOptionリソース
+  UnitOptionResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref V1Resource
+      PathPart: unitoption
+      RestApiId: !Ref ApiGwRestAPI
+
+
+  # GetSlipリソース
+  GetSlipResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: getslip
+      RestApiId: !Ref ApiGwRestAPI
+  # GetSlipメソッド
+  GetSlipMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref GetSlipResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref GetSlipLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission1
+
+
+  # MessageParmRequestリソース
+  MessageParmRequestResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: messageparmrequest
+      RestApiId: !Ref ApiGwRestAPI
+  # MessageParmRequestメソッド
+  MessageParmRequestMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref MessageParmRequestResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref MessageParmRequestLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission2
+
+
+  # InitPostSlipリソース
+  InitPostSlipResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: initpostslip
+      RestApiId: !Ref ApiGwRestAPI
+  # InitPostSlipメソッド
+  InitPostSlipMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref InitPostSlipResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref InitPostSlipLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission3
+
+
+  # InitMechanicUpリソース
+  InitMechanicUpResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: initmechanicup
+      RestApiId: !Ref ApiGwRestAPI
+  # InitMechanicUpメソッド
+  InitMechanicUpMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref InitMechanicUpResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref GetSlipLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission4
+
+
+  # InitOfficeUpリソース
+  InitOfficeUpResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: initofficeup
+      RestApiId: !Ref ApiGwRestAPI
+  # InitOfficeUpメソッド
+  InitOfficeUpMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref InitOfficeUpResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref InitOfficeLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission5
+
+
+  # InitSalesServiceリソース
+  InitSalesServiceResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: initsalesservice
+      RestApiId: !Ref ApiGwRestAPI
+  # InitSalesServiceメソッド
+  InitSalesServiceMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref InitSalesServiceResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref InitSalesServiceLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission6
+
+
+  # LambdaPermission
+  LambdaPermission1:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: getSlipLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission2:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: messageParmRequestLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission3:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: initPostSlipLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission4:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: initMechanicUserLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission5:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: initOfficeLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission6:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: initSalesServiceLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+

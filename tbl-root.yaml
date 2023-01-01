@@ -144,3 +144,12 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/userVehicleInfo.yaml'
 
+
+  salesServiceInfo:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/salesServiceInfo.yaml'
+

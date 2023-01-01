@@ -16,7 +16,9 @@ Resources:
           AttributeType: S
         - AttributeName: displayDiv
           AttributeType: S
-        - AttributeName: slipAdminUserId
+        - AttributeName: slipAdminOfficeId
+          AttributeType: S
+        - AttributeName: slipAdminMechanicId
           AttributeType: S
       KeySchema:
         - AttributeName: slipNo
@@ -86,11 +88,12 @@ Resources:
               - thumbnailUrl
             ProjectionType: INCLUDE
 
-
-        - IndexName: slipAdminUserId-index
+        - IndexName: slipAdminOfficeId-index
           KeySchema:
-            - AttributeName: slipAdminUserId
+            - AttributeName: slipAdminOfficeId
               KeyType: HASH
+            - AttributeName: deleteDiv
+              KeyType: RANGE
           Projection:
             NonKeyAttributes:
               - slipNo
@@ -112,4 +115,31 @@ Resources:
               - thumbnailUrl
             ProjectionType: INCLUDE
 
-      TableName: slipDetailInfo
+        - IndexName: slipAdminMechanic-index
+          KeySchema:
+            - AttributeName: slipAdminMechanicId
+              KeyType: HASH
+            - AttributeName: deleteDiv
+              KeyType: RANGE
+          Projection:
+            NonKeyAttributes:
+              - slipNo
+              - category
+              - slipAdminUserId
+              - adminDiv
+              - title
+              - areaNo1
+              - areaNo2
+              - praice
+              - bidMethod
+              - bidEndDate
+              - targetService
+              - targetVehicleName
+              - targetVehicleInfo
+              - workAreaInfo
+              - preferredDate
+              - preferredTime
+              - thumbnailUrl
+            ProjectionType: INCLUDE
+
+      TableName: salesServiceInfo

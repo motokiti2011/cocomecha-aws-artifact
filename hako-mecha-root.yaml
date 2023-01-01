@@ -94,6 +94,23 @@ Resources:
         - ''
         - - !Ref TemplateUrl
 
+  UniqueLambdaRoot:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'unique-lambda-root.yaml'
+      Parameters:
+        LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
+        S3Buket: !Ref S3Buket
+        LambdaCodeDirectory: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+        TemplateUrl: !Join 
+        - ''
+        - - !Ref TemplateUrl
+
 
   # Cognitoの作成
   Cognito:
@@ -131,10 +148,7 @@ Resources:
         UserInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.UserInfoLambda
         UserMyListLambdaArn: !GetAtt BasicLambdaRoot.Outputs.UserMyListLambda
         UserVehicleInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.UserVehicleInfoLambda
-        GetSlipLambdaArn: !GetAtt BasicLambdaRoot.Outputs.GetSlipLambda
-        MessageParmRequestLambdaArn: !GetAtt BasicLambdaRoot.Outputs.MessageParmRequestLambda
-        InitPostSlipLambdaArn: !GetAtt BasicLambdaRoot.Outputs.InitPostSlipLambda
-        InitMechanicUserLambdaArn: !GetAtt BasicLambdaRoot.Outputs.InitMechanicUserLambda
+        SalesServiceInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.SalesServiceInfoLambda
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
   GsiApigateway:
@@ -157,6 +171,7 @@ Resources:
         UserMyListGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.UserMyListGSILambda
         MechanicInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.MechanicInfoGSILambda
         UserVehicleInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.UserVehicleInfoGSILambda
+        SalesServiceInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SalesServiceInfoGSILambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
@@ -170,6 +185,24 @@ Resources:
           - 'check-apigateway.yaml'
       Parameters:
         SlipMegPrmUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.SlipMegPrmUserCheckLambda
+
+        UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
+
+
+  UniqueApigateway:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'unique-apigateway.yaml'
+      Parameters:
+        GetSlipLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.GetSlipLambda
+        MessageParmRequestLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.MessageParmRequestLambda
+        InitPostSlipLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.InitPostSlipLambda
+        InitMechanicUserLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.InitMechanicUserLambda
+        InitOfficeLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.InitOfficeLambda
+        InitSalesServiceLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.InitSalesServiceLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 

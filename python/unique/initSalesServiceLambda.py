@@ -9,7 +9,7 @@ from boto3.dynamodb.conditions import Key
 # Dynamodbアクセスのためのオブジェクト取得
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
-table = dynamodb.Table("slipDetailInfo")
+table = dynamodb.Table("salesServiceInfo")
 
 
 # レコード検索
@@ -29,6 +29,8 @@ def post_product(PartitionKey, event):
       'deleteDiv' : event['Keys']['deleteDiv'],
       'category' : event['Keys']['category'],
       'slipAdminUserId' : event['Keys']['slipAdminUserId'],
+      'slipAdminOfficeId' : event['Keys']['slipAdminOfficeId'],
+      'slipAdminMechanicId' : event['Keys']['slipAdminMechanicId'],
       'adminDiv' : event['Keys']['adminDiv'],
       'title' : event['Keys']['title'],
       'areaNo1' : event['Keys']['areaNo1'],

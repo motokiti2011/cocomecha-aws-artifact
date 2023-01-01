@@ -216,6 +216,22 @@ Resources:
           - '/gsi/zip'
           - '/userVehicleInfo-gsi.zip'
 
+  SalesServiceInfoGSI:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/gsi/salesServiceInfo-gsi.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
+          - '/salesServiceInfo-gsi.zip'
+
 
 Outputs:
 
@@ -266,3 +282,8 @@ Outputs:
   # UserVehicleInfo-gsi‚ÌARN
   UserVehicleInfoGSILambda:
     Value: !GetAtt UserVehicleInfoGSI.Outputs.UserVehicleInfoGSILambda
+
+  # SalesServiceInfo-gsi‚ÌARN
+  SalesServiceInfoGSILambda:
+    Value: !GetAtt SalesServiceInfoGSI.Outputs.SalesServiceInfoGSILambda
+

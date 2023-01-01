@@ -26,7 +26,6 @@ def post_product(PartitionKey, event):
   putResponse = table.put_item(
     Item={
       'officeId' : PartitionKey,
-      'officeAreaNo' : event['Keys']['officeAreaNo'],
       'officeName' : event['Keys']['officeName'],
       'officeTel' : event['Keys']['officeTel'],
       'officeMailAdress' : event['Keys']['officeMailAdress'],
@@ -35,7 +34,7 @@ def post_product(PartitionKey, event):
       'officePostCode' : event['Keys']['officePostCode'],
       'workContentList' : event['Keys']['workContentList'],
       'businessHours' : event['Keys']['businessHours'],
-      'baseId' : event['Keys']['baseId'],
+      'adminBaseId' : event['Keys']['adminBaseId'],
       'baseInfoList' : event['Keys']['baseInfoList'],
       'adminIdList' : event['Keys']['adminIdList'],
       'employeeList' : event['Keys']['employeeList'],
