@@ -38,22 +38,29 @@ def areaNo1AndAreaNo2_query(partitionKey, sortKey) :
 def serchTitle(checkTitle, title) :
     # 部分一致チェック
     if checkTitle in title :
-      return false
+      return False
     else :
-      return true
+      return True
 
 
 
 # 価格チェック serchPrice
 def serchPrice(price, priceB, priceU) :
     # 価格範囲チェック
+    # 絞り込み条件がない場合
+    if priceB == priceU == '' :
+      return False
+    if priceB == '' :
+      priceB = '0'
+    if priceU == '' :
+      priceU = '0'
     if price >= priceB :
       if price <= priceU :
-        return false
+        return False
       else :
-        return true
+        return True
     else :
-      return true
+      return True
 
 
 # 日付チェック serchDate
@@ -62,25 +69,25 @@ def serchDate(preferredDate, date1, date2, dateKey) :
     if dateKey == '0' :
       if preferredDate >= date1 :
         if preferredDate <= date2 :
-          return false
+          return False
         else :
-          return true
+          return True
       else :
-        return true
+        return True
 
     # 検索方法（以上）
     if dateKey == '1' :
       if preferredDate >= date1 :
-          return false
+          return False
       else :
-        return true
+        return True
 
     # 検索方法（未満）
     if dateKey == '2' :
       if preferredDate <= date2 :
-          return false
+          return False
       else :
-        return true
+        return True
 
 def lambda_handler(event, context) :
     print("Received event: " + json.dumps(event))
@@ -142,7 +149,7 @@ def lambda_handler(event, context) :
               continue
 
           # 削除区分
-          if item[deleteDiv] != "0" :
+          if item['deleteDiv'] != "0" :
             continue
 
           # 工程ステータス
