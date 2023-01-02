@@ -74,7 +74,7 @@ def user_post(userId, mechanicId, officeId, officeDiv, event):
     role.append('ADMIN')
   
   # 更新対象データを取得
-  queryData = table.query(
+  queryData = usertable.query(
     KeyConditionExpression = Key("userId").eq(userId)
   )
   items=queryData['Items']
@@ -139,9 +139,6 @@ def lambda_handler(event, context):
     else:
       print('PUT Successed.mechanic')
 
-
-
-    print('オフィス1' + officeDiv)
     # 企業情報にメカニック情報を追加
     if officeDiv == '1':
       print('オフィス2' + officeId)

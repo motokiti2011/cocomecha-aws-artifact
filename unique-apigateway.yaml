@@ -10,26 +10,29 @@ Parameters:
   MessageParmRequestLambdaArn:
     Type: String
 
-
   # initPostSlipLambdaArnのARN
   InitPostSlipLambdaArn:
     Type: String
-
 
   # initMechanicUserLambdaArnのARN
   InitMechanicUserLambdaArn:
     Type: String
 
-
   # initOfficeLambdaArnのARN
   InitOfficeLambdaArn:
     Type: String
-
 
   # initSalesServiceLambdaArnのARN
   InitSalesServiceLambdaArn:
     Type: String
 
+  # SerchSalesServiceContentsLambdaArnのARN
+  SerchSalesServiceContentsLambdaArn:
+    Type: String
+
+  # SerchslipContentsLambdaArnのARN
+  SerchslipContentsLambdaArn:
+    Type: String
 
   # CognitoUserPoolのARN
   UserPoolArn:
@@ -62,6 +65,8 @@ Resources:
       - InitMechanicUpResource
       - InitOfficeUpResource
       - InitSalesServiceResource
+      - SerchSalesServiceContentsResource
+      - SerchslipContentsResource
 
       - GetSlipMethod
       - MessageParmRequestMethod
@@ -69,6 +74,8 @@ Resources:
       - InitMechanicUpMethod
       - InitOfficeUpMethod
       - InitSalesServiceMethod
+      - SerchSalesServiceContentsMethod
+      - SerchslipContentsMethod
 
   # ステージ
   ApiGwStage:
@@ -213,7 +220,7 @@ Resources:
          - - 'arn:aws:apigateway:'
            - !Ref AWS::Region
            - ':lambda:path/2015-03-31/functions/'
-           - !Ref InitPostSlipLambdaArn
+           - !Ref InitMechanicUserLambdaArn
            - '/invocations'
         PassthroughBehavior: WHEN_NO_MATCH
         RequestTemplates:
@@ -349,6 +356,86 @@ Resources:
     DependsOn: LambdaPermission6
 
 
+  # SerchSalesServiceContentsリソース
+  SerchSalesServiceContentsResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: serchsalesservicecontents
+      RestApiId: !Ref ApiGwRestAPI
+  # SerchSalesServiceContentsメソッド
+  SerchSalesServiceContentsMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SerchSalesServiceContentsResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SerchSalesServiceContentsLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission7
+
+
+  # SerchslipContentsリソース
+  SerchslipContentsResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: serchslipcontents
+      RestApiId: !Ref ApiGwRestAPI
+  # SerchslipContentsメソッド
+  SerchslipContentsMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SerchslipContentsResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SerchslipContentsLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission8
+
+
   # LambdaPermission
   LambdaPermission1:
     Type: 'AWS::Lambda::Permission'
@@ -389,6 +476,20 @@ Resources:
     Type: 'AWS::Lambda::Permission'
     Properties:
       FunctionName: initSalesServiceLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission7:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: serchSalesServiceContentsLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission8:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: serchslipContentsLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 

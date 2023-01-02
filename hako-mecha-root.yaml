@@ -203,6 +203,8 @@ Resources:
         InitMechanicUserLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.InitMechanicUserLambda
         InitOfficeLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.InitOfficeLambda
         InitSalesServiceLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.InitSalesServiceLambda
+        SerchSalesServiceContentsLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SerchSalesServiceContentsLambda
+        SerchslipContentsLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SerchslipContentsLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
