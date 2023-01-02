@@ -101,13 +101,13 @@ Resources:
           - '/unique/zip'
           - '/initOfficeLambda.zip'
 
-  SerchSalesServiceContentsLambda:
+  InitSalesServiceLambda:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'lambda/unique/serchSalesServiceContentsLambda.yaml'
+          - 'lambda/unique/initSalesServiceLambda.yaml'
       Parameters:
         LambdaRoleArn: !Ref LambdaRoleArn
         S3Buket: !Ref S3Buket
@@ -115,7 +115,7 @@ Resources:
         - ''
         - - !Ref LambdaCodeDirectory
           - '/unique/zip'
-          - '/serchSalesServiceContentsLambda.zip'
+          - '/initSalesServiceLambda.zip'
 
   SerchSalesServiceContentsLambda:
     Type: AWS::CloudFormation::Stack
@@ -176,7 +176,7 @@ Outputs:
     Value: !GetAtt InitSalesServiceLambda.Outputs.InitSalesServiceLambda
 
   # SerchSalesServiceContentsLambda‚ÌARN
-  SerchslipContentsLambda:
+  SerchSalesServiceContentsLambda:
     Value: !GetAtt SerchSalesServiceContentsLambda.Outputs.SerchSalesServiceContentsLambda
 
   # SerchslipContentsLambda‚ÌARN

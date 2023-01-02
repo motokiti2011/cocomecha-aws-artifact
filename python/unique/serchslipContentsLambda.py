@@ -11,10 +11,10 @@ table = dynamodb.Table("slipDetailInfo")
 
 
 # 1レコード検索 areaNo1-index
-def areaNo1_query(partitionKey):
+def areaNo1_query(partitionKey) :
     queryData = table.query(
         IndexName = 'areaNo1AndAreaNo2-index',
-        KeyConditionExpression = Key("officeId").eq(partitionKey)
+        KeyConditionExpression = Key("areaNo1").eq(partitionKey)
     )
     items=queryData['Items']
     print(items)
@@ -23,10 +23,10 @@ def areaNo1_query(partitionKey):
 
 
 # 2レコード検索 areaNo1AndAreaNo2-index
-def areaNo1AndAreaNo2_query(partitionKey, sortKey):
+def areaNo1AndAreaNo2_query(partitionKey, sortKey) :
     queryData = table.query(
         IndexName = 'areaNo1AndAreaNo2-index',
-        KeyConditionExpression = Key("officeId").eq(partitionKey) & Key("areaNo2").eq("sortKey")
+        KeyConditionExpression = Key("areaNo1").eq(partitionKey) & Key("areaNo2").eq("sortKey")
     )
     items=queryData['Items']
     print(items)
@@ -35,9 +35,9 @@ def areaNo1AndAreaNo2_query(partitionKey, sortKey):
 
 
 # タイトルチェック serchTitle
-def serchTitle(checkTitle, title):
+def serchTitle(checkTitle, title) :
     # 部分一致チェック
-    if checkTitle in title:
+    if checkTitle in title :
       return false
     else :
       return true
@@ -45,10 +45,10 @@ def serchTitle(checkTitle, title):
 
 
 # 価格チェック serchPrice
-def serchPrice(price, praiceB, praiceU) :
+def serchPrice(price, priceB, priceU) :
     # 価格範囲チェック
-    if price >= praiceB
-      if price <= praiceU
+    if price >= priceB :
+      if price <= priceU :
         return false
       else :
         return true
@@ -59,9 +59,9 @@ def serchPrice(price, praiceB, praiceU) :
 # 日付チェック serchDate
 def serchDate(preferredDate, date1, date2, dateKey) :
     # 検索方法（範囲）
-    if dateKey == "0":
-      if preferredDate >= date1
-        if preferredDate <= date2
+    if dateKey == '0' :
+      if preferredDate >= date1 :
+        if preferredDate <= date2 :
           return false
         else :
           return true
@@ -69,20 +69,20 @@ def serchDate(preferredDate, date1, date2, dateKey) :
         return true
 
     # 検索方法（以上）
-    elseif dateKey == "1":
-      if preferredDate >= date1
+    if dateKey == '1' :
+      if preferredDate >= date1 :
           return false
       else :
         return true
 
     # 検索方法（未満）
-    elseif dateKey == "2":
-      if preferredDate <= date2
+    if dateKey == '2' :
+      if preferredDate <= date2 :
           return false
       else :
         return true
 
-def lambda_handler(event, context):
+def lambda_handler(event, context) :
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
     try:
@@ -98,9 +98,9 @@ def lambda_handler(event, context):
         # サービス地域2
         areaNo2 = event['Keys']['areaNo2']
         # 価格下限
-        praiceB = event['Keys']['praiceBottom']
+        priceB = event['Keys']['priceBottom']
         # 価格上限
-        praiceU = event['Keys']['praiceUpper']
+        priceU = event['Keys']['priceUpper']
         # 入札方式
         bidMethod = event['Keys']['bidMethod']
         # 工程ステータス
@@ -110,9 +110,9 @@ def lambda_handler(event, context):
         # 作業場所情報
         workAreaInfo = event['Keys']['workAreaInfo']
         # 希望日1
-        date1 = event['Keys']['Date']
+        date1 = event['Keys']['date']
         # 希望日2
-        date2 = event['Keys']['Date2']
+        date2 = event['Keys']['date2']
         # 希望日検索キー
         preferredDateKey = event['Keys']['preferredDateKey']
 
@@ -122,7 +122,7 @@ def lambda_handler(event, context):
 
         # データ取得
         queryItems = []
-        if not areaNo2
+        if not areaNo2 :
          queryItems = areaNo1_query(areaNo1)
         else :
          queryItems = areaNo1AndAreaNo2_query(areaNo1, areaNo2)
@@ -134,11 +134,11 @@ def lambda_handler(event, context):
         for item in queryItems :
           # カテゴリー
           if category != "" :
-            if category != item[category] :
+            if category != item['category'] :
               continue
           # 入札方式
           if bidMethod != "" :
-            if bidMethod != item[bidMethod] :
+            if bidMethod != item['bidMethod'] :
               continue
 
           # 削除区分
@@ -147,31 +147,31 @@ def lambda_handler(event, context):
 
           # 工程ステータス
           if processStatus != "" :
-            if processStatus != item[processStatus] :
+            if processStatus != item['processStatus'] :
               continue
 
           # 対象車両情報
           if targetVehicleInfo != "" :
-            if targetVehicleInfo != item[targetVehicleInfo] :
+            if targetVehicleInfo != item['targetVehicleInfo'] :
               continue
 
           # 作業場所情報
           if workAreaInfo != "" :
-            if workAreaInfo != item[workAreaInfo] :
+            if workAreaInfo != item['workAreaInfo'] :
               continue
 
           # タイトル（部分一致）
           if title != "" :
-            if serchTitle(item[title], title) :
+            if serchTitle(item['title'], title) :
               continue
 
           # 価格
-          if serchPrice(item[price], praiceB, praiceU) :
+          if serchPrice(item['price'], priceB, priceU) :
             continue          
           
           # 希望日
           if preferredDateKey != "" :
-            if serchDate(item[preferredDate], date1, date2, preferredDateKey) :
+            if serchDate(item['preferredDate'], date1, date2, preferredDateKey) :
               continue
 
           # チェック後値を格納

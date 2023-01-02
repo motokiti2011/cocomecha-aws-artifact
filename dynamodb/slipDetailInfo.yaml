@@ -41,15 +41,17 @@ Resources:
           Projection:
             NonKeyAttributes:
               - slipNo
+              - deleteDiv
               - category
               - slipAdminUserId
               - adminDiv
               - title
               - areaNo1
               - areaNo2
-              - praice
+              - price
               - bidMethod
               - bidEndDate
+              - processStatus
               - targetService
               - targetVehicleName
               - targetVehicleInfo
@@ -68,15 +70,17 @@ Resources:
           Projection:
             NonKeyAttributes:
               - slipNo
+              - deleteDiv
               - category
               - slipAdminUserId
               - adminDiv
               - title
               - areaNo1
               - areaNo2
-              - praice
+              - price
               - bidMethod
               - bidEndDate
+              - processStatus
               - targetService
               - targetVehicleName
               - targetVehicleInfo
@@ -94,15 +98,17 @@ Resources:
           Projection:
             NonKeyAttributes:
               - slipNo
+              - deleteDiv
               - category
               - slipAdminUserId
               - adminDiv
               - title
               - areaNo1
               - areaNo2
-              - praice
+              - price
               - bidMethod
               - bidEndDate
+              - processStatus
               - targetService
               - targetVehicleName
               - targetVehicleInfo

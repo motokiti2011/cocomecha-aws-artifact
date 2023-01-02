@@ -141,7 +141,6 @@ def lambda_handler(event, context):
 
     # 企業情報にメカニック情報を追加
     if officeDiv == '1':
-      print('オフィス2' + officeId)
       officeResponse = office_post(userId, mechanicId, office)
       print(officeResponse)
 
