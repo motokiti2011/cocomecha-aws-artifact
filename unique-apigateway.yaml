@@ -34,6 +34,14 @@ Parameters:
   SerchslipContentsLambdaArn:
     Type: String
 
+  # SendSlipMessageLambdaArnのARN
+  SendSlipMessageLambdaArn:
+    Type: String
+
+  # SendSlipQuestionLambdaArnのARN
+  SendSlipQuestionLambdaArn:
+    Type: String
+
   # CognitoUserPoolのARN
   UserPoolArn:
     Type: String
@@ -155,6 +163,45 @@ Resources:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission1
 
+  # GetSalesServiceリソース
+  GetSalesServiceResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: getsalesservice
+      RestApiId: !Ref ApiGwRestAPI
+  # GetSalesServiceメソッド
+  GetSalesServiceMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref GetSalesServiceResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref GetSalesServiceLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission9
+
 
   # MessageParmRequestリソース
   MessageParmRequestResource:
@@ -195,6 +242,84 @@ Resources:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission2
 
+
+  # SendSlipMessageリソース
+  SendSlipMessageResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: sendmessage
+      RestApiId: !Ref ApiGwRestAPI
+  # SendSlipMessageメソッド
+  SendSlipMessageMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SendSlipMessageResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SendSlipMessageLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission10
+
+  # SendSlipQuestionリソース
+  SendSlipQuestionResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: sendquestion
+      RestApiId: !Ref ApiGwRestAPI
+  # SendSlipMessageメソッド
+  SendSlipQuestionMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SendSlipQuestionResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SendSlipQuestionLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission11
 
   # InitPostSlipリソース
   InitPostSlipResource:
@@ -493,3 +618,23 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 
+  LambdaPermission9:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: getSalesServiceLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission10:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: sendSlipMessageLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission11:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: sendSlipQuestionLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com

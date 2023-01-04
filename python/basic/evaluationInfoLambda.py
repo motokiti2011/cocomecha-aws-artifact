@@ -75,7 +75,7 @@ def lambda_handler(event, context):
       return operation_query(PartitionKey)
 
     elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['productContributorId'] + str(now)
+      PartitionKey = event['Keys']['productContributorId']
       return post_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':

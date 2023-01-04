@@ -7,7 +7,7 @@ from boto3.dynamodb.conditions import Key
 
 dynamodb = boto3.resource('dynamodb')
 
-table = dynamodb.Table("slipDetailInfo")
+table = dynamodb.Table("salesServiceInfo")
 
 def operation_query(partitionKey):
     queryData = table.query(
@@ -22,7 +22,7 @@ def lambda_handler(event, context):
   OperationType = event['OperationType']
 
   try:
-    if OperationType == 'GETSLIP':
+    if OperationType == 'GETSALESSERVICE':
       PartitionKey = event['Keys']['slipNo']
       return operation_query(PartitionKey)
 

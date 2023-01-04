@@ -60,8 +60,6 @@ def operation_delete(partitionKey):
 
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
-  now = datetime.now()
-  print(now)
   OperationType = event['OperationType']
 
   try:
@@ -70,7 +68,7 @@ def lambda_handler(event, context):
       return operation_query(PartitionKey)
 
     elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['id'] + str(now)
+      PartitionKey = event['Keys']['id']
       return post_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':

@@ -166,6 +166,7 @@ Resources:
         HistoryInfoOfficeGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.HistoryInfoOfficeGSILambda
         SlipDetailInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SlipDetailInfoGSILambda
         SlipQuestionGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SlipQuestionGSILambda
+        SlipMessageInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SlipMessageInfoGSILambda
         TransactionSlipGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.TransactionSlipGSILambda
         UserFavoriteGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.UserFavoriteGSILambda
         UserMyListGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.UserMyListGSILambda
@@ -198,6 +199,7 @@ Resources:
           - 'unique-apigateway.yaml'
       Parameters:
         GetSlipLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.GetSlipLambda
+        GetSalesServiceLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.GetSalesServiceLambda
         MessageParmRequestLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.MessageParmRequestLambda
         InitPostSlipLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.InitPostSlipLambda
         InitMechanicUserLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.InitMechanicUserLambda
@@ -205,6 +207,8 @@ Resources:
         InitSalesServiceLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.InitSalesServiceLambda
         SerchSalesServiceContentsLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SerchSalesServiceContentsLambda
         SerchslipContentsLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SerchslipContentsLambda
+        SendSlipMessageLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SendSlipMessageLambda
+        SendSlipQuestionLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SendSlipQuestionLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 

@@ -13,9 +13,9 @@ table = dynamodb.Table("slipDetailInfo")
 
 
 # ÉåÉRÅ[Éhåüçı
-def operation_query(partitionKey):
+def operation_query(partitionKey, sortKey):
     queryData = table.query(
-        KeyConditionExpression = Key("slipNo").eq(partitionKey)
+        KeyConditionExpression = Key("slipNo").eq(partitionKey) & Key("deleteDiv").eq("sortKey")
     )
     items=queryData['Items']
     print(items)
@@ -88,10 +88,11 @@ def lambda_handler(event, context):
 
     if OperationType == 'QUERY':
       PartitionKey = event['Keys']['slipNo']
-      return operation_query(PartitionKey)
+      sortKey = event['Keys']['deleteDiv']
+      return operation_query(PartitionKey, sortKey)
 
     elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['slipNo'] + str(now)
+      PartitionKey = event['Keys']['slipNo']
       return post_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':

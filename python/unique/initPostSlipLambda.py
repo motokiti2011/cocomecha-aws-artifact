@@ -1,6 +1,6 @@
-
 import json
 import boto3
+import uuid
 
 from datetime import datetime
 
@@ -85,8 +85,15 @@ def lambda_handler(event, context):
   try:
 
     if OperationType == 'INITSLIPPOST':
-      PartitionKey = event['Keys']['slipNo'] + str(now)
+      id = str(uuid.uuid4())
+      PartitionKey = id
       return post_product(PartitionKey, event)
+
+    else :
+      # アクセス方法がおかしい場合
+      print('initMechanicUserLambda_Injustice')
+      print(str(now))
+
 
   except Exception as e:
       print("Error Exception.")

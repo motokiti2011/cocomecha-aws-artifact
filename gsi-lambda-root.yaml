@@ -151,6 +151,23 @@ Resources:
           - '/gsi/zip'
           - '/slipQuestion-gsi.zip'
 
+  SlipMessageInfoGSI:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/gsi/slipMessageInfo-gsi.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
+          - '/slipMessageInfo-gsi.zip'
+
+
   TransactionSlipGSI:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -266,6 +283,10 @@ Outputs:
   # SlipQuestion-gsi‚ÌARN
   SlipQuestionGSILambda:
     Value: !GetAtt SlipQuestionGSI.Outputs.SlipQuestionGSILambda
+
+  # SlipMessageInfo-gsi‚ÌARN
+  SlipMessageInfoGSILambda:
+    Value: !GetAtt SlipMessageInfoGSI.Outputs.SlipMessageInfoGSI
 
   # TransactionSlip-gsi‚ÌARN
   TransactionSlipGSILambda:

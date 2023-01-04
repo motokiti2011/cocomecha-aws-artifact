@@ -1,5 +1,6 @@
 import json
 import boto3
+import uuid
 
 from datetime import datetime
 
@@ -85,8 +86,12 @@ def lambda_handler(event, context):
   try:
 
     if OperationType == 'INITSALESSERVICEPOST':
-      PartitionKey = event['Keys']['slipNo'] + str(now)
+      id = str(uuid.uuid4())
+      PartitionKey = id
       return post_product(PartitionKey, event)
+
+    else :
+      print('INITSALESSERVICEPOST_Injustice')
 
   except Exception as e:
       print("Error Exception.")

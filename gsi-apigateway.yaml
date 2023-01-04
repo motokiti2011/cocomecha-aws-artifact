@@ -38,6 +38,11 @@ Parameters:
     Type: String
     Description: SlipQuestionGSI of Lambda
 
+  # SlipMessageInfoGSIのARN
+  SlipMessageInfoGSILambdaArn:
+    Type: String
+    Description: SlipMessageInfoGSI of Lambda
+
   # TransactionSlipGSIのARN
   TransactionSlipGSILambdaArn:
     Type: String
@@ -433,6 +438,46 @@ Resources:
     DependsOn: LambdaPermission7
 
 
+  # SlipMessageInfoGSIリソース
+  SlipMessageInfoGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: slipmessage
+      RestApiId: !Ref ApiGwRestAPI
+  # SlipMessageInfoGSIメソッド
+  SlipMessageInfoGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SlipMessageInfoGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SlipMessageInfoGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission15
+
+
   # UserFavoriteGSIリソース
   UserFavoriteGSIResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -760,5 +805,12 @@ Resources:
     Type: 'AWS::Lambda::Permission'
     Properties:
       FunctionName: salesServiceInfo-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission15:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: slipMessageInfo-gsi
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
