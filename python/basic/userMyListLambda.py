@@ -1,5 +1,6 @@
 import json
 import boto3
+import uuid
 
 from datetime import datetime
 
@@ -21,12 +22,19 @@ def operation_query(partitionKey):
     print(items)
     return items
 
-# レコード追加
-def post_product(PartitionKey, event):
+# レコード更新
+def put_product(PartitionKey, event):
+
+
+  now = datetime.now(JST)
+
   putResponse = table.put_item(
     Item={
       'id' : PartitionKey,
       'userId' : event['Keys']['userId'],
+      'mechanicId' : event['Keys']['mechanicId'],
+      'officeId' : event['Keys']['officeId'],
+      'serviceType' : event['Keys']['serviceType'],
       'slipNo' : event['Keys']['slipNo'],
       'serviceTitle' : event['Keys']['serviceTitle'],
       'category' : event['Keys']['category'],
@@ -34,10 +42,9 @@ def post_product(PartitionKey, event):
       'readDiv' : event['Keys']['readDiv'],
       'messageDate' : event['Keys']['messageDate'],
       'messageOrQuastionId' : event['Keys']['messageOrQuastionId'],
-      'bidderId' : event['Keys']['bidderId'],
       'deleteDiv' : event['Keys']['deleteDiv'],
       'created' : event['Keys']['created'],
-      'updated' : event['Keys']['updated']
+      'updated' :  now.strftime('%x %X')
     }
   )
   
@@ -60,6 +67,37 @@ def operation_delete(partitionKey):
         print('DEL Successed.')
     return delResponse
 
+# レコード追加
+def post_product(PartitionKey, event):
+
+  now = datetime.now()
+
+  putResponse = table.put_item(
+    Item={
+      'id' : PartitionKey,
+      'userId' : event['Keys']['userId'],
+      'mechanicId' : event['Keys']['mechanicId'],
+      'officeId' : event['Keys']['officeId'],
+      'serviceType' : event['Keys']['serviceType'],
+      'slipNo' : event['Keys']['slipNo'],
+      'serviceTitle' : event['Keys']['serviceTitle'],
+      'category' : event['Keys']['category'],
+      'message' : event['Keys']['message'],
+      'readDiv' : event['Keys']['readDiv'],
+      'messageDate' : event['Keys']['messageDate'],
+      'messageOrQuastionId' : event['Keys']['messageOrQuastionId'],
+      'deleteDiv' : event['Keys']['deleteDiv'],
+      'created' : now.strftime('%x %X'),
+      'updated' : now.strftime('%x %X')
+
+    }
+  )
+  
+  if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+    print(putResponse)
+  else:
+    print('Post Successed.')
+  return putResponse
 
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
@@ -73,12 +111,17 @@ def lambda_handler(event, context):
       PartitionKey = event['Keys']['id']
       return operation_query(PartitionKey)
 
-    elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['id']
+    elif OperationType == 'POST':
+      id = str(uuid.uuid4())
+      PartitionKey = id
       return post_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':
       return operation_delete(PartitionKey)
+
+    elif OperationType == 'PUT':
+      PartitionKey = event['Keys']['id']
+      return put_product(PartitionKey, event)
 
   except Exception as e:
       print("Error Exception.")

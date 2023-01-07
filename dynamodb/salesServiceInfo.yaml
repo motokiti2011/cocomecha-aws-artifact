@@ -20,6 +20,9 @@ Resources:
           AttributeType: S
         - AttributeName: slipAdminMechanicId
           AttributeType: S
+        - AttributeName: processStatus
+          AttributeType: S
+
       KeySchema:
         - AttributeName: slipNo
           KeyType: HASH
@@ -148,6 +151,17 @@ Resources:
               - preferredDate
               - preferredTime
               - thumbnailUrl
+            ProjectionType: INCLUDE
+
+        - IndexName: processStatus-index
+          KeySchema:
+            - AttributeName: processStatus
+              KeyType: HASH
+          Projection:
+            NonKeyAttributes:
+              - slipNo
+              - deleteDiv
+              - processStatus
             ProjectionType: INCLUDE
 
       TableName: salesServiceInfo

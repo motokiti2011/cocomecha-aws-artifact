@@ -26,7 +26,7 @@ def lambda_handler(event, context):
     try:
 
         PartitionKey = event['Keys']['userId']
-        if OperationType == 'USERID-INDEX':
+        if IndexType == 'USERID-INDEX':
             return operation_query(PartitionKey)
         
     except Exception as e:

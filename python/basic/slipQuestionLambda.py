@@ -29,8 +29,8 @@ def post_product(PartitionKey, event):
       'slipNo' : event['Keys']['slipNo'],
       'slipAdminUser' : event['Keys']['slipAdminUser'],
       'senderId' : event['Keys']['senderId'],
-      'sernderName' : event['Keys']['sernderName'],
-      'sernderText' : event['Keys']['sernderText'],
+      'senderName' : event['Keys']['senderName'],
+      'senderText' : event['Keys']['senderText'],
       'anserDiv' : event['Keys']['anserDiv'],
       'anserText' : event['Keys']['anserText'],
       'created' : event['Keys']['created'],
@@ -63,7 +63,7 @@ def lambda_handler(event, context):
   OperationType = event['OperationType']
 
   try:
-    elif OperationType == 'QUERY':
+    if OperationType == 'QUERY':
       PartitionKey = event['Keys']['id']
       return operation_query(PartitionKey)
 

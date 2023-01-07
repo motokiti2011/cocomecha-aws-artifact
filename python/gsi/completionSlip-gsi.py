@@ -19,21 +19,21 @@ def slipAdminUserId_query(partitionKey):
     print(items)
     return items
 
-# 2レコード検索 slipAdminOffice-index
+# 2レコード検索 slipAdminOfficeId-index
 def slipAdminOffice_query(partitionKey):
     queryData = table.query(
         IndexName = 'slipAdminOffice-index',
-        KeyConditionExpression = Key("slipAdminOffice").eq(partitionKey)
+        KeyConditionExpression = Key("slipAdminOfficeId").eq(partitionKey)
     )
     items=queryData['Items']
     print(items)
     return items
 
-# 3レコード検索 slipAdminBaseId-index
+# 3レコード検索 slipAdminMechanicId-index
 def slipAdminBaseId_query(partitionKey):
     queryData = table.query(
         IndexName = 'slipAdminBaseId-index',
-        KeyConditionExpression = Key("slipAdminBaseId").eq(partitionKey)
+        KeyConditionExpression = Key("slipAdminMechanicId").eq(partitionKey)
     )
     items=queryData['Items']
     print(items)
@@ -50,11 +50,11 @@ def lambda_handler(event, context):
             return slipAdminUserId_query(PartitionKey)
 
         elif IndexType == 'SLIPADMINOFFICE-INDEX':
-          PartitionKey = event['Keys']['slipAdminOffice']
+          PartitionKey = event['Keys']['slipAdminOfficeId']
           return slipAdminOffice_query(PartitionKey, SortKey)
 
-        elif IndexType == 'SLIPADMINBASEID-INDEX':
-          PartitionKey = event['Keys']['slipAdminBaseId']
+        elif IndexType == 'SLIPADMINMECHANIC-INDEX':
+          PartitionKey = event['Keys']['slipAdminMechanicId']
           return slipAdminBaseId_query(PartitionKey)
 
     except Exception as e:

@@ -27,8 +27,8 @@ def post_product(PartitionKey, event):
     Item={
       'slipNo' : PartitionKey,
       'slipAdminUserId' : event['Keys']['slipAdminUserId'],
-      'slipAdminOffice' : event['Keys']['slipAdminOffice'],
-      'slipAdminBaseId' : event['Keys']['slipAdminBaseId'],
+      'slipAdminOfficeId' : event['Keys']['slipAdminOfficeId'],
+      'slipAdminMechanicId' : event['Keys']['slipAdminMechanicId'],
       'adminDiv' : event['Keys']['adminDiv'],
       'title' : event['Keys']['title'],
       'price' : event['Keys']['price'],

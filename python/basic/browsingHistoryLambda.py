@@ -1,5 +1,6 @@
 import json
 import boto3
+import uuid
 
 from datetime import datetime
 
@@ -20,8 +21,8 @@ def operation_query(partitionKey):
     print(items)
     return items
 
-# レコード追加
-def post_product(PartitionKey, event):
+# レコード更新
+def put_product(PartitionKey, event):
   putResponse = table.put_item(
     Item={
       'id' : PartitionKey,
@@ -32,6 +33,7 @@ def post_product(PartitionKey, event):
       'whet' : event['Keys']['whet'],
       'endDate' : event['Keys']['endDate'],
       'imageUrl' : event['Keys']['imageUrl'],
+      'serviceType' : event['Keys']['serviceType'],
       'created' : event['Keys']['created'],
       'updated' : event['Keys']['updated']
     }
@@ -57,6 +59,30 @@ def operation_delete(partitionKey):
     return delResponse
 
 
+# レコード追加
+def post_product(PartitionKey, event):
+
+  t_delta = datetime.timedelta(hours=9)
+  JST = datetime.timezone(t_delta, 'JST')
+  now = datetime.datetime.now(JST)
+
+  putResponse = table.put_item(
+    Item={
+      'id' : PartitionKey,
+      'userId' : event['Keys']['userId'],
+      'slipNo' : event['Keys']['slipNo'],
+      'title' : event['Keys']['title'],
+      'price' : event['Keys']['price'],
+      'whet' : event['Keys']['whet'],
+      'endDate' : event['Keys']['endDate'],
+      'imageUrl' : event['Keys']['imageUrl'],
+      'serviceType' : event['Keys']['serviceType'],
+      'created' : now.strftime('%x %X'),
+      'updated' : now.strftime('%x %X')
+
+    }
+  )
+
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()
@@ -70,10 +96,15 @@ def lambda_handler(event, context):
 
     elif OperationType == 'PUT':
       PartitionKey = event['Keys']['id']
-      return post_product(PartitionKey, event)
+      return put_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':
       return operation_delete(PartitionKey)
+
+    elif OperationType == 'POST':
+      id = str(uuid.uuid4())
+      PartitionKey = id
+      return post_product(PartitionKey, event)
 
   except Exception as e:
       print("Error Exception.")

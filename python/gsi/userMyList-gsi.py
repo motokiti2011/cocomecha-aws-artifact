@@ -19,14 +19,54 @@ def mechanicId_query(partitionKey):
     print(items)
     return items
 
+# レコード検索 userId-index
+def userId_query(partitionKey):
+    queryData = table.query(
+        IndexName = 'userId-index',
+        KeyConditionExpression = Key("userId").eq(partitionKey)
+    )
+    items=queryData['Items']
+    print(items)
+    return items
+
+# レコード検索 mechanicId-index
+def mechanicId_query(partitionKey):
+    queryData = table.query(
+        IndexName = 'mechanicId-index',
+        KeyConditionExpression = Key("mechanicId").eq(partitionKey)
+    )
+    items=queryData['Items']
+    print(items)
+    return items
+
+# レコード検索 officeId-index
+def officeId_query(partitionKey):
+    queryData = table.query(
+        IndexName = 'officeId-index',
+        KeyConditionExpression = Key("officeId").eq(partitionKey)
+    )
+    items=queryData['Items']
+    print(items)
+    return items
+
+
 def lambda_handler(event, context):
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
     try:
 
-        PartitionKey = event['Keys']['userId']
+        PartitionKey = event['Keys']['id']
         if IndexType == 'USERID-INDEX':
             return mechanicId_query(PartitionKey)
+
+        PartitionKey = event['Keys']['id']
+        if IndexType == 'MECHANICID-INDEX':
+            return mechanicId_query(PartitionKey)
+
+
+        PartitionKey = event['Keys']['id']
+        if IndexType == 'OFFICEID-INDEX':
+            return officeId_query(PartitionKey)
 
     except Exception as e:
         print("Error Exception.")

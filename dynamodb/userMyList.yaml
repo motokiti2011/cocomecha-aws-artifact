@@ -8,13 +8,21 @@ Resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
+        - AttributeName: serviceType
+          AttributeType: S
         - AttributeName: userId
           AttributeType: S
+        - AttributeName: mechanicId
+          AttributeType: S
+        - AttributeName: officeId
+          AttributeType: S
+
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-        - AttributeName: userId
+        - AttributeName: serviceType
           KeyType: RANGE
+
       GlobalSecondaryIndexes:
         - IndexName: userId-index
           KeySchema:
@@ -22,4 +30,19 @@ Resources:
               KeyType: HASH
           Projection:
             ProjectionType: ALL
+
+        - IndexName: mechanicId-index
+          KeySchema:
+            - AttributeName: mechanicId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+        - IndexName: officeId-index
+          KeySchema:
+            - AttributeName: officeId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
       TableName: userMyList

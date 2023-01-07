@@ -10,9 +10,9 @@ Resources:
           AttributeType: S
         - AttributeName: slipAdminUserId
           AttributeType: S
-        - AttributeName: slipAdminOffice
+        - AttributeName: slipAdminOfficeId
           AttributeType: S
-        - AttributeName: slipAdminBaseId
+        - AttributeName: slipAdminMechanicId
           AttributeType: S
 
       KeySchema:
@@ -47,9 +47,9 @@ Resources:
               - imageUrlList
             ProjectionType: INCLUDE
 
-        - IndexName: slipAdminOffice-index
+        - IndexName: slipAdminOfficeId-index
           KeySchema:
-            - AttributeName: slipAdminOffice
+            - AttributeName: slipAdminOfficeId
               KeyType: HASH
           Projection:
             NonKeyAttributes:
@@ -73,9 +73,9 @@ Resources:
               - imageUrlList
             ProjectionType: INCLUDE
 
-        - IndexName: slipAdminBaseId-index
+        - IndexName: slipAdminMechanicId-index
           KeySchema:
-            - AttributeName: slipAdminBaseId
+            - AttributeName: slipAdminMechanicId
               KeyType: HASH
           Projection:
             NonKeyAttributes:

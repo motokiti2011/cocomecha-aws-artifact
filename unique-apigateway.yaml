@@ -6,8 +6,20 @@ Parameters:
   GetSlipLambdaArn:
     Type: String
 
+  # getSalesServiceLambdaArnのARN
+  GetSalesServiceLambdaArn:
+    Type: String
+
   # messageParmRequestLambdaArnのARN
   MessageParmRequestLambdaArn:
+    Type: String
+
+  # multipleBrowsingHistoryLambdaArnのARN
+  MultipleBrowsingHistoryLambdaArn:
+    Type: String
+
+  # multipleFavoriteLambdaArnのARN
+  MultipleFavoriteLambdaArn:
     Type: String
 
   # initPostSlipLambdaArnのARN
@@ -241,6 +253,87 @@ Resources:
           ResponseModels:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission2
+
+
+
+  # MultipleBrowsingHistoryリソース
+  MultipleBrowsingHistoryResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: multiplebrosing
+      RestApiId: !Ref ApiGwRestAPI
+  # MultipleBrowsingHistoryメソッド
+  MultipleBrowsingHistoryMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref MultipleBrowsingHistoryResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref MultipleBrowsingHistoryLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission12
+
+
+  # MultipleFavoriteリソース
+  MultipleFavoriteResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: multiplefavorite
+      RestApiId: !Ref ApiGwRestAPI
+  # MultipleFavoriteメソッド
+  MultipleFavoriteMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref MultipleFavoriteResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref MultipleFavoriteLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission13
 
 
   # SendSlipMessageリソース
@@ -638,3 +731,18 @@ Resources:
       FunctionName: sendSlipQuestionLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
+
+  LambdaPermission12:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: multipleBrowsingHistoryLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission13:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: multipleFavoriteLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+

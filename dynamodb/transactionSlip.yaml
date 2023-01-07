@@ -8,13 +8,14 @@ Resources:
       AttributeDefinitions:
         - AttributeName: slipNo
           AttributeType: S
-        - AttributeName: slipAdminUserId
+        - AttributeName: userId
           AttributeType: S
-        - AttributeName: slipAdminOffice
+        - AttributeName: mechanicId
           AttributeType: S
-        - AttributeName: slipAdminBaseId
+        - AttributeName: officeId
           AttributeType: S
-
+        - AttributeName: serviceType
+          AttributeType: S
 
       KeySchema:
         - AttributeName: slipNo
@@ -22,82 +23,31 @@ Resources:
 
       GlobalSecondaryIndexes:
 
-        - IndexName: slipAdminUserId-index
+        - IndexName: userId-index
           KeySchema:
-            - AttributeName: slipAdminUserId
+            - AttributeName: userId
               KeyType: HASH
+            - AttributeName: serviceType
+              KeyType: RANGE
           Projection:
-            NonKeyAttributes:
-              - slipNo
-              - category
-              - adminDiv
-              - title
-              - areaNo1
-              - areaNo2
-              - price
-              - bidMethod
-              - bidderId
-              - bidEndDate
-              - explanation
-              - displayDiv
-              - targetService
-              - targetVehicleName
-              - workAreaInfo
-              - preferredDate
-              - preferredTime
-              - imageUrlList
-            ProjectionType: INCLUDE
+            ProjectionType: ALL
 
-        - IndexName: slipAdminOffice-index
+        - IndexName: mechanicId-index
           KeySchema:
-            - AttributeName: slipAdminOffice
+            - AttributeName: mechanicId
               KeyType: HASH
+            - AttributeName: serviceType
+              KeyType: RANGE
           Projection:
-            NonKeyAttributes:
-              - slipNo
-              - category
-              - adminDiv
-              - title
-              - areaNo1
-              - areaNo2
-              - price
-              - bidMethod
-              - bidderId
-              - bidEndDate
-              - explanation
-              - displayDiv
-              - targetService
-              - targetVehicleName
-              - workAreaInfo
-              - preferredDate
-              - preferredTime
-              - imageUrlList
-            ProjectionType: INCLUDE
+            ProjectionType: ALL
 
-        - IndexName: slipAdminBaseId-index
+        - IndexName: officeId-index
           KeySchema:
-            - AttributeName: slipAdminBaseId
+            - AttributeName: officeId
               KeyType: HASH
+            - AttributeName: serviceType
+              KeyType: RANGE
           Projection:
-            NonKeyAttributes:
-              - slipNo
-              - category
-              - adminDiv
-              - title
-              - areaNo1
-              - areaNo2
-              - price
-              - bidMethod
-              - bidderId
-              - bidEndDate
-              - explanation
-              - displayDiv
-              - targetService
-              - targetVehicleName
-              - workAreaInfo
-              - preferredDate
-              - preferredTime
-              - imageUrlList
-            ProjectionType: INCLUDE
+            ProjectionType: ALL
 
       TableName: transactionSlip

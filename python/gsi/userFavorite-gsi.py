@@ -7,10 +7,10 @@ from boto3.dynamodb.conditions import Key
 # Dynamodbアクセスのためのオブジェクト取得
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
-table = dynamodb.Table("slipQuestion")
+table = dynamodb.Table("userFavorite")
 
 # レコード検索 userId-index
-def mechanicId_query(partitionKey):
+def serch_query(partitionKey):
     queryData = table.query(
         IndexName = 'userId-index',
         KeyConditionExpression = Key("userId").eq(partitionKey)
@@ -26,7 +26,7 @@ def lambda_handler(event, context):
 
         PartitionKey = event['Keys']['userId']
         if IndexType == 'USERID-INDEX':
-            return mechanicId_query(PartitionKey)
+            return serch_query(PartitionKey)
 
     except Exception as e:
         print("Error Exception.")

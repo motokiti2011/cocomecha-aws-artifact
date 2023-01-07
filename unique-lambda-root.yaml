@@ -69,6 +69,38 @@ Resources:
           - '/unique/zip'
           - '/messageParmRequestLambda.zip'
 
+  MultipleBrowsingHistoryLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/unique/multipleBrowsingHistoryLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/unique/zip'
+          - '/multipleBrowsingHistoryLambda.zip'
+
+  MultipleFavoriteLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/unique/multipleFavoriteLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/unique/zip'
+          - '/multipleFavoriteLambda.zip'
+
   InitPostSlipLambda:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -210,6 +242,14 @@ Outputs:
   # MessageParmRequestLambda‚ÌARN
   MessageParmRequestLambda:
     Value: !GetAtt MessageParmRequestLambda.Outputs.MessageParmRequestLambda
+
+  # MultipleBrowsingHistoryLambda‚ÌARN
+  MultipleBrowsingHistoryLambda:
+    Value: !GetAtt MultipleBrowsingHistoryLambda.Outputs.MultipleBrowsingHistoryLambda
+
+  # MultipleFavoriteLambda‚ÌARN
+  MultipleFavoriteLambda:
+    Value: !GetAtt MultipleFavoriteLambda.Outputs.MultipleFavoriteLambda
 
   # InitPostSlipLambda‚ÌARN
   InitPostSlipLambda:

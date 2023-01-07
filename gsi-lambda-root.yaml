@@ -286,7 +286,7 @@ Outputs:
 
   # SlipMessageInfo-gsi‚ÌARN
   SlipMessageInfoGSILambda:
-    Value: !GetAtt SlipMessageInfoGSI.Outputs.SlipMessageInfoGSI
+    Value: !GetAtt SlipMessageInfoGSI.Outputs.SlipMessageInfoGSILambda
 
   # TransactionSlip-gsi‚ÌARN
   TransactionSlipGSILambda:

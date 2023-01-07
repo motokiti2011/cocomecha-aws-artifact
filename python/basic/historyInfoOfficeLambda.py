@@ -70,6 +70,9 @@ def lambda_handler(event, context):
     elif OperationType == 'DELETE':
       return operation_delete(PartitionKey)
 
+    else : 
+      return operation_query(PartitionKey)
+
   except Exception as e:
       print("Error Exception.")
       print(e)
