@@ -1,5 +1,6 @@
 import json
 import boto3
+import uuid
 
 from datetime import datetime
 
@@ -22,37 +23,25 @@ def operation_query(partitionKey):
 
 # レコード追加
 def post_product(PartitionKey, event):
+
+  now = datetime.now()
+
   putResponse = table.put_item(
     Item={
-      'slipNo' : PartitionKey,
-      'slipAdminUserId' : event['Keys']['slipAdminUserId'],
-      'slipAdminUserName' : event['Keys']['slipAdminUserName'],
-      'slipAdminOffice' : event['Keys']['slipAdminOffice'],
-      'slipAdminOfficeName' : event['Keys']['slipAdminOfficeName'],
-      'slipAdminBaseId' : event['Keys']['slipAdminBaseId'],
-      'slipAdminBaseName' : event['Keys']['slipAdminBaseName'],
-      'adminDiv' : event['Keys']['adminDiv'],
-      'title' : event['Keys']['title'],
-      'price' : event['Keys']['price'],
-      'bidMethod' : event['Keys']['bidMethod'],
+      'id' : PartitionKey,
+      'serviceType' : event['Keys']['serviceType'],
+      'userId' : event['Keys']['userId'],
+      'mechanicId' : event['Keys']['mechanicId'],
+      'officeId' : event['Keys']['officeId'],
+      'slipNo' : event['Keys']['slipNo'],
+      'serviceTitle' : event['Keys']['serviceTitle'],
+      'slipRelation' : event['Keys']['slipRelation'],
+      'slipAdminId' : event['Keys']['slipAdminId'],
+      'slipAdminName' : event['Keys']['slipAdminName'],
       'bidderId' : event['Keys']['bidderId'],
-      'bidEndDate' : event['Keys']['bidEndDate'],
-      'explanation' : event['Keys']['explanation'],
-      'processStatus' : event['Keys']['processStatus'],
-      'targetService' : event['Keys']['targetService'],
-      'targetVehicleId' : event['Keys']['targetVehicleId'],
-      'targetVehicleName' : event['Keys']['targetVehicleName'],
-      'targetVehicleInfo' : event['Keys']['targetVehicleInfo'],
-      'workAreaInfo' : event['Keys']['workAreaInfo'],
-      'preferredDate' : event['Keys']['preferredDate'],
-      'preferredTime' : event['Keys']['preferredTime'],
-      'completionDate' : event['Keys']['completionDate'],
-      'transactionCompletionDate' : event['Keys']['transactionCompletionDate'],
-      'imageUrlList' : event['Keys']['imageUrlList'],
-      'messageOpenLebel' : event['Keys']['messageOpenLebel'],
-      'updateUserId' : event['Keys']['updateUserId'],
+      'deleteDiv' : event['Keys']['deleteDiv'],
       'created' : event['Keys']['created'],
-      'updated' : event['Keys']['updated']
+      'updated' :  now.strftime('%x %X')
     }
   )
   
@@ -76,6 +65,38 @@ def operation_delete(partitionKey):
     return delResponse
 
 
+# レコード追加
+def post_product(PartitionKey, event):
+
+  now = datetime.now()
+
+  putResponse = table.put_item(
+    Item={
+      'id' : PartitionKey,
+      'serviceType' : event['Keys']['serviceType'],
+      'userId' : event['Keys']['userId'],
+      'mechanicId' : event['Keys']['mechanicId'],
+      'officeId' : event['Keys']['officeId'],
+      'slipNo' : event['Keys']['slipNo'],
+      'serviceTitle' : event['Keys']['serviceTitle'],
+      'slipRelation' : event['Keys']['slipRelation'],
+      'slipAdminId' : event['Keys']['slipAdminId'],
+      'slipAdminName' : event['Keys']['slipAdminName'],
+      'bidderId' : event['Keys']['bidderId'],
+      'deleteDiv' : event['Keys']['deleteDiv'],
+      'created' : now.strftime('%x %X'),
+      'updated' : now.strftime('%x %X')
+
+    }
+  )
+  
+  if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+    print(putResponse)
+  else:
+    print('Post Successed.')
+  return putResponse
+
+
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()
@@ -85,15 +106,20 @@ def lambda_handler(event, context):
   try:
 
     if OperationType == 'QUERY':
-      PartitionKey = event['Keys']['slipNo']
+      PartitionKey = event['Keys']['id']
       return operation_query(PartitionKey)
 
     elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['slipNo']
+      PartitionKey = event['Keys']['id']
       return post_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':
       return operation_delete(PartitionKey)
+
+    elif OperationType == 'POST':
+      id = str(uuid.uuid4())
+      PartitionKey = id
+      return post_product(PartitionKey, event)
 
   except Exception as e:
       print("Error Exception.")

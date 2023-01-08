@@ -23,6 +23,9 @@ def operation_query(partitionKey):
 
 # レコード更新
 def put_product(PartitionKey, event):
+
+  now = datetime.now()
+
   putResponse = table.put_item(
     Item={
       'id' : PartitionKey,
@@ -35,7 +38,7 @@ def put_product(PartitionKey, event):
       'imageUrl' : event['Keys']['imageUrl'],
       'serviceType' : event['Keys']['serviceType'],
       'created' : event['Keys']['created'],
-      'updated' : event['Keys']['updated']
+      'updated' : now.strftime('%x %X')
     }
   )
   
@@ -62,9 +65,7 @@ def operation_delete(partitionKey):
 # レコード追加
 def post_product(PartitionKey, event):
 
-  t_delta = datetime.timedelta(hours=9)
-  JST = datetime.timezone(t_delta, 'JST')
-  now = datetime.datetime.now(JST)
+  now = datetime.now()
 
   putResponse = table.put_item(
     Item={

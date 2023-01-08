@@ -24,10 +24,9 @@ def operation_query(partitionKey):
 
 # レコード更新
 def put_product(PartitionKey, event):
-
-
-  now = datetime.now(JST)
-
+  
+  now = datetime.now()
+  
   putResponse = table.put_item(
     Item={
       'id' : PartitionKey,
