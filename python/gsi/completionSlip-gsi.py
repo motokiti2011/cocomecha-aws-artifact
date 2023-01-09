@@ -45,16 +45,16 @@ def lambda_handler(event, context):
     IndexType = event['IndexType']
     try:
 
-        PartitionKey = event['Keys']['slipAdminUserId']
+        PartitionKey = event['Keys']['id']
         if IndexType == 'SLIPADMINUSERID-INDEX':
             return slipAdminUserId_query(PartitionKey)
 
         elif IndexType == 'SLIPADMINOFFICE-INDEX':
-          PartitionKey = event['Keys']['slipAdminOfficeId']
+          PartitionKey = event['Keys']['id']
           return slipAdminOffice_query(PartitionKey, SortKey)
 
         elif IndexType == 'SLIPADMINMECHANIC-INDEX':
-          PartitionKey = event['Keys']['slipAdminMechanicId']
+          PartitionKey = event['Keys']['id']
           return slipAdminBaseId_query(PartitionKey)
 
     except Exception as e:

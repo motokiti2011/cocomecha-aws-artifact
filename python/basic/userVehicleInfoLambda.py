@@ -1,5 +1,6 @@
 import json
 import boto3
+import uuid
 
 from datetime import datetime
 
@@ -21,8 +22,11 @@ def operation_query(partitionKey):
     print(items)
     return items
 
-# レコード追加
-def post_product(PartitionKey, event):
+# レコード更新
+def put_product(PartitionKey, event):
+
+  now = datetime.now()
+
   putResponse = table.put_item(
     Item={
       'userId' : PartitionKey,
@@ -37,7 +41,7 @@ def post_product(PartitionKey, event):
       'InspectionExpirationDate' : event['Keys']['InspectionExpirationDate'],
       'updateUserId' : event['Keys']['updateUserId'],
       'created' : event['Keys']['created'],
-      'updated' : event['Keys']['updated']
+      'updated' : now.strftime('%x %X')
     }
   )
   
@@ -46,8 +50,40 @@ def post_product(PartitionKey, event):
   else:
     print('Post Successed.')
   return putResponse
+
+
+# レコード追加
+def post_product(PartitionKey, event):
+
+  now = datetime.now()
+
+  putResponse = table.put_item(
+    Item={
+      'userId' : PartitionKey,
+      'vehicleId' : event['Keys']['vehicleId'],
+      'vehicleName' : event['Keys']['vehicleName'],
+      'vehicleNo' : event['Keys']['vehicleNo'],
+      'chassisNo' : event['Keys']['chassisNo'],
+      'designatedClassification' : event['Keys']['designatedClassification'],
+      'coler' : event['Keys']['coler'],
+      'colerNo' : event['Keys']['colerNo'],
+      'firstRegistrationDate' : event['Keys']['firstRegistrationDate'],
+      'InspectionExpirationDate' : event['Keys']['InspectionExpirationDate'],
+      'updateUserId' : event['Keys']['updateUserId'],
+      'created' : now.strftime('%x %X'),
+      'updated' : now.strftime('%x %X')
+    }
+  )
   
-  # レコード削除
+  if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+    print(putResponse)
+  else:
+    print('Post Successed.')
+  return putResponse
+
+
+
+# レコード削除
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        key={

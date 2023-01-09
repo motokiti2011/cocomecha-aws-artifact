@@ -10,40 +10,34 @@ from boto3.dynamodb.conditions import Key
 # Dynamodbアクセスのためのオブジェクト取得
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
-table = dynamodb.Table("officeInfo")
+table = dynamodb.Table("serviceTransactionRequest")
 
 
 # レコード検索
 def operation_query(partitionKey):
     queryData = table.query(
-        KeyConditionExpression = Key("officeId").eq(partitionKey)
+        KeyConditionExpression = Key("id").eq(partitionKey)
     )
     items=queryData['Items']
     print(items)
     return items
 
 # レコード更新
-def post_product(PartitionKey, event):
+def put_product(PartitionKey, event):
 
   now = datetime.now()
 
   putResponse = table.put_item(
     Item={
-      'officeId' : PartitionKey,
-      'officeName' : event['Keys']['officeName'],
-      'officeTel' : event['Keys']['officeTel'],
-      'officeMailAdress' : event['Keys']['officeMailAdress'],
-      'officeArea1' : event['Keys']['officeArea1'],
-      'officeArea' : event['Keys']['officeArea'],
-      'officePostCode' : event['Keys']['officePostCode'],
-      'workContentList' : event['Keys']['workContentList'],
-      'businessHours' : event['Keys']['businessHours'],
-      'adminBaseId' : event['Keys']['adminBaseId'],
-      'baseInfoList' : event['Keys']['baseInfoList'],
-      'adminIdList' : event['Keys']['adminIdList'],
-      'employeeList' : event['Keys']['employeeList'],
-      'officePR' : event['Keys']['officePR'],
-      'officePRimageURL' : event['Keys']['officePRimageURL'],
+      'id' : PartitionKey,
+      'slipNo' : event['Keys']['slipNo'],
+      'requestId' : event['Keys']['requestId'],
+      'serviceUserType' : event['Keys']['serviceUserType'],
+      'requestType' : event['Keys']['requestType'],
+      'files' : event['Keys']['files'],
+      'requestStatus' : event['Keys']['requestStatus'],
+      'confirmDiv' : event['Keys']['confirmDiv'],
+      'deadline' : event['Keys']['deadline'],
       'created' : event['Keys']['created'],
       'updated' :  now.strftime('%x %X')
     }
@@ -56,7 +50,6 @@ def post_product(PartitionKey, event):
   return putResponse
 
 
-
 # レコード登録
 def post_product(PartitionKey, event):
 
@@ -64,21 +57,15 @@ def post_product(PartitionKey, event):
 
   putResponse = table.put_item(
     Item={
-      'officeId' : PartitionKey,
-      'officeName' : event['Keys']['officeName'],
-      'officeTel' : event['Keys']['officeTel'],
-      'officeMailAdress' : event['Keys']['officeMailAdress'],
-      'officeArea1' : event['Keys']['officeArea1'],
-      'officeArea' : event['Keys']['officeArea'],
-      'officePostCode' : event['Keys']['officePostCode'],
-      'workContentList' : event['Keys']['workContentList'],
-      'businessHours' : event['Keys']['businessHours'],
-      'adminBaseId' : event['Keys']['adminBaseId'],
-      'baseInfoList' : event['Keys']['baseInfoList'],
-      'adminIdList' : event['Keys']['adminIdList'],
-      'employeeList' : event['Keys']['employeeList'],
-      'officePR' : event['Keys']['officePR'],
-      'officePRimageURL' : event['Keys']['officePRimageURL'],
+      'id' : PartitionKey,
+      'slipNo' : event['Keys']['slipNo'],
+      'requestId' : event['Keys']['requestId'],
+      'serviceUserType' : event['Keys']['serviceUserType'],
+      'requestType' : event['Keys']['requestType'],
+      'files' : event['Keys']['files'],
+      'requestStatus' : event['Keys']['requestStatus'],
+      'confirmDiv' : event['Keys']['confirmDiv'],
+      'deadline' : event['Keys']['deadline'],
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')
     }
@@ -95,7 +82,7 @@ def post_product(PartitionKey, event):
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        key={
-           'officeId': partitionKey,
+           'id': partitionKey,
        }
     )
     if delResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
@@ -112,17 +99,16 @@ def lambda_handler(event, context):
   OperationType = event['OperationType']
 
   try:
-
     if OperationType == 'QUERY':
-      PartitionKey = event['Keys']['officeId']
+      PartitionKey = event['Keys']['id']
       return operation_query(PartitionKey)
 
     elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['officeId']
+      PartitionKey = event['Keys']['id']
       return put_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':
-      PartitionKey = event['Keys']['officeId']
+      PartitionKey = event['Keys']['id']
       return operation_delete(PartitionKey)
 
     elif OperationType == 'POST':

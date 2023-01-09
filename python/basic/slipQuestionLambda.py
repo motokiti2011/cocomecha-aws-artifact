@@ -1,5 +1,7 @@
 import json
 import boto3
+import uuid
+
 
 from datetime import datetime
 
@@ -21,8 +23,11 @@ def operation_query(partitionKey):
     print(items)
     return items
 
-# レコード追加
-def post_product(PartitionKey, event):
+# レコード更新
+def put_product(PartitionKey, event):
+
+  now = datetime.now()
+
   putResponse = table.put_item(
     Item={
       'id' : PartitionKey,
@@ -34,7 +39,7 @@ def post_product(PartitionKey, event):
       'anserDiv' : event['Keys']['anserDiv'],
       'anserText' : event['Keys']['anserText'],
       'created' : event['Keys']['created'],
-      'updated' : event['Keys']['updated']
+      'updated' :  now.strftime('%x %X')
     }
   )
   
@@ -43,8 +48,36 @@ def post_product(PartitionKey, event):
   else:
     print('Post Successed.')
   return putResponse
+
+
+# レコード追加
+def post_product(PartitionKey, event):
+
+  now = datetime.now()
+
+  putResponse = table.put_item(
+    Item={
+      'id' : PartitionKey,
+      'slipNo' : event['Keys']['slipNo'],
+      'slipAdminUser' : event['Keys']['slipAdminUser'],
+      'senderId' : event['Keys']['senderId'],
+      'senderName' : event['Keys']['senderName'],
+      'senderText' : event['Keys']['senderText'],
+      'anserDiv' : event['Keys']['anserDiv'],
+      'anserText' : event['Keys']['anserText'],
+      'created' : now.strftime('%x %X'),
+      'updated' : now.strftime('%x %X')
+    }
+  )
   
-  # レコード削除
+  if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+    print(putResponse)
+  else:
+    print('Post Successed.')
+  return putResponse
+
+
+# レコード削除
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        key={
@@ -69,10 +102,16 @@ def lambda_handler(event, context):
 
     elif OperationType == 'PUT':
       PartitionKey = event['Keys']['id']
-      return post_product(PartitionKey, event)
+      return put_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':
+      PartitionKey = event['Keys']['id']
       return operation_delete(PartitionKey)
+
+    elif OperationType == 'POST':
+      id = str(uuid.uuid4())
+      PartitionKey = id
+      return post_product(PartitionKey, event)
 
   except Exception as e:
       print("Error Exception.")

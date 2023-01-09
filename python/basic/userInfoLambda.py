@@ -23,6 +23,9 @@ def operation_query(partitionKey):
 
 # ÉåÉRÅ[Éhí«â¡
 def post_product(PartitionKey, event):
+
+  now = datetime.now()
+  
   putResponse = table.put_item(
     Item={
       'userId' : PartitionKey,
@@ -44,7 +47,7 @@ def post_product(PartitionKey, event):
       'Introduction' : event['Keys']['Introduction'],
       'updateUserId' : event['Keys']['updateUserId'],
       'created' : event['Keys']['created'],
-      'updated' : event['Keys']['updated']
+      'updated' : now.strftime('%x %X')
     }
   )
   

@@ -13,9 +13,9 @@ dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table("transactionSlip")
 
 # レコード検索
-def operation_query(partitionKey):
+def operation_query(partitionKey, sortKey):
     queryData = table.query(
-        KeyConditionExpression = Key("slipNo").eq(partitionKey)
+        KeyConditionExpression = Key("slipNo").eq(partitionKey) & Key("serviceType").eq("sortKey")
     )
     items=queryData['Items']
     print(items)
@@ -40,6 +40,7 @@ def post_product(PartitionKey, event):
       'slipAdminName' : event['Keys']['slipAdminName'],
       'bidderId' : event['Keys']['bidderId'],
       'deleteDiv' : event['Keys']['deleteDiv'],
+      'completionScheduledDate' : event['Keys']['completionScheduledDate'],
       'created' : event['Keys']['created'],
       'updated' :  now.strftime('%x %X')
     }
@@ -51,11 +52,11 @@ def post_product(PartitionKey, event):
     print('Post Successed.')
   return putResponse
   
-  # レコード削除
+# レコード削除
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        key={
-           'slipNo': partitionKey,
+           'id': partitionKey,
        }
     )
     if delResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
@@ -84,6 +85,7 @@ def post_product(PartitionKey, event):
       'slipAdminName' : event['Keys']['slipAdminName'],
       'bidderId' : event['Keys']['bidderId'],
       'deleteDiv' : event['Keys']['deleteDiv'],
+      'completionScheduledDate' : event['Keys']['completionScheduledDate'],
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')
 
@@ -107,13 +109,15 @@ def lambda_handler(event, context):
 
     if OperationType == 'QUERY':
       PartitionKey = event['Keys']['id']
-      return operation_query(PartitionKey)
+      SortKey = event['Keys']['serviceType']
+      return operation_query(PartitionKey, SortKey)
 
     elif OperationType == 'PUT':
       PartitionKey = event['Keys']['id']
-      return post_product(PartitionKey, event)
+      return put_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':
+      PartitionKey = event['Keys']['id']
       return operation_delete(PartitionKey)
 
     elif OperationType == 'POST':

@@ -1,5 +1,6 @@
 import json
 import boto3
+import uuid
 
 from datetime import datetime
 
@@ -21,8 +22,11 @@ def operation_query(partitionKey):
     print(items)
     return items
 
-# レコード追加
-def post_product(PartitionKey, event):
+# レコード更新
+def put_product(PartitionKey, event):
+
+  now = datetime.now()
+
   putResponse = table.put_item(
     Item={
       'mechanicId' : PartitionKey,
@@ -42,7 +46,7 @@ def post_product(PartitionKey, event):
       'evaluationInfoIdList' : event['Keys']['evaluationInfoIdList'],
       'updateUserId' : event['Keys']['updateUserId'],
       'created' : event['Keys']['created'],
-      'updated' : event['Keys']['updated']
+      'updated' :  now.strftime('%x %X')
     }
   )
   
@@ -51,8 +55,44 @@ def post_product(PartitionKey, event):
   else:
     print('Post Successed.')
   return putResponse
+
+
+# レコード登録
+def post_product(PartitionKey, event):
+
+  now = datetime.now()
+
+  putResponse = table.put_item(
+    Item={
+      'mechanicId' : PartitionKey,
+      'validDiv' : event['Keys']['validDiv'],
+      'mechanicName' : event['Keys']['mechanicName'],
+      'adminUserId' : event['Keys']['adminUserId'],
+      'adminAddressDiv' : event['Keys']['adminAddressDiv'],
+      'telList' : event['Keys']['telList'],
+      'mailAdress' : event['Keys']['mailAdress'],
+      'officeConnectionDiv' : event['Keys']['officeConnectionDiv'],
+      'officeId' : event['Keys']['officeId'],
+      'associationOfficeList': event['Keys']['associationOfficeList'],
+      'qualification' : event['Keys']['qualification'],
+      'specialtyWork' : event['Keys']['specialtyWork'],
+      'profileImageUrl' : event['Keys']['profileImageUrl'],
+      'Introduction' : event['Keys']['Introduction'],
+      'evaluationInfoIdList' : event['Keys']['evaluationInfoIdList'],
+      'updateUserId' : event['Keys']['updateUserId'],
+      'created' : now.strftime('%x %X'),
+      'updated' : now.strftime('%x %X')
+    }
+  )
   
-  # レコード削除
+  if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+    print(putResponse)
+  else:
+    print('Post Successed.')
+  return putResponse
+
+
+# レコード削除
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        key={
@@ -80,10 +120,16 @@ def lambda_handler(event, context):
 
     elif OperationType == 'PUT':
       PartitionKey = event['Keys']['mechanicId']
-      return post_product(PartitionKey, event)
+      return put_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':
+      PartitionKey = event['Keys']['mechanicId']
       return operation_delete(PartitionKey)
+
+    elif OperationType == 'POST':
+      id = str(uuid.uuid4())
+      PartitionKey = id
+      return post_product(PartitionKey, event)
 
   except Exception as e:
       print("Error Exception.")
