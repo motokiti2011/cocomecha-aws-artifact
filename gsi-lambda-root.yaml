@@ -250,6 +250,56 @@ Resources:
           - '/salesServiceInfo-gsi.zip'
 
 
+  FactoryMechaImpletionGSI:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/gsi/factoryMechaImpletion-gsi.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
+          - '/factoryMechaImpletion-gsi.zip'
+
+
+  FactoryMechanicFavoriteGSI:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/gsi/factoryMechanicFavorite-gsi.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
+          - '/factoryMechanicFavorite-gsi.zip'
+
+
+  ServiceTransactionRequestGSI:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/gsi/serviceTransactionRequest-gsi.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
+          - '/serviceTransactionRequest-gsi.zip'
+
 Outputs:
 
   # BrowsingHistory-gsi‚ÌARN
@@ -308,3 +358,14 @@ Outputs:
   SalesServiceInfoGSILambda:
     Value: !GetAtt SalesServiceInfoGSI.Outputs.SalesServiceInfoGSILambda
 
+  # FactoryMechaImpletion-gsi‚ÌARN
+  FactoryMechaImpletionGSILambda:
+    Value: !GetAtt FactoryMechaImpletionGSI.Outputs.FactoryMechaImpletionGSILambda
+
+  # FactoryMechanicFavorite-gsi‚ÌARN
+  FactoryMechanicFavoriteGSILambda:
+    Value: !GetAtt FactoryMechanicFavoriteGSI.Outputs.FactoryMechanicFavoriteGSILambda
+
+  # ServiceTransactionRequest-gsi‚ÌARN
+  ServiceTransactionRequestGSILambda:
+    Value: !GetAtt ServiceTransactionRequestGSI.Outputs.ServiceTransactionRequestGSILambda

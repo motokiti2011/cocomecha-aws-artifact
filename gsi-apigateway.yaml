@@ -73,6 +73,23 @@ Parameters:
     Type: String
     Description: SalesServiceInfoGSI of Lambda
 
+  # FactoryMechaImpletionGSIのARN
+  FactoryMechaImpletionGSILambdaArn:
+    Type: String
+    Description: FactoryMechaImpletionGSI of Lambda
+
+  # FactoryMechanicFavoriteGSIのARN
+  FactoryMechanicFavoriteGSILambdaArn:
+    Type: String
+    Description: FactoryMechanicFavoriteGSI of Lambda
+
+  # ServiceTransactionRequestGSIのARN
+  ServiceTransactionRequestGSILambdaArn:
+    Type: String
+    Description: ServiceTransactionRequestGSI of Lambda
+
+
+
   # CognitoUserPoolのARN
   UserPoolArn:
     Type: String
@@ -108,6 +125,10 @@ Resources:
       - UserMyListGSIResource
       - UserVehicleInfoGSIResource
       - SalesServiceInfoGSIResource
+      - FactoryMechaImpletionGSIResource
+      - FactoryMechanicFavoriteGSIResource
+      - ServiceTransactionRequestGSIResource
+
       - BrowsinghistoryGSIMethod
       - CompletionSlipGSIMethod
       - EvaluationInfoGSIMethod
@@ -120,6 +141,10 @@ Resources:
       - UserMyListGSIMethod
       - UserVehicleInfoGSIMethod
       - SalesServiceInfoGSIMethod
+      - FactoryMechaImpletionGSIMethod
+      - FactoryMechanicFavoriteGSIMethod
+      - ServiceTransactionRequestGSIMethod
+
 
   # ステージ
   ApiGwStage:
@@ -676,6 +701,8 @@ Resources:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission12
 
+
+
   # SalesServiceInfoGSIリソース
   SalesServiceInfoGSIResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -714,6 +741,133 @@ Resources:
           ResponseModels:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission14
+
+
+  # FactoryMechaImpletionGSIリソース
+  FactoryMechaImpletionGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: factorymechaimpletion
+      RestApiId: !Ref ApiGwRestAPI
+  # FactoryMechaImpletionGSIGSIメソッド
+  FactoryMechaImpletionGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref FactoryMechaImpletionGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref FactoryMechaImpletionGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission16
+
+
+
+  # FactoryMechanicFavoriteGSIリソース
+  FactoryMechanicFavoriteGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: factorymechanicfavorite
+      RestApiId: !Ref ApiGwRestAPI
+  # FactoryMechanicFavoriteGSIメソッド
+  FactoryMechanicFavoriteGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref FactoryMechanicFavoriteGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref FactoryMechanicFavoriteGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission17
+
+
+
+
+  # ServiceTransactionRequestGSIリソース
+  ServiceTransactionRequestGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: servicetransactionrequest
+      RestApiId: !Ref ApiGwRestAPI
+  # ServiceTransactionRequestGSIメソッド
+  ServiceTransactionRequestGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref ServiceTransactionRequestGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref ServiceTransactionRequestGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission18
+
+
+
+
 
 
   # LambdaPermission
@@ -814,3 +968,26 @@ Resources:
       FunctionName: slipMessageInfo-gsi
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
+
+
+  LambdaPermission16:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: factoryMechaImpletion-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission17:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: factoryMechanicFavorite-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission18:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: serviceTransactionRequest-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+

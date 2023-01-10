@@ -153,3 +153,30 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/salesServiceInfo.yaml'
 
+
+  factoryMechaImpletion:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/factoryMechaImpletion.yaml'
+
+
+  factoryMechanicFavorite:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/factoryMechanicFavorite.yaml'
+
+
+  serviceTransactionRequest:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/serviceTransactionRequest.yaml'
+

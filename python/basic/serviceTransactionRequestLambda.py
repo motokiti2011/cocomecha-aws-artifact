@@ -14,9 +14,9 @@ table = dynamodb.Table("serviceTransactionRequest")
 
 
 # ÉåÉRÅ[Éhåüçı
-def operation_query(partitionKey):
+def operation_query(partitionKey, sortKey):
     queryData = table.query(
-        KeyConditionExpression = Key("id").eq(partitionKey)
+        KeyConditionExpression = Key("id").eq(partitionKey) & Key("serviceType").eq("sortKey")
     )
     items=queryData['Items']
     print(items)
@@ -101,7 +101,8 @@ def lambda_handler(event, context):
   try:
     if OperationType == 'QUERY':
       PartitionKey = event['Keys']['id']
-      return operation_query(PartitionKey)
+      SortKey =  event['Keys']['serviceType']
+      return operation_query(PartitionKey, SortKey)
 
     elif OperationType == 'PUT':
       PartitionKey = event['Keys']['id']

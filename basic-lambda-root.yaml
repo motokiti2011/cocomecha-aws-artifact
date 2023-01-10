@@ -71,6 +71,39 @@ Resources:
           - '/basic/zip'
           - '/evaluationInfoLambda.zip'
 
+  FactoryMechaImpletionLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/basic/factoryMechaImpletionLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
+          - '/factoryMechaImpletionLambda.zip'
+
+  FactoryMechanicFavoriteLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/basic/factoryMechanicFavoriteLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
+          - '/factoryMechanicFavoriteLambda.zip'
+
+
   HistoryInfoMechaLambda:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -102,7 +135,6 @@ Resources:
         - - !Ref LambdaCodeDirectory
           - '/basic/zip'
           - '/historyInfoOfficeLambda.zip'
-
 
   MechanicInfoLambda:
     Type: AWS::CloudFormation::Stack
@@ -313,6 +345,21 @@ Resources:
           - '/basic/zip'
           - '/salesServiceInfoLambda.zip'
 
+  ServiceTransactionRequestLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/basic/serviceTransactionRequestLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
+          - '/serviceTransactionRequestLambda.zip'
 
 Outputs:
 
@@ -327,6 +374,14 @@ Outputs:
   # EvaluationInfoLambda‚ÌARN
   EvaluationInfoLambda:
     Value: !GetAtt EvaluationInfoLambda.Outputs.EvaluationInfoLambda
+
+  # FactoryMechaImpletionLambda‚ÌARN
+  FactoryMechaImpletionLambda:
+    Value: !GetAtt FactoryMechaImpletionLambda.Outputs.FactoryMechaImpletionLambda
+
+  # FactoryMechanicFavoriteLambda‚ÌARN
+  FactoryMechanicFavoriteLambda:
+    Value: !GetAtt FactoryMechanicFavoriteLambda.Outputs.FactoryMechanicFavoriteLambda
 
   # HistoryInfoMechaLambda‚ÌARN
   HistoryInfoMechaLambda:
@@ -388,4 +443,7 @@ Outputs:
   SalesServiceInfoLambda:
     Value: !GetAtt SalesServiceInfoLambda.Outputs.SalesServiceInfoLambda
 
+  # ServiceTransactionRequestLambda‚ÌARN
+  ServiceTransactionRequestLambda:
+    Value: !GetAtt ServiceTransactionRequestLambda.Outputs.ServiceTransactionRequestLambda
 

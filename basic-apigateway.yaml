@@ -76,6 +76,18 @@ Parameters:
   SalesServiceInfoLambdaArn:
     Type: String
 
+  # factoryMechaImpletionLambdaArnのARN
+  FactoryMechaImpletionLambdaArn:
+    Type: String
+
+  # factoryMechanicFavoriteLambdaArnのARN
+  FactoryMechanicFavoriteLambdaArn:
+    Type: String
+
+  # serviceTransactionRequestLambdaArnのARN
+  ServiceTransactionRequestLambdaArn:
+    Type: String
+
   # CognitoUserPoolのARN
   UserPoolArn:
     Type: String
@@ -119,6 +131,10 @@ Resources:
       - UserMyListResource
       - UserVehicleInfoResource
       - SalesServiceInfoResource
+      - FactoryMechaImpletionResource
+      - FactoryMechanicFavoriteResource
+      - ServiceTransactionRequestResource
+
       - BrowsinghistoryMethod
       - CompletionSlipMethod
       - EvaluationInfoMethod
@@ -137,7 +153,9 @@ Resources:
       - UserMyListMethod
       - UserVehicleInfoMethod
       - SalesServiceInfoMethod
-
+      - FactoryMechaImpletionMethod
+      - FactoryMechanicFavoriteMethod
+      - ServiceTransactionRequestMethod
 
   # ステージ
   ApiGwStage:
@@ -895,6 +913,137 @@ Resources:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission18
 
+
+
+
+  # FactoryMechaImpletionリソース
+  FactoryMechaImpletionResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SerchResource
+      PathPart: factorymechaimpletion
+      RestApiId: !Ref ApiGwRestAPI
+  # FactoryMechaImpletionメソッド
+  FactoryMechaImpletionMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref FactoryMechaImpletionResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref FactoryMechaImpletionLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission19
+
+
+
+  # FactoryMechanicFavoriteリソース
+  FactoryMechanicFavoriteResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SerchResource
+      PathPart: factorymechanicfavorite
+      RestApiId: !Ref ApiGwRestAPI
+  # FactoryMechanicFavoriteメソッド
+  FactoryMechanicFavoriteMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref FactoryMechanicFavoriteResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref FactoryMechanicFavoriteLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission20
+
+
+
+  # ServiceTransactionRequestリソース
+  ServiceTransactionRequestResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SerchResource
+      PathPart: servicetransactionrequest
+      RestApiId: !Ref ApiGwRestAPI
+  # ServiceTransactionRequestメソッド
+  ServiceTransactionRequestMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref ServiceTransactionRequestResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref ServiceTransactionRequestLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission21
+
+
+
+
+
+
+
+
   # IndexSerchリソース
   IndexSerchResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -902,6 +1051,7 @@ Resources:
       ParentId: !Ref V1Resource
       PathPart: indexserch
       RestApiId: !Ref ApiGwRestAPI
+
 
 
   # LambdaPermission
@@ -1030,6 +1180,27 @@ Resources:
     Type: 'AWS::Lambda::Permission'
     Properties:
       FunctionName: salesServiceInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission19:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: factoryMechaImpletionLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission20:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: factoryMechanicFavoriteLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission21:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: serviceTransactionRequestLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 
