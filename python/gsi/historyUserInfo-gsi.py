@@ -7,7 +7,17 @@ from boto3.dynamodb.conditions import Key
 # Dynamodbアクセスのためのオブジェクト取得
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
-table = dynamodb.Table("historyInfoMecha")
+table = dynamodb.Table("historyUserInfo")
+
+# レコード検索 userId-index
+def userId_query(partitionKey):
+    queryData = table.query(
+        IndexName = 'userId-index',
+        KeyConditionExpression = Key("userId").eq(partitionKey)
+    )
+    items=queryData['Items']
+    print(items)
+    return items
 
 # レコード検索 slipNo-index
 def slipNo_query(partitionKey):
@@ -19,11 +29,11 @@ def slipNo_query(partitionKey):
     print(items)
     return items
 
-# レコード検索 mechanicId-index
-def mechanicId_query(partitionKey):
+# レコード検索 officeId-index
+def officeId_query(partitionKey):
     queryData = table.query(
-        IndexName = 'mechanicId-index',
-        KeyConditionExpression = Key("mechanicId").eq(partitionKey)
+        IndexName = 'officeId-index',
+        KeyConditionExpression = Key("officeId").eq(partitionKey)
     )
     items=queryData['Items']
     print(items)
@@ -36,13 +46,17 @@ def lambda_handler(event, context):
     try:
 
         PartitionKey = event['Keys']['id']
-        if IndexType == 'SLIPNO-INDEX':
-            return slipNo_query(PartitionKey)
+        if IndexType == 'USERID-INDEX':
+            return userId_query(PartitionKey)
 
-        elif IndexType == 'MECHANICID-INDEX':
+        elif IndexType == 'SLIPNO-INDEX':
           PartitionKey = event['Keys']['id']
-          return mechanicId_query(PartitionKey)
-        
+          return slipNo_query(PartitionKey)
+
+        elif IndexType == 'OFFICEID-INDEX':
+          PartitionKey = event['Keys']['id']
+          return officeId_query(PartitionKey)
+
     except Exception as e:
         print("Error Exception.")
         print(e)

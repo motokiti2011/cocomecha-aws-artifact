@@ -180,3 +180,12 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/serviceTransactionRequest.yaml'
 
+  historyUserInfo:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/historyUserInfo.yaml'
+
+

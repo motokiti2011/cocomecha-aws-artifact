@@ -361,6 +361,23 @@ Resources:
           - '/basic/zip'
           - '/serviceTransactionRequestLambda.zip'
 
+  HistoryUserInfoLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/basic/historyUserInfoLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
+          - '/historyUserInfoLambda.zip'
+
+
 Outputs:
 
   # BrowsingHistoryLambda‚ÌARN
@@ -446,4 +463,8 @@ Outputs:
   # ServiceTransactionRequestLambda‚ÌARN
   ServiceTransactionRequestLambda:
     Value: !GetAtt ServiceTransactionRequestLambda.Outputs.ServiceTransactionRequestLambda
+
+  # HistoryUserInfoLambda‚ÌARN
+  HistoryUserInfoLambda:
+    Value: !GetAtt HistoryUserInfoLambda.Outputs.HistoryUserInfoLambda
 

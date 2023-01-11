@@ -152,6 +152,7 @@ Resources:
         FactoryMechaImpletionLambdaArn: !GetAtt BasicLambdaRoot.Outputs.FactoryMechaImpletionLambda
         FactoryMechanicFavoriteLambdaArn: !GetAtt BasicLambdaRoot.Outputs.FactoryMechanicFavoriteLambda
         ServiceTransactionRequestLambdaArn: !GetAtt BasicLambdaRoot.Outputs.ServiceTransactionRequestLambda
+        HistoryUserInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.HistoryUserInfoLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
@@ -180,6 +181,7 @@ Resources:
         FactoryMechaImpletionGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.FactoryMechaImpletionGSILambda
         FactoryMechanicFavoriteGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.FactoryMechanicFavoriteGSILambda
         ServiceTransactionRequestGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.ServiceTransactionRequestGSILambda
+        HistoryUserInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.HistoryUserInfoGSILambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 

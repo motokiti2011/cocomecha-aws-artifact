@@ -74,7 +74,7 @@ def lambda_handler(event, context):
         elif IndexType == 'SLIPADMINMECHANIC-INDEX':
           PartitionKey = event['Keys']['slipAdminMechanicId']
           SortKey = event['Keys']['deleteDiv']
-          return slipAdminMechanic_query(PartitionKey, SortKey):
+          return slipAdminMechanic_query(PartitionKey, SortKey)
 
     except Exception as e:
         print("Error Exception.")

@@ -300,6 +300,23 @@ Resources:
           - '/gsi/zip'
           - '/serviceTransactionRequest-gsi.zip'
 
+
+  HistoryUserInfoGSI:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/gsi/historyUserInfo-gsi.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
+          - '/historyUserInfo-gsi.zip'
+
 Outputs:
 
   # BrowsingHistory-gsi‚ÌARN
@@ -369,3 +386,7 @@ Outputs:
   # ServiceTransactionRequest-gsi‚ÌARN
   ServiceTransactionRequestGSILambda:
     Value: !GetAtt ServiceTransactionRequestGSI.Outputs.ServiceTransactionRequestGSILambda
+
+  # HistoryUserInfo-gsi‚ÌARN
+  HistoryUserInfoGSILambda:
+    Value: !GetAtt HistoryUserInfoGSI.Outputs.HistoryUserInfoGSILambda

@@ -6,26 +6,29 @@ Resources:
     Properties:
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
-        - AttributeName: slipNo
-          AttributeType: S
         - AttributeName: historyId
+          AttributeType: S
+        - AttributeName: slipNo
           AttributeType: S
         - AttributeName: mechanicId
           AttributeType: S
       KeySchema:
-        - AttributeName: slipNo
+        - AttributeName: historyId
           KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: historyId-index
+
+        - IndexName: slipNo-index
           KeySchema:
-            - AttributeName: historyId
+            - AttributeName: slipNo
               KeyType: HASH
           Projection:
             ProjectionType: ALL
+
         - IndexName: mechanicId-index
           KeySchema:
             - AttributeName: mechanicId
               KeyType: HASH
           Projection:
             ProjectionType: ALL
+
       TableName: historyInfoMecha

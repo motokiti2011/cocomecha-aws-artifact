@@ -9,11 +9,11 @@ dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("historyInfoOffice")
 
-# レコード検索 historyId-index
-def historyId_query(partitionKey):
+# レコード検索 slipNo-index
+def slipNo_query(partitionKey):
     queryData = table.query(
         IndexName = 'historyId-index',
-        KeyConditionExpression = Key("historyId").eq(partitionKey)
+        KeyConditionExpression = Key("slipNo").eq(partitionKey)
     )
     items=queryData['Items']
     print(items)
@@ -35,12 +35,12 @@ def lambda_handler(event, context):
     IndexType = event['IndexType']
     try:
 
-        PartitionKey = event['Keys']['historyId']
-        if IndexType == 'HISTORYID-INDEX':
-            return historyId_query(PartitionKey)
+        PartitionKey = event['Keys']['id']
+        if IndexType == 'SLIPNO-INDEX':
+            return slipNo_query(PartitionKey)
 
         elif IndexType == 'OFFICEID-INDEX':
-          PartitionKey = event['Keys']['officeId']
+          PartitionKey = event['Keys']['id']
           return officeId_query(PartitionKey)
         
     except Exception as e:

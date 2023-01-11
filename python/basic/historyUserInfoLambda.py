@@ -10,7 +10,7 @@ from boto3.dynamodb.conditions import Key
 # Dynamodbアクセスのためのオブジェクト取得
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
-table = dynamodb.Table("historyInfoMecha")
+table = dynamodb.Table("historyUserInfo")
 
 # レコード検索
 def operation_query(partitionKey):
@@ -25,11 +25,15 @@ def operation_query(partitionKey):
 def post_product(PartitionKey, event):
 
   now = datetime.now(JST)
+
   putResponse = table.put_item(
     Item={
       'historyId' : PartitionKey,
+      'userId' : event['Keys']['userId'],
+      'vehicleId' : event['Keys']['vehicleId'],
       'slipNo' : event['Keys']['slipNo'],
       'slipTitle' : event['Keys']['slipTitle'],
+      'officeId' : event['Keys']['officeId'],
       'mechanicId' : event['Keys']['mechanicId'],
       'completionDate' : event['Keys']['completionDate'],
       'displayDiv' : event['Keys']['displayDiv'],
@@ -49,11 +53,15 @@ def post_product(PartitionKey, event):
 def operation_post(PartitionKey, event):
 
   now = datetime.now(JST)
+
   putResponse = table.put_item(
     Item={
       'historyId' : PartitionKey,
+      'userId' : event['Keys']['userId'],
+      'vehicleId' : event['Keys']['vehicleId'],
       'slipNo' : event['Keys']['slipNo'],
       'slipTitle' : event['Keys']['slipTitle'],
+      'officeId' : event['Keys']['officeId'],
       'mechanicId' : event['Keys']['mechanicId'],
       'completionDate' : event['Keys']['completionDate'],
       'displayDiv' : event['Keys']['displayDiv'],
@@ -67,6 +75,7 @@ def operation_post(PartitionKey, event):
   else:
     print('Post Successed.')
   return putResponse
+
 
 
 # レコード削除
@@ -100,12 +109,14 @@ def lambda_handler(event, context):
       return post_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':
+      PartitionKey = event['Keys']['historyId']
       return operation_delete(PartitionKey)
 
     elif OperationType == 'POST':
       id = str(uuid.uuid4())
       PartitionKey = id
       return operation_post(PartitionKey, event)
+
 
   except Exception as e:
       print("Error Exception.")

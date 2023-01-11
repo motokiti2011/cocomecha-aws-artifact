@@ -88,6 +88,10 @@ Parameters:
     Type: String
     Description: ServiceTransactionRequestGSI of Lambda
 
+  # HistoryUserInfoGSIのARN
+  HistoryUserInfoGSILambdaArn:
+    Type: String
+    Description: HistoryUserInfoGSI of Lambda
 
 
   # CognitoUserPoolのARN
@@ -128,6 +132,7 @@ Resources:
       - FactoryMechaImpletionGSIResource
       - FactoryMechanicFavoriteGSIResource
       - ServiceTransactionRequestGSIResource
+      - HistoryUserInfoGSIResource
 
       - BrowsinghistoryGSIMethod
       - CompletionSlipGSIMethod
@@ -144,6 +149,7 @@ Resources:
       - FactoryMechaImpletionGSIMethod
       - FactoryMechanicFavoriteGSIMethod
       - ServiceTransactionRequestGSIMethod
+      - HistoryUserInfoGSIMethod
 
 
   # ステージ
@@ -866,7 +872,44 @@ Resources:
     DependsOn: LambdaPermission18
 
 
-
+  # HistoryUserInfoGSIリソース
+  HistoryUserInfoGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: historyuserinfo
+      RestApiId: !Ref ApiGwRestAPI
+  # HistoryUserInfoGSIメソッド
+  HistoryUserInfoGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref HistoryUserInfoGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref HistoryUserInfoGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission19
 
 
 
@@ -991,3 +1034,9 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 
+  LambdaPermission19:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: historyUserInfo-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com

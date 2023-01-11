@@ -1,5 +1,6 @@
 import json
 import boto3
+import uuid
 
 from datetime import datetime
 
@@ -15,21 +16,22 @@ table = dynamodb.Table("evaluationInfo")
 # レコード検索
 def operation_query(partitionKey):
     queryData = table.query(
-        KeyConditionExpression = Key("slipNo").eq(partitionKey)
+        KeyConditionExpression = Key("id").eq(partitionKey)
     )
     items=queryData['Items']
     print(items)
     return items
 
-# レコード追加
-def post_product(PartitionKey, event):
+# レコード更新
+def put_product(PartitionKey, event):
   putResponse = table.put_item(
     Item={
-      'slipNo' : PartitionKey,
+      'id' : PartitionKey,
+      'slipNo' : event['Keys']['slipNo'],
       'evaluationInfoId' : event['Keys']['evaluationInfoId'],
       'mechanicId' : event['Keys']['mechanicId'],
       'officeId' : event['Keys']['officeId'],
-      'baseId' : event['Keys']['baseId'],
+      'serviceType' : event['Keys']['serviceType'],
       'serviceTitle' : event['Keys']['serviceTitle'],
       'date' : event['Keys']['date'],
       'evaluationDispDiv' : event['Keys']['evaluationDispDiv'],
@@ -39,7 +41,7 @@ def post_product(PartitionKey, event):
       'evaluationComment' : event['Keys']['evaluationComment'],
       'versusEvaluationComment' : event['Keys']['versusEvaluationComment'],
       'created' : event['Keys']['created'],
-      'updated' : event['Keys']['updated']
+      'updated' : now.strftime('%x %X')
     }
   )
   
@@ -48,12 +50,44 @@ def post_product(PartitionKey, event):
   else:
     print('Post Successed.')
   return putResponse
+
+
+# レコード追加
+def operation_post(PartitionKey, event):
+  putResponse = table.put_item(
+    Item={
+      'id' : PartitionKey,
+      'slipNo' : event['Keys']['slipNo'],
+      'evaluationInfoId' : event['Keys']['evaluationInfoId'],
+      'mechanicId' : event['Keys']['mechanicId'],
+      'officeId' : event['Keys']['officeId'],
+      'serviceType' : event['Keys']['serviceType'],
+      'serviceTitle' : event['Keys']['serviceTitle'],
+      'date' : event['Keys']['date'],
+      'evaluationDispDiv' : event['Keys']['evaluationDispDiv'],
+      'evaluationUserId' : event['Keys']['evaluationUserId'],
+      'evaluationUserName' : event['Keys']['evaluationUserName'],
+      'evaluation' : event['Keys']['evaluation'],
+      'evaluationComment' : event['Keys']['evaluationComment'],
+      'versusEvaluationComment' : event['Keys']['versusEvaluationComment'],
+      'created' : now.strftime('%x %X'),
+      'updated' : now.strftime('%x %X')
+    }
+  )
   
-  # レコード削除
+  if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+    print(putResponse)
+  else:
+    print('Post Successed.')
+  return putResponse
+
+
+
+# レコード削除
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        key={
-           'slipNo': partitionKey,
+           'id': partitionKey,
        }
     )
     if delResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
@@ -69,17 +103,21 @@ def lambda_handler(event, context):
   OperationType = event['OperationType']
 
   try:
-
     if OperationType == 'QUERY':
-      PartitionKey = event['Keys']['slipNo']
+      PartitionKey = event['Keys']['id']
       return operation_query(PartitionKey)
 
     elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['productContributorId']
-      return post_product(PartitionKey, event)
+      PartitionKey = event['Keys']['id']
+      return put_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':
       return operation_delete(PartitionKey)
+
+    elif OperationType == 'POST':
+      id = str(uuid.uuid4())
+      PartitionKey = id
+      return operation_post(PartitionKey, event)
 
   except Exception as e:
       print("Error Exception.")

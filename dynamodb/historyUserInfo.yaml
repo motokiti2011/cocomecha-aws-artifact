@@ -6,36 +6,30 @@ Resources:
     Properties:
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
-        - AttributeName: id
+        - AttributeName: historyId
+          AttributeType: S
+        - AttributeName: userId
           AttributeType: S
         - AttributeName: slipNo
           AttributeType: S
-        - AttributeName: mechanicId
-          AttributeType: S
         - AttributeName: officeId
           AttributeType: S
-        - AttributeName: serviceType
-          AttributeType: S
       KeySchema:
-        - AttributeName: id
+        - AttributeName: historyId
           KeyType: HASH
       GlobalSecondaryIndexes:
+
+        - IndexName: userId-index
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
 
         - IndexName: slipNo-index
           KeySchema:
             - AttributeName: slipNo
               KeyType: HASH
-            - AttributeName: serviceType
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-
-        - IndexName: mechanicId-index
-          KeySchema:
-            - AttributeName: mechanicId
-              KeyType: HASH
-            - AttributeName: serviceType
-              KeyType: RANGE
           Projection:
             ProjectionType: ALL
 
@@ -46,4 +40,4 @@ Resources:
           Projection:
             ProjectionType: ALL
 
-      TableName: evaluationInfo
+      TableName: historyUserInfo
