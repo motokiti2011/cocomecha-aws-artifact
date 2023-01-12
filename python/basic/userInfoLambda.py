@@ -13,9 +13,9 @@ table = dynamodb.Table("userInfo")
 
 
 # ÉåÉRÅ[Éhåüçı
-def operation_query(partitionKey):
+def operation_query(partitionKey, sortKey):
     queryData = table.query(
-        KeyConditionExpression = Key("userId").eq(partitionKey)
+        KeyConditionExpression = Key("userId").eq(partitionKey) & Key("userValidDiv").eq(sortKey)
     )
     items=queryData['Items']
     print(items)
@@ -81,13 +81,15 @@ def lambda_handler(event, context):
 
     if OperationType == 'QUERY':
       PartitionKey = event['Keys']['userId']
-      return operation_query(PartitionKey)
+      sortKey = event['Keys']['userValidDiv']
+      return operation_query(PartitionKey, sortKey)
 
     elif OperationType == 'PUT':
       PartitionKey = event['Keys']['userId']
       return post_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':
+      PartitionKey = event['Keys']['userId']
       return operation_delete(PartitionKey)
 
   except Exception as e:

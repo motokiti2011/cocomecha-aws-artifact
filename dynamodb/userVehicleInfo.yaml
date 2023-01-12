@@ -6,9 +6,29 @@ Resources:
     Properties:
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
+        - AttributeName: vehicleId
+          AttributeType: S
         - AttributeName: userId
           AttributeType: S
+        - AttributeName: vehicleNo
+          AttributeType: S
       KeySchema:
-        - AttributeName: userId
+        - AttributeName: vehicleId
           KeyType: HASH
+
+      GlobalSecondaryIndexes:
+        - IndexName: userId-index
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+        - IndexName: vehicleNo-index
+          KeySchema:
+            - AttributeName: vehicleNo
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
       TableName: userVehicleInfo

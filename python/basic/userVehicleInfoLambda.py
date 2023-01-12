@@ -29,8 +29,8 @@ def put_product(PartitionKey, event):
 
   putResponse = table.put_item(
     Item={
-      'userId' : PartitionKey,
-      'vehicleId' : event['Keys']['vehicleId'],
+      'vehicleId' : PartitionKey,
+      'userId' : event['Keys']['userId'],
       'vehicleName' : event['Keys']['vehicleName'],
       'vehicleNo' : event['Keys']['vehicleNo'],
       'chassisNo' : event['Keys']['chassisNo'],
@@ -60,8 +60,8 @@ def post_product(PartitionKey, event):
 
   putResponse = table.put_item(
     Item={
-      'userId' : PartitionKey,
-      'vehicleId' : event['Keys']['vehicleId'],
+      'vehicleId' : PartitionKey,
+      'userId' : event['Keys']['userId'],
       'vehicleName' : event['Keys']['vehicleName'],
       'vehicleNo' : event['Keys']['vehicleNo'],
       'chassisNo' : event['Keys']['chassisNo'],
@@ -108,15 +108,21 @@ def lambda_handler(event, context):
   try:
 
     if OperationType == 'QUERY':
-      PartitionKey = event['Keys']['userId']
+      PartitionKey = event['Keys']['vehicleId']
       return operation_query(PartitionKey)
 
     elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['userId']
-      return post_product(PartitionKey, event)
+      PartitionKey = event['Keys']['vehicleId']
+      return put_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':
       return operation_delete(PartitionKey)
+
+    elif OperationType == 'POST':
+      id = str(uuid.uuid4())
+      PartitionKey = id
+      return post_product(PartitionKey, event)
+
 
   except Exception as e:
       print("Error Exception.")
