@@ -12,7 +12,8 @@ dynamodb = boto3.resource('dynamodb')
 
 table = dynamodb.Table("salesServiceInfo")
 table2 = dynamodb.Table("slipMegPrmUser")
-
+table3 = dynamodb.Table("transactionSlip")
+table4 = dynamodb.Table("userMyList")
 
 # salesServiceÇÃPOST
 def post_product(PartitionKey, event):
@@ -58,7 +59,7 @@ def post_product(PartitionKey, event):
   else:
     print('salesService : Post Successed.')
 
-  
+  # ì`ï[ÉÅÉbÉZÅ[ÉWä«óùÉÜÅ[ÉUÇÃìoò^
   slipMegPrmUserPutResponse = table2.put_item(
     Item={
       'slipNo' : PartitionKey,
@@ -74,7 +75,61 @@ def post_product(PartitionKey, event):
     print(slipMegPrmUserPutResponse)
   else:
     print('slipMegPrmUser : Post Successed.')
-    return slipMegPrmUserPutResponse['ResponseMetadata']['HTTPStatusCode']
+
+  # éÊà¯ì`ï[èÓïÒÇÃìoò^
+  transactionSlipResponse = table3.put_item(
+    Item={
+      'id' : str(uuid.uuid4()),
+      'serviceType' : '0',
+      'userId' : event['Keys']['userId'],
+      'mechanicId' : event['Keys']['slipAdminMechanicId'],
+      'officeId' : event['Keys']['slipAdminOfficeId'],
+      'slipNo' : PartitionKey,
+      'serviceTitle' : event['Keys']['title'],
+      'slipRelation' : '0',
+      'slipAdminId' : event['Keys']['slipAdminUserId'],
+      'slipAdminName' : event['Keys']['slipAdminUserName'],
+      'bidderId' : event['Keys']['bidderId'],
+      'deleteDiv' : '0',
+      'completionScheduledDate' : event['Keys']['completionScheduledDate'],
+      'created' : now.strftime('%x %X'),
+      'updated' : now.strftime('%x %X')
+    }
+  )
+  
+  if transactionSlipResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+    print(transactionSlipResponse)
+  else:
+    print('Post Successed.')
+
+
+  # É}ÉCÉäÉXÉgTBLÇÃìoò^
+  userMyListResponse = table4.put_item(
+    Item={
+      'id' : str(uuid.uuid4()),
+      'userId' : event['Keys']['slipAdminUserId'],
+      'mechanicId : event['Keys']['slipAdminMechanicId'],
+      'officeId' : event['Keys']['slipAdminOfficeId'],
+      'serviceType' : event['Keys']['targetService'],
+      'slipNo' :PartitionKey,
+      'serviceTitle' : event['Keys']['serviceTitle'],
+      'category' : '8',
+      'message' : '',
+      'readDiv' : '0',
+      'messageDate' : now.strftime('%x %X'),
+      'messageOrQuastionId' : '' ,
+      'deleteDiv' : '0',
+      'created' : now.strftime('%x %X'),
+      'updated' : now.strftime('%x %X')
+
+    }
+  )
+  
+  if userMyListResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+    print(userMyListResponse)
+  else:
+    print('Post Successed.')
+  return userMyListResponse
 
 
 

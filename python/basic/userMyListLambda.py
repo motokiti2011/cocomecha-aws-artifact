@@ -53,7 +53,7 @@ def put_product(PartitionKey, event):
     print('Post Successed.')
   return putResponse
   
-  # レコード削除
+# レコード削除
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        key={

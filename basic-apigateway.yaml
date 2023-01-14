@@ -105,7 +105,7 @@ Resources:
     Type: 'AWS::ApiGateway::RestApi'
     Properties:
       Description: This is the Description of ApiGwRestAPI
-      Name: 'cocomecha-APIGW'
+      Name: 'hakomecha-APIGW'
       EndpointConfiguration:
         Types:
           - REGIONAL

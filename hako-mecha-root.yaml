@@ -111,6 +111,23 @@ Resources:
         - ''
         - - !Ref TemplateUrl
 
+  SlipProcessLambdaRoot:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'slipProcess-lambda-root.yaml'
+      Parameters:
+        LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
+        S3Buket: !Ref S3Buket
+        LambdaCodeDirectory: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+        TemplateUrl: !Join 
+        - ''
+        - - !Ref TemplateUrl
+
 
   # Cognitoの作成
   Cognito:
@@ -222,6 +239,23 @@ Resources:
         SendSlipQuestionLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SendSlipQuestionLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
+
+
+  SlipProcessApigateway:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'slipProcess-apigateway.yaml'
+      Parameters:
+        ConfirmTransactionLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.ConfirmTransactionLambda
+        SendTransactionRequestLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.SendTransactionRequestLambda
+        TransactionEndLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.TransactionEndLambda
+
+
+        UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
+
 
 
   # S3（画像アップロード用）の作成

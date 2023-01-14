@@ -1,0 +1,228 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: IaC for API Gateway
+Parameters:
+  # ConfirmTransactionLambdaのARN
+  ConfirmTransactionLambdaArn:
+    Type: String
+
+  # SendTransactionRequestLambdaのARN
+  SendTransactionRequestLambdaArn:
+    Type: String
+
+  # TransactionEndLambdaのARN
+  TransactionEndLambdaArn:
+    Type: String
+
+  # CognitoUserPoolのARN
+  UserPoolArn:
+    Type: String
+    Description: UserPool of Cognito
+
+Resources:
+  # RESTAPI
+  ApiGwRestAPI:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Description: This is the Description of ApiGwRestAPI
+      Name: 'hakomecha-API-SLIP-PROSESS'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+  ApiGwDeployment:
+    Type: 'AWS::ApiGateway::Deployment'
+    Properties:
+      Description: This is the Description of ApiGwDeployment
+      RestApiId: !Ref ApiGwRestAPI
+    DependsOn:
+      - V1Resource
+      - SlipProcessResource
+      - ConfirmTransactionResource
+      - SendTransactionRequestResource
+      - TransactionEndResource
+
+      - ConfirmTransactionMethod
+      - SendTransactionRequestMethod
+      - TransactionEndMethod
+
+  # ステージ
+  ApiGwStage:
+    Type: 'AWS::ApiGateway::Stage'
+    Properties:
+      RestApiId: !Ref ApiGwRestAPI
+      DeploymentId: !Ref ApiGwDeployment
+      StageName: dev
+  # オーソライザー
+  Authorizer: 
+    Type: AWS::ApiGateway::Authorizer
+    Properties: 
+      ProviderARNs: 
+        - !Ref UserPoolArn
+      AuthorizerResultTtlInSeconds: "300"
+      Type: "COGNITO_USER_POOLS"
+      IdentitySource: "method.request.header.Authorization"
+      Name: "Authorization"
+      RestApiId: !Ref ApiGwRestAPI
+
+  # v1リソース
+  V1Resource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt 
+        - ApiGwRestAPI
+        - RootResourceId
+      PathPart: v1
+      RestApiId: !Ref ApiGwRestAPI
+
+  # SlipProcessリソース
+  SlipProcessResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref V1Resource
+      PathPart: slipprocess
+      RestApiId: !Ref ApiGwRestAPI
+
+
+  # ConfirmTransactionリソース
+  ConfirmTransactionResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SlipProcessResource
+      PathPart: slipmegprmuser
+      RestApiId: !Ref ApiGwRestAPI
+  # ConfirmTransactionメソッド
+  ConfirmTransactionMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref ConfirmTransactionResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref ConfirmTransactionLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission1
+
+
+  # SendTransactionRequestリソース
+  SendTransactionRequestResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SlipProcessResource
+      PathPart: sendtransactionrequest
+      RestApiId: !Ref ApiGwRestAPI
+  # SendTransactionRequestメソッド
+  SendTransactionRequestMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SendTransactionRequestResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SendTransactionRequestLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission2
+
+
+  # TransactionEndリソース
+  TransactionEndResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SlipProcessResource
+      PathPart: transactionend
+      RestApiId: !Ref ApiGwRestAPI
+  # TransactionEndメソッド
+  TransactionEndMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref TransactionEndResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref TransactionEndLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission3
+
+
+
+
+  # LambdaPermission
+  LambdaPermission1:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: confirmTransactionLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission2:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: sendTransactionRequestLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission3:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: transactionEndLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+

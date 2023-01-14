@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: IaC for Lambda
+Parameters:
+  # LambdaにアタッチするIAMロールのARN
+  LambdaRoleArn:
+    Type: String
+    Description: Role of Lambda Function
+  # S3Buket:Lambdaコードの格納先S3Buket
+  S3Buket:
+    Type: String
+    Description: S3Buket
+  # Lambdaコード格納先のディレクトリ名
+  LambdaCodeDirectory:
+    Type: String
+    Description: LambdaCodeDirectory
+  # テンプレート格納先のURL
+  TemplateUrl:
+    Type: String
+    Description: TemplateURL
+
+
+Resources:
+
+  ConfirmTransactionLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/slipProcess/confirmTransactionLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/slipProcess/zip'
+          - '/confirmTransactionLambda.zip'
+
+
+  SendTransactionRequestLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/slipProcess/sendTransactionRequestLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/slipProcess/zip'
+          - '/sendTransactionRequestLambda.zip'
+
+
+  TransactionEndLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/slipProcess/transactionEndLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/slipProcess/zip'
+          - '/transactionEndLambda.zip'
+
+
+Outputs:
+
+  # ConfirmTransactionLambdaのARN
+  ConfirmTransactionLambda:
+    Value: !GetAtt ConfirmTransactionLambda.Outputs.ConfirmTransactionLambda
+
+  # SendTransactionRequestLambdaのARN
+  SendTransactionRequestLambda:
+    Value: !GetAtt SendTransactionRequestLambda.Outputs.SendTransactionRequestLambda
+
+  # TransactionEndLambdaのARN
+  TransactionEndLambda:
+    Value: !GetAtt TransactionEndLambda.Outputs.TransactionEndLambda
+

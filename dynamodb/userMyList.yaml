@@ -16,6 +16,8 @@ Resources:
           AttributeType: S
         - AttributeName: officeId
           AttributeType: S
+        - AttributeName: slipNo
+          AttributeType: S
 
       KeySchema:
         - AttributeName: id
@@ -41,6 +43,13 @@ Resources:
         - IndexName: officeId-index
           KeySchema:
             - AttributeName: officeId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+        - IndexName: slipNo-index
+          KeySchema:
+            - AttributeName: slipNo
               KeyType: HASH
           Projection:
             ProjectionType: ALL

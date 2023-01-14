@@ -10,7 +10,7 @@ dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table("slipQuestion")
 
 # ÉåÉRÅ[Éhåüçı slipNo-index
-def mechanicId_query(partitionKey):
+def slipNo_query(partitionKey):
     queryData = table.query(
         IndexName = 'slipNo-index',
         KeyConditionExpression = Key("slipNo").eq(partitionKey)
@@ -26,7 +26,7 @@ def lambda_handler(event, context):
 
         PartitionKey = event['Keys']['slipNo']
         if IndexType == 'SLIPNO-INDEX':
-            return mechanicId_query(PartitionKey)
+            return slipNo_query(PartitionKey)
 
     except Exception as e:
         print("Error Exception.")

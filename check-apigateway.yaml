@@ -16,7 +16,7 @@ Resources:
     Type: 'AWS::ApiGateway::RestApi'
     Properties:
       Description: This is the Description of ApiGwRestAPI
-      Name: 'cocomecha-APICHECK'
+      Name: 'hakomecha-APICHECK'
       EndpointConfiguration:
         Types:
           - REGIONAL
