@@ -12,10 +12,11 @@ dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("serviceTransactionRequest")
 table2 = dynamodb.Table("userMyList")
-
+slipDetailInfo = dynamodb.Table("slipDetailInfo")
+salesServiceInfo = dynamodb.Table("salesServiceInfo")
 
 # 取引依頼TBLレコード登録
-def post_product(PartitionKey, event):
+def post_product(PartitionKey, event, adminUser, adminMecha, adminOffice, serviceTitle):
 
   now = datetime.now()
 
@@ -24,6 +25,7 @@ def post_product(PartitionKey, event):
       'id' : PartitionKey,
       'slipNo' : event['Keys']['slipNo'],
       'requestId' : event['Keys']['requestId'],
+      'requestUserName' : event['Keys']['requestUserName'],
       'serviceUserType' : event['Keys']['serviceUserType'],
       'requestType' : event['Keys']['requestType'],
       'files' : event['Keys']['files'],
@@ -49,14 +51,14 @@ def post_product(PartitionKey, event):
   userMyListAdminResponse = table2.put_item(
     Item={
       'id' : str(uuid.uuid4()),
-      'userId' : event['Keys']['slipAdminUserId'],
-      'mechanicId : event['Keys']['slipAdminMechanicId'],
-      'officeId' : event['Keys']['slipAdminOfficeId'],
-      'serviceType' : event['Keys']['targetService'],
+      'userId' :adminUser,
+      'mechanicId' :adminMecha,
+      'officeId' : adminOffice,
+      'serviceType' : event['Keys']['serviceUserType'],
       'slipNo' : event['Keys']['slipNo'],
-      'serviceTitle' : event['Keys']['serviceTitle'],
+      'serviceTitle' : serviceTitle,
       'category' : '7',
-      'message' : '',
+      'message' : 'TRAN_RES',
       'readDiv' : '0',
       'messageDate' : now.strftime('%x %X'),
       'messageOrQuastionId' : '' ,
@@ -77,14 +79,14 @@ def post_product(PartitionKey, event):
   userMyListResponse = table2.put_item(
     Item={
       'id' : str(uuid.uuid4()),
-      'userId' : event['Keys']['slipAdminUserId'],
-      'mechanicId : event['Keys']['slipAdminMechanicId'],
-      'officeId' : event['Keys']['slipAdminOfficeId'],
-      'serviceType' : event['Keys']['targetService'],
+      'userId' :adminUser,
+      'mechanicId' :adminMecha,
+      'officeId' : adminOffice,
+      'serviceType' : event['Keys']['serviceUserType'],
       'slipNo' : event['Keys']['slipNo'],
-      'serviceTitle' : event['Keys']['serviceTitle'],
+      'serviceTitle' :serviceTitle,
       'category' : '13',
-      'message' : '',
+      'message' : 'TRAN_REQ',
       'readDiv' : '0',
       'messageDate' : now.strftime('%x %X'),
       'messageOrQuastionId' : '' ,
@@ -107,12 +109,27 @@ def lambda_handler(event, context):
   now = datetime.now()
   print(now)
   OperationType = event['OperationType']
+  key = event['Keys']['slipNo']
+  serviceKey = event['Keys']['serviceUserType']
 
   try:
     if OperationType == 'TRANSACTIONREQUEST':
+      if serviceKey == '0':
+        slip = getSlipDitail(key)
+        adminUser = slip[0]['slipAdminUserId']
+        adminMecha = '0'
+        adminOffice = '0'
+        serviceTitle = slip[0]['title']
+      else:
+        service = getSalesServiceInfo(key)
+        adminUser = service[0]['slipAdminUserId']
+        adminMecha = service[0]['slipAdminMechanicId']
+        adminOffice = service[0]['slipAdminOfficeId']
+        serviceTitle = service[0]['title']
+
       id = str(uuid.uuid4())
       PartitionKey = id
-      return post_product(PartitionKey, event)
+      return post_product(PartitionKey, event, adminUser, adminMecha, adminOffice, serviceTitle)
 
 
   except Exception as e:

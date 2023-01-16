@@ -86,7 +86,7 @@ def operation_post(PartitionKey, event):
 # ƒŒƒR[ƒhíœ
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
-       key={
+       Key={
            'id': partitionKey,
        }
     )

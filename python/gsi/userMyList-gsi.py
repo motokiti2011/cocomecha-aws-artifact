@@ -57,7 +57,7 @@ def lambda_handler(event, context):
 
         PartitionKey = event['Keys']['id']
         if IndexType == 'USERID-INDEX':
-            return mechanicId_query(PartitionKey)
+            return userId_query(PartitionKey)
 
         PartitionKey = event['Keys']['id']
         if IndexType == 'MECHANICID-INDEX':

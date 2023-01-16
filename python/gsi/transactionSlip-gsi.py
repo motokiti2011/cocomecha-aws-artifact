@@ -13,7 +13,7 @@ table = dynamodb.Table("transactionSlip")
 def slipUser_query(partitionKey, sortKey):
     queryData = table.query(
         IndexName = 'userId-index',
-        KeyConditionExpression = Key("userId").eq(partitionKey) & Key("serviceType").eq("sortKey")
+        KeyConditionExpression = Key("userId").eq(partitionKey) & Key("serviceType").eq(sortKey)
     )
     items=queryData['Items']
     print(items)
@@ -23,7 +23,7 @@ def slipUser_query(partitionKey, sortKey):
 def slipOffice_query(partitionKey):
     queryData = table.query(
         IndexName = 'officeId-index',
-        KeyConditionExpression = Key("officeId").eq(partitionKey) & Key("serviceType").eq("sortKey")
+        KeyConditionExpression = Key("officeId").eq(partitionKey) & Key("serviceType").eq(sortKey)
     )
     items=queryData['Items']
     print(items)
@@ -33,7 +33,7 @@ def slipOffice_query(partitionKey):
 def slipMechanic_query(partitionKey):
     queryData = table.query(
         IndexName = 'mechanicId-index',
-        KeyConditionExpression = Key("mechanicId").eq(partitionKey) & Key("serviceType").eq("sortKey")
+        KeyConditionExpression = Key("mechanicId").eq(partitionKey) & Key("serviceType").eq(sortKey)
     )
     items=queryData['Items']
     print(items)

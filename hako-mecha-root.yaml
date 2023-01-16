@@ -212,6 +212,7 @@ Resources:
           - 'check-apigateway.yaml'
       Parameters:
         SlipMegPrmUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.SlipMegPrmUserCheckLambda
+        SlipAdminUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.SlipAdminUserCheckLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 

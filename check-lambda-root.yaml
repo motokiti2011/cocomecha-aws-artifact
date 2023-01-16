@@ -38,10 +38,28 @@ Resources:
           - '/slipMegPrmUserCheckLambda.zip'
 
 
+  SlipAdminUserCheckLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/check/slipAdminUserCheckLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/check/zip'
+          - '/slipAdminUserCheckLambda.zip'
+
 Outputs:
   # SlipMegPrmUserCheckLambda‚ÌARN
   SlipMegPrmUserCheckLambda:
     Value: !GetAtt SlipMegPrmUserCheckLambda.Outputs.SlipMegPrmUserCheckLambda
 
-
+  # SlipAdminUserCheckLambda‚ÌARN
+  SlipAdminUserCheckLambda:
+    Value: !GetAtt SlipAdminUserCheckLambda.Outputs.SlipAdminUserCheckLambda
 

@@ -13,7 +13,7 @@ table = dynamodb.Table("mechanicInfo")
 def mechanicId_query(partitionKey, sortKey):
     queryData = table.query(
         IndexName = 'adminUserId-index',
-        KeyConditionExpression = Key("adminUserId").eq(partitionKey) & Key("validDiv").eq("sortKey")
+        KeyConditionExpression = Key("adminUserId").eq(partitionKey) & Key("validDiv").eq(sortKey)
     )
     items=queryData['Items']
     print(items)
@@ -24,7 +24,7 @@ def mechanicId_query(partitionKey, sortKey):
 def mechanicId_query(partitionKey, sortKey):
     queryData = table.query(
         IndexName = 'officeId-index',
-        KeyConditionExpression = Key("officeId").eq(partitionKey) & Key("validDiv").eq("sortKey")
+        KeyConditionExpression = Key("officeId").eq(partitionKey) & Key("validDiv").eq(sortKey)
     )
     items=queryData['Items']
     print(items)

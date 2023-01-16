@@ -23,7 +23,7 @@ def areaNo1_query(partitionKey):
 def areaNo1AndAreaNo2_query(partitionKey, sortKey):
     queryData = table.query(
         IndexName = 'areaNo1AndAreaNo2-index',
-        KeyConditionExpression = Key("officeId").eq(partitionKey) & Key("areaNo2").eq("sortKey")
+        KeyConditionExpression = Key("officeId").eq(partitionKey) & Key("areaNo2").eq(sortKey)
     )
     items=queryData['Items']
     print(items)

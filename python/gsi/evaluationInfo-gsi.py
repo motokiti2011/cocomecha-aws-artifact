@@ -14,7 +14,7 @@ table = dynamodb.Table("evaluationInfo")
 def slipNo_query(partitionKey, sortKey):
     queryData = table.query(
         IndexName = 'slipNo-index',
-        KeyConditionExpression = Key("slipNo").eq(partitionKey) & Key("serviceType").eq("sortKey")
+        KeyConditionExpression = Key("slipNo").eq(partitionKey) & Key("serviceType").eq(sortKey)
     )
     items=queryData['Items']
     print(items)
@@ -25,7 +25,7 @@ def slipNo_query(partitionKey, sortKey):
 def mechanicId_query(partitionKey, sortKey):
     queryData = table.query(
         IndexName = 'mechanicId-index',
-        KeyConditionExpression = Key("mechanicId").eq(partitionKey) & Key("serviceType").eq("sortKey")
+        KeyConditionExpression = Key("mechanicId").eq(partitionKey) & Key("serviceType").eq(sortKey)
     )
     items=queryData['Items']
     print(items)
@@ -36,7 +36,7 @@ def mechanicId_query(partitionKey, sortKey):
 def officeId_query(partitionKey, sortKey):
     queryData = table.query(
         IndexName = 'officeId-index',
-        KeyConditionExpression = Key("officeId").eq(partitionKey) & Key("serviceType").eq("sortKey")
+        KeyConditionExpression = Key("officeId").eq(partitionKey) & Key("serviceType").eq(sortKey)
     )
     items=queryData['Items']
     print(items)

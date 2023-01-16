@@ -23,7 +23,7 @@ def areaNo1_query(partitionKey):
 def areaNo1AndAreaNo2_query(partitionKey, sortKey):
     queryData = table.query(
         IndexName = 'areaNo1AndAreaNo2-index',
-        KeyConditionExpression = Key("officeId").eq(partitionKey) & Key("areaNo2").eq("sortKey")
+        KeyConditionExpression = Key("officeId").eq(partitionKey) & Key("areaNo2").eq(sortKey)
     )
     items=queryData['Items']
     print(items)
@@ -34,7 +34,7 @@ def areaNo1AndAreaNo2_query(partitionKey, sortKey):
 def slipAdminOffice_query(partitionKey, sortKey):
     queryData = table.query(
         IndexName = 'slipAdminOfficeId-index',
-        KeyConditionExpression = Key("slipAdminOfficeId").eq(partitionKey) & Key("deleteDiv").eq("sortKey")
+        KeyConditionExpression = Key("slipAdminOfficeId").eq(partitionKey) & Key("deleteDiv").eq(sortKey)
     )
     items=queryData['Items']
     print(items)
@@ -45,7 +45,7 @@ def slipAdminOffice_query(partitionKey, sortKey):
 def slipAdminMechanic_query(partitionKey, sortKey):
     queryData = table.query(
         IndexName = 'slipAdminMechanic-index',
-        KeyConditionExpression = Key("slipAdminMechanicId").eq(partitionKey) & Key("deleteDiv").eq("sortKey")
+        KeyConditionExpression = Key("slipAdminMechanicId").eq(partitionKey) & Key("deleteDiv").eq(sortKey)
     )
     items=queryData['Items']
     print(items)
