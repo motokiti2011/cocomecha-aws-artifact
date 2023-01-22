@@ -1,0 +1,154 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Scheduled Lambda Sample'
+Parameters:
+
+
+  # confirmMigrationServiceLambda‚ÌARN
+  ConfirmMigrationServiceLambdaArn:
+    Type: String
+
+  # deadlineCheckTransacitonServiceLambda‚ÌARN
+  DeadlineCheckTransacitonServiceLambdaArn:
+    Type: String
+
+  # expiredServiceLambda‚ÌARN
+  ExpiredServiceLambdaArn:
+    Type: String
+
+  # transactionEndBatchLambda‚ÌARN
+  TransactionEndBatchLambdaArn:
+    Type: String
+
+
+Resources:
+
+  # Role
+  EventScheduleRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - scheduler.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: CallStepFunctions
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - states:StartExecution
+                Resource:
+                  - "*"
+
+
+  # EventBridgeSchedule
+
+  ConfirmMigrationServiceSchedule:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Description: Recurring StepFunctions Schedule
+      ScheduleExpression: rate(12 hours)
+      FlexibleTimeWindow:
+        Mode: FLEXIBLE
+        MaximumWindowInMinutes: 60
+      State: ENABLED
+      Target:
+        Arn: !Ref ConfirmMigrationServiceLambdaArn
+        RoleArn:
+          Fn::GetAtt:
+          - EventScheduleRole
+          - Arn
+
+
+  DeadlineCheckTransacitonServiceSchedule:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Description: Recurring StepFunctions Schedule
+      ScheduleExpression: rate(12 hours)
+      FlexibleTimeWindow:
+        Mode: FLEXIBLE
+        MaximumWindowInMinutes: 60
+      State: ENABLED
+      Target:
+        Arn: !Ref DeadlineCheckTransacitonServiceLambdaArn
+        RoleArn:
+          Fn::GetAtt:
+          - EventScheduleRole
+          - Arn
+
+
+  ExpiredServiceSchedule:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Description: Recurring StepFunctions Schedule
+      ScheduleExpression: rate(12 hours)
+      FlexibleTimeWindow:
+        Mode: FLEXIBLE
+        MaximumWindowInMinutes: 60
+      State: ENABLED
+      Target:
+        Arn: !Ref ExpiredServiceLambdaArn
+        RoleArn:
+          Fn::GetAtt:
+          - EventScheduleRole
+          - Arn
+
+
+  TransactionEndBatchSchedule:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Description: Recurring StepFunctions Schedule
+      ScheduleExpression: rate(12 hours)
+      FlexibleTimeWindow:
+        Mode: FLEXIBLE
+        MaximumWindowInMinutes: 60
+      State: ENABLED
+      Target:
+        Arn: !Ref TransactionEndBatchLambdaArn
+        RoleArn:
+          Fn::GetAtt:
+          - EventScheduleRole
+          - Arn
+
+
+  # LambdaPermission
+  PermissionForEventsToInvokeLambda1:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: confirmMigrationServiceLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt 'ConfirmMigrationServiceSchedule.Arn'
+
+  PermissionForEventsToInvokeLambda2:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: deadlineCheckTransacitonServiceLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt 'DeadlineCheckTransacitonServiceSchedule.Arn'
+
+  PermissionForEventsToInvokeLambda3:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: expiredServiceLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt 'ExpiredServiceSchedule.Arn'
+
+  PermissionForEventsToInvokeLambda4:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: transactionEndBatchLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt 'TransactionEndBatchSchedule.Arn'
+
+

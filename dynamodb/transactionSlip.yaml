@@ -16,6 +16,12 @@ Resources:
           AttributeType: S
         - AttributeName: serviceType
           AttributeType: S
+        - AttributeName: deleteDiv
+          AttributeType: S
+        - AttributeName: completionScheduledDate
+          AttributeType: N
+        - AttributeName: ttlDate
+          AttributeType: N
 
       KeySchema:
         - AttributeName: slipNo
@@ -46,6 +52,31 @@ Resources:
             - AttributeName: officeId
               KeyType: HASH
             - AttributeName: serviceType
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+        - IndexName: deleteDiv-index
+          KeySchema:
+            - AttributeName: deleteDiv
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+        - IndexName: completionScheduledDate-index
+          KeySchema:
+            - AttributeName: deleteDiv
+              KeyType: HASH
+            - AttributeName: completionScheduledDate
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+        - IndexName: ttlDate-index
+          KeySchema:
+            - AttributeName: deleteDiv
+              KeyType: HASH
+            - AttributeName: ttlDate
               KeyType: RANGE
           Projection:
             ProjectionType: ALL

@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: DynamoDBAccessRole
+Resources:
+  # IAMポリシー
+  DynamoDBAccess:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: DynamoDBAccessRole.
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'dynamodb:*'
+              - 'logs:CreateLogGroup'
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+            Resource:
+              - '*'
+  # IAMロール
+  DynamoDBAccessRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      Description: UnauthenticatedRole for Cognito ID Pool.
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 'sts:AssumeRole'
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - !Ref DynamoDBAccess
+Outputs:
+  # IAMロールのARN
+  DynamoDBAccessRole:
+    Value: !GetAtt DynamoDBAccessRole.Arn

@@ -23,6 +23,9 @@ def operation_query(partitionKey):
 
 # レコード追加
 def post_product(PartitionKey, event):
+
+  now = datetime.now()
+
   putResponse = table.put_item(
     Item={
       'slipNo' : PartitionKey,
@@ -41,12 +44,13 @@ def post_product(PartitionKey, event):
       'targetVehicleName' : event['Keys']['targetVehicleName'],
       'targetVehicleInfo' : event['Keys']['targetVehicleInfo'],
       'workAreaInfo' : event['Keys']['workAreaInfo'],
+      'evaluationId' : event['Keys']['evaluationId'],
       'completionDate' : event['Keys']['completionDate'],
       'transactionCompletionDate' : event['Keys']['transactionCompletionDate'],
       'thumbnailUrl' : event['Keys']['thumbnailUrl'],
       'imageUrlList' : event['Keys']['imageUrlList'],
-      'created' : event['Keys']['created'],
-      'updated' : event['Keys']['updated']
+      'created' : now.strftime('%x %X'),
+      'updated' : now.strftime('%x %X')
     }
   )
   
@@ -55,8 +59,48 @@ def post_product(PartitionKey, event):
   else:
     print('Post Successed.')
   return putResponse
+
+# レコード更新
+def put_product(PartitionKey, event):
+
+  now = datetime.now()
+
+  putResponse = table.put_item(
+    Item={
+      'slipNo' : PartitionKey,
+      'slipAdminUserId' : event['Keys']['slipAdminUserId'],
+      'slipAdminOfficeId' : event['Keys']['slipAdminOfficeId'],
+      'slipAdminMechanicId' : event['Keys']['slipAdminMechanicId'],
+      'adminDiv' : event['Keys']['adminDiv'],
+      'title' : event['Keys']['title'],
+      'price' : event['Keys']['price'],
+      'bidMethod' : event['Keys']['bidMethod'],
+      'bidderId' : event['Keys']['bidderId'],
+      'bidEndDate' : event['Keys']['bidEndDate'],
+      'explanation' : event['Keys']['explanation'],
+      'targetService' : event['Keys']['targetService'],
+      'targetVehicleId' : event['Keys']['targetVehicleId'],
+      'targetVehicleName' : event['Keys']['targetVehicleName'],
+      'targetVehicleInfo' : event['Keys']['targetVehicleInfo'],
+      'workAreaInfo' : event['Keys']['workAreaInfo'],
+      'evaluationId' : event['Keys']['evaluationId'],
+      'completionDate' : event['Keys']['completionDate'],
+      'transactionCompletionDate' : event['Keys']['transactionCompletionDate'],
+      'thumbnailUrl' : event['Keys']['thumbnailUrl'],
+      'imageUrlList' : event['Keys']['imageUrlList'],
+      'created' : event['Keys']['created'],
+      'updated' : now.strftime('%x %X')
+    }
+  )
   
-  # レコード削除
+  if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+    print(putResponse)
+  else:
+    print('Post Successed.')
+  return putResponse
+
+
+# レコード削除
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        Key={
@@ -82,9 +126,13 @@ def lambda_handler(event, context):
       PartitionKey = event['Keys']['slipNo']
       return operation_query(PartitionKey)
 
-    elif OperationType == 'PUT':
+    elif OperationType == 'POST':
       PartitionKey = event['Keys']['slipNo']
       return post_product(PartitionKey, event)
+
+    elif OperationType == 'PUT':
+      PartitionKey = event['Keys']['slipNo']
+      return put_product(PartitionKey, event)
 
     elif OperationType == 'DELETE':
       return operation_delete(PartitionKey)

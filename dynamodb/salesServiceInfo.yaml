@@ -22,6 +22,8 @@ Resources:
           AttributeType: S
         - AttributeName: processStatus
           AttributeType: S
+        - AttributeName: preferredDate
+          AttributeType: N
 
       KeySchema:
         - AttributeName: slipNo
@@ -158,10 +160,15 @@ Resources:
             - AttributeName: processStatus
               KeyType: HASH
           Projection:
-            NonKeyAttributes:
-              - slipNo
-              - deleteDiv
-              - processStatus
-            ProjectionType: INCLUDE
+            ProjectionType: ALL
+
+        - IndexName: preferredDate-index
+          KeySchema:
+            - AttributeName: processStatus
+              KeyType: HASH
+            - AttributeName: preferredDate
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
 
       TableName: salesServiceInfo

@@ -40,6 +40,7 @@ def put_product(PartitionKey, event):
       'evaluation' : event['Keys']['evaluation'],
       'evaluationComment' : event['Keys']['evaluationComment'],
       'versusEvaluationComment' : event['Keys']['versusEvaluationComment'],
+      'versusEvaluationCommentDiv' : event['Keys']['versusEvaluationCommentDiv'],
       'created' : event['Keys']['created'],
       'updated' : now.strftime('%x %X')
     }
@@ -70,6 +71,7 @@ def operation_post(PartitionKey, event):
       'evaluation' : event['Keys']['evaluation'],
       'evaluationComment' : event['Keys']['evaluationComment'],
       'versusEvaluationComment' : event['Keys']['versusEvaluationComment'],
+      'versusEvaluationCommentDiv' : event['Keys']['versusEvaluationCommentDiv'],
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')
     }

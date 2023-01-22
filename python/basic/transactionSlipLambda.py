@@ -21,8 +21,8 @@ def operation_query(partitionKey, sortKey):
     print(items)
     return items
 
-# レコード追加
-def post_product(PartitionKey, event):
+# レコード更新
+def put_product(PartitionKey, event):
 
   now = datetime.now()
 
@@ -41,6 +41,7 @@ def post_product(PartitionKey, event):
       'bidderId' : event['Keys']['bidderId'],
       'deleteDiv' : event['Keys']['deleteDiv'],
       'completionScheduledDate' : event['Keys']['completionScheduledDate'],
+      'ttlDate' : 0,
       'created' : event['Keys']['created'],
       'updated' :  now.strftime('%x %X')
     }
@@ -86,6 +87,7 @@ def post_product(PartitionKey, event):
       'bidderId' : event['Keys']['bidderId'],
       'deleteDiv' : event['Keys']['deleteDiv'],
       'completionScheduledDate' : event['Keys']['completionScheduledDate'],
+      'ttlDate' : 0,
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')
 

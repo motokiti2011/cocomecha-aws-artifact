@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Manage myself verification environment
+
+Parameters:
+  # LambdaCode格納先のS3Buketを記述
+  S3Buket:
+    Type: String
+    Description: S3Buket
+  # テンプレート格納先のURL
+  TemplateUrl:
+    Type: String
+    Description: TemplateURL
+  # Lambdaコード格納先のディレクトリ名
+  LambdaCodeDirectory:
+    Type: String
+    Description: LambdaCodeDirectory
+
+
+Resources:
+  # Roleの作成
+  Role:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'iam/hocomecha-batch-role.yaml'
+
+
+
+  # Lambdaの作成
+  ScheduleBatchLambdaRoot:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'schedule-batch-lambda-root.yaml'
+      Parameters:
+        LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
+        S3Buket: !Ref S3Buket
+        LambdaCodeDirectory: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+        TemplateUrl: !Join 
+        - ''
+        - - !Ref TemplateUrl
+
+
+  # EventBridge Schedulerの作成
+  EventBridgeScheduler:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'schedule-batch-days.yaml'
+      Parameters:
+        ConfirmMigrationServiceLambdaArn: !GetAtt ScheduleBatchLambdaRoot.Outputs.ConfirmMigrationServiceLambda
+        DeadlineCheckTransacitonServiceLambdaArn: !GetAtt ScheduleBatchLambdaRoot.Outputs.DeadlineCheckTransacitonServiceLambda
+        ExpiredServiceLambdaArn: !GetAtt ScheduleBatchLambdaRoot.Outputs.ExpiredServiceLambda
+        TransactionEndBatchLambdaArn: !GetAtt ScheduleBatchLambdaRoot.Outputs.TransactionEndBatchLambda
+
+Outputs:
+  # 構築したリージョン
+  Region:
+    Value: !Ref AWS::Region
+    Description: Region
+
