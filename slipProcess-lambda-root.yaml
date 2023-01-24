@@ -71,6 +71,22 @@ Resources:
           - '/slipProcess/zip'
           - '/transactionEndLambda.zip'
 
+  RelistedServiceLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/slipProcess/relistedServiceLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/slipProcess/zip'
+          - '/relistedServiceLambda.zip'
+
 
 Outputs:
 
@@ -85,4 +101,8 @@ Outputs:
   # TransactionEndLambda‚ÌARN
   TransactionEndLambda:
     Value: !GetAtt TransactionEndLambda.Outputs.TransactionEndLambda
+
+  # RelistedServiceLambda‚ÌARN
+  RelistedServiceLambda:
+    Value: !GetAtt RelistedServiceLambda.Outputs.RelistedServiceLambda
 

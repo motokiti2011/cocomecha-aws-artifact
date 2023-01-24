@@ -253,7 +253,7 @@ Resources:
         ConfirmTransactionLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.ConfirmTransactionLambda
         SendTransactionRequestLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.SendTransactionRequestLambda
         TransactionEndLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.TransactionEndLambda
-
+        RelistedServiceLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.RelistedServiceLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 

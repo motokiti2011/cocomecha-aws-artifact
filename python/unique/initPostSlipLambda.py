@@ -95,7 +95,7 @@ def post_product(PartitionKey, event):
       'slipAdminName' : event['Keys']['slipAdminUserName'],
       'bidderId' : event['Keys']['bidderId'],
       'deleteDiv' : '0',
-      'completionScheduledDate': '' ,
+      'completionScheduledDate': 0 ,
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')
     }
