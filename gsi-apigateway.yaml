@@ -93,6 +93,16 @@ Parameters:
     Type: String
     Description: HistoryUserInfoGSI of Lambda
 
+  # SerchServiceContentsGSIのARN
+  SerchServiceContentsGSILambdaArn:
+    Type: String
+    Description: SerchServiceContentsGSI of Lambda
+
+  # SerchSlipContentsGSIのARN
+  SerchSlipContentsGSILambdaArn:
+    Type: String
+    Description: SerchSlipContentsGSI of Lambda
+
 
   # CognitoUserPoolのARN
   UserPoolArn:
@@ -912,6 +922,86 @@ Resources:
     DependsOn: LambdaPermission19
 
 
+  # SerchServiceContentsGSIリソース
+  SerchServiceContentsGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: serchservicecontents
+      RestApiId: !Ref ApiGwRestAPI
+  # SerchServiceContentsGSIメソッド
+  SerchServiceContentsGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SerchServiceContentsGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SerchServiceContentsGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission20
+
+
+
+  # SerchSlipContentsGSIリソース
+  SerchSlipContentsGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: serchslipcontents
+      RestApiId: !Ref ApiGwRestAPI
+  # SerchSlipContentsGSIメソッド
+  SerchSlipContentsGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SerchSlipContentsGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SerchSlipContentsGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission21
+
+
+
 
   # LambdaPermission
   LambdaPermission1:
@@ -1040,3 +1130,19 @@ Resources:
       FunctionName: historyUserInfo-gsi
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
+
+  LambdaPermission20:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: serchServiceContents-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission21:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: serchSlipContents-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+

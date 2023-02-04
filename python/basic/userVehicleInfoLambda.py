@@ -33,6 +33,10 @@ def put_product(PartitionKey, event):
       'userId' : event['Keys']['userId'],
       'vehicleName' : event['Keys']['vehicleName'],
       'vehicleNo' : event['Keys']['vehicleNo'],
+      'vehicleNoAreaName' : event['Keys']['vehicleNoAreaName'],
+      'vehicleNoClassificationNum' : event['Keys']['vehicleNoClassificationNum'],
+      'vehicleNoKana' : event['Keys']['vehicleNoKana'],
+      'vehicleNoSerialNum' : event['Keys']['vehicleNoSerialNum'],
       'chassisNo' : event['Keys']['chassisNo'],
       'designatedClassification' : event['Keys']['designatedClassification'],
       'coler' : event['Keys']['coler'],
@@ -50,7 +54,7 @@ def put_product(PartitionKey, event):
     print(putResponse)
   else:
     print('Post Successed.')
-  return putResponse
+  return putResponse['ResponseMetadata']['HTTPStatusCode']
 
 
 # ÉåÉRÅ[Éhí«â¡
@@ -64,6 +68,10 @@ def post_product(PartitionKey, event):
       'userId' : event['Keys']['userId'],
       'vehicleName' : event['Keys']['vehicleName'],
       'vehicleNo' : event['Keys']['vehicleNo'],
+      'vehicleNoAreaName' : event['Keys']['vehicleNoAreaName'],
+      'vehicleNoClassificationNum' : event['Keys']['vehicleNoClassificationNum'],
+      'vehicleNoKana' : event['Keys']['vehicleNoKana'],
+      'vehicleNoSerialNum' : event['Keys']['vehicleNoSerialNum'],
       'chassisNo' : event['Keys']['chassisNo'],
       'designatedClassification' : event['Keys']['designatedClassification'],
       'coler' : event['Keys']['coler'],
@@ -81,7 +89,7 @@ def post_product(PartitionKey, event):
     print(putResponse)
   else:
     print('Post Successed.')
-  return putResponse
+  return putResponse['ResponseMetadata']['HTTPStatusCode']
 
 
 

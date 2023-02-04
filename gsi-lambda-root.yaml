@@ -317,6 +317,40 @@ Resources:
           - '/gsi/zip'
           - '/historyUserInfo-gsi.zip'
 
+
+  SerchServiceContentsGsi:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/gsi/serchServiceContents-gsi.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
+          - '/serchServiceContents-gsi.zip'
+
+
+  SerchSlipContentsGsi:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/gsi/serchSlipContents-gsi.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
+          - '/serchSlipContents-gsi.zip'
+
 Outputs:
 
   # BrowsingHistory-gsi‚ÌARN
@@ -390,3 +424,12 @@ Outputs:
   # HistoryUserInfo-gsi‚ÌARN
   HistoryUserInfoGSILambda:
     Value: !GetAtt HistoryUserInfoGSI.Outputs.HistoryUserInfoGSILambda
+
+  # SerchServiceContents-gsi‚ÌARN
+  SerchServiceContentsGSILambda:
+    Value: !GetAtt SerchServiceContentsGsi.Outputs.SerchServiceContentsGSILambda
+
+  # SerchSlipContents-gsi‚ÌARN
+  SerchSlipContentsGSILambda:
+    Value: !GetAtt SerchSlipContentsGsi.Outputs.SerchSlipContentsGSILambda
+

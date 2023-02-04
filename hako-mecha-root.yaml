@@ -199,6 +199,8 @@ Resources:
         FactoryMechanicFavoriteGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.FactoryMechanicFavoriteGSILambda
         ServiceTransactionRequestGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.ServiceTransactionRequestGSILambda
         HistoryUserInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.HistoryUserInfoGSILambda
+        SerchServiceContentsGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SerchServiceContentsGSILambda
+        SerchSlipContentsGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SerchSlipContentsGSILambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 

@@ -23,7 +23,7 @@ def operation_query(partitionKey):
     return items
 
 # レコード更新
-def post_product(PartitionKey, event):
+def put_product(PartitionKey, event):
 
   now = datetime.now()
 
@@ -35,6 +35,7 @@ def post_product(PartitionKey, event):
       'officeMailAdress' : event['Keys']['officeMailAdress'],
       'officeArea1' : event['Keys']['officeArea1'],
       'officeArea' : event['Keys']['officeArea'],
+      'officeAdress' : event['Keys']['officeAdress'],
       'officePostCode' : event['Keys']['officePostCode'],
       'workContentList' : event['Keys']['workContentList'],
       'businessHours' : event['Keys']['businessHours'],
@@ -44,6 +45,7 @@ def post_product(PartitionKey, event):
       'employeeList' : event['Keys']['employeeList'],
       'officePR' : event['Keys']['officePR'],
       'officePRimageURL' : event['Keys']['officePRimageURL'],
+      'officeFormList' : event['Keys']['officeFormList'],
       'created' : event['Keys']['created'],
       'updated' :  now.strftime('%x %X')
     }
@@ -53,7 +55,7 @@ def post_product(PartitionKey, event):
     print(putResponse)
   else:
     print('Post Successed.')
-  return putResponse
+  return putResponse['ResponseMetadata']['HTTPStatusCode']
 
 
 
@@ -70,6 +72,7 @@ def post_product(PartitionKey, event):
       'officeMailAdress' : event['Keys']['officeMailAdress'],
       'officeArea1' : event['Keys']['officeArea1'],
       'officeArea' : event['Keys']['officeArea'],
+      'officeAdress' : event['Keys']['officeAdress'],
       'officePostCode' : event['Keys']['officePostCode'],
       'workContentList' : event['Keys']['workContentList'],
       'businessHours' : event['Keys']['businessHours'],
@@ -79,6 +82,7 @@ def post_product(PartitionKey, event):
       'employeeList' : event['Keys']['employeeList'],
       'officePR' : event['Keys']['officePR'],
       'officePRimageURL' : event['Keys']['officePRimageURL'],
+      'officeFormList' : event['Keys']['officeFormList'],
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')
     }
