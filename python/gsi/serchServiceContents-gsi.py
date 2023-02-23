@@ -1,7 +1,7 @@
 import json
 import boto3
 
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 # Keyオブジェクトを利用できるようにする
 
 # Dynamodbアクセスのためのオブジェクト取得
@@ -14,12 +14,24 @@ def areaNo1_query(event):
 
     # 検索条件作成
     serchFilter = createFilter(event)
+    print('serchFilter')
+    print(serchFilter)
 
-    queryData = table.query(
-        IndexName = 'areaNo1-index',
-        KeyConditionExpression = Key("areaNo1").eq(event['Keys']['areaNo1'])
-        FilterExpression: serchFilter,
-    )
+    if serchFilter != '' :
+      options = {
+        'IndexName' : 'areaNo1-index',
+        'KeyConditionExpression': Key("areaNo1").eq(event['Keys']['area1']),
+        'FilterExpression': createFilter(event),
+      }
+    else :
+      options = {
+        'IndexName' : 'areaNo1-index',
+        'KeyConditionExpression': Key("areaNo1").eq(event['Keys']['area1']),
+      }
+    
+    print('options:')
+    print( options)
+    queryData = table.query(**options)
     items=queryData['Items']
     print(items)
     return items
@@ -30,12 +42,24 @@ def areaNo1AndAreaNo2_query(event):
 
     # 検索条件作成
     serchFilter = createFilter(event)
+    print('serchFilter')
+    print(serchFilter)
+    
+    if serchFilter != '' :
+      options = {
+        'IndexName' : 'areaNo1AndAreaNo2-index',
+        'KeyConditionExpression': Key("areaNo1").eq(event['Keys']['area1']) & Key("areaNo2").eq(event['Keys']['area2']),
+        'FilterExpression': createFilter(event),
+      }
+    else :
+      options = {
+        'IndexName' : 'areaNo1AndAreaNo2-index',
+        'KeyConditionExpression': Key("areaNo1").eq(event['Keys']['area1']) & Key("areaNo2").eq(event['Keys']['area2']),
+      }
 
-    queryData = table.query(
-        IndexName = 'areaNo1AndAreaNo2-index',
-        KeyConditionExpression = Key("areaNo2").eq(event['Keys']['areaNo1']) & Key("areaNo2").eq(event['Keys']['areaNo2']),
-        FilterExpression: serchFilter,
-    )
+    print('options:')
+    print( options)
+    queryData = table.query(**options)
     items=queryData['Items']
     print(items)
     return items
@@ -45,44 +69,30 @@ def areaNo1AndAreaNo2_query(event):
 def createFilter(event):
 
     # 検索条件作成
-    area2 : event['Keys']['areaNo2']
-    category : event['Keys']['category']
-    amount1 : event['Keys']['amount1']
-    amount2 : event['Keys']['amount2']
-    amountSerchDiv : event['Keys']['amountSerchDiv']
-    
+    area2 = event['Keys']['area2']
+    category = event['Keys']['category']
+    amount1 = event['Keys']['amount1']
+    amount2 = event['Keys']['amount2']
+    amountSerchDiv = event['Keys']['amountSerchDiv']
+
     # その他検索条件がなし
-    if area2 == '0' && category == '0' && amountSerchDiv == false :
+    if category == '0' and amountSerchDiv == True :
+      print('1')
       return ''
-
-    # 地域2情報のみ
-    if area2 != '0' && category == '0' && amountSerchDiv == false :
-      return Attr('area2').eq(area2)
-
     # カテゴリーのみ
-    if area2 == '0' && category != '0' && amountSerchDiv == false :
+    if category != '0' and amountSerchDiv == True :
+      print('2')
       return Attr('category').eq(category)
-
     # 金額のみ
-    if area2 == '0' && category == '0' && amountSerchDiv == true :
+    if category == '0' and amountSerchDiv == False :
+      print('3')
       return Attr('amount').GE(amount1) & Attr('amount').LE(amount2)
-
-    # 地域2,カテゴリー
-    if area2 != '0' && category != '0' && amountSerchDiv == false :
-      return Attr('area2').eq(area2) & Attr('category').eq(category)
-
-    # 地域2,金額
-    if area2 != '0' && category == '0' && amountSerchDiv == true :
-      return Attr('area2').eq(area2) & Attr('amount').GE(amount1) & Attr('amount').LE(amount2)
-
     # カテゴリー,金額
-    if area2 == '0' && category != '0' && amountSerchDiv == true :
+    if category != '0' and amountSerchDiv == False :
+      print('4')
       return Attr('category').eq(category) & Attr('amount').GE(amount1) & Attr('amount').LE(amount2)
-
-    # 地域2,カテゴリー,金額
-    if area2 == '0' && category != '0' && amountSerchDiv == true :
-      return Attr('area2').eq(area2) & Attr('category').eq(category) & Attr('amount').GE(amount1) & Attr('amount').LE(amount2)
-
+    # カテゴリー,金額
+    print('5')
     return ''
 
 
@@ -92,14 +102,14 @@ def lambda_handler(event, context):
     try:
 
         # インデックスタイプチェック
-        if IndexType == 'SERCH-SERVICE-INDEX':
-            area2 = event['Keys']['areaNo2']
+        if IndexType == 'SERCH-SLIP-INDEX':
+            area2 = event['Keys']['area2']
             # 検索値「エリア2のチェック」
             if area2 == 0:
                 return areaNo1_query(event)
             else:
                 return areaNo1AndAreaNo2_query(event)
-        elif:
+        else:
           return 500
 
 

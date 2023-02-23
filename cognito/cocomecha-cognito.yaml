@@ -13,7 +13,7 @@ Resources:
           RequireLowercase: true
           RequireNumbers: true
           RequireSymbols: true
-      UserPoolName: 'coco-mecha-user-pool'
+      UserPoolName: 'hako-mecha-user-pool'
       MfaConfiguration: 'OFF'
       AdminCreateUserConfig:
         AllowAdminCreateUserOnly: false
@@ -30,7 +30,7 @@ Resources:
     Type: 'AWS::Cognito::UserPoolClient'
     Properties:
       UserPoolId: !Ref UserPool
-      ClientName: 'coco-mecha-user-pool-client'
+      ClientName: 'hako-mecha-user-pool-client'
       RefreshTokenValidity: 30
       ExplicitAuthFlows:
         - ALLOW_ADMIN_USER_PASSWORD_AUTH
@@ -41,7 +41,7 @@ Resources:
   IdentityPool:
     Type: 'AWS::Cognito::IdentityPool'
     Properties:
-      IdentityPoolName: coco-mecha-Identity-Pool
+      IdentityPoolName: hako-mecha-Identity-Pool
       AllowUnauthenticatedIdentities: true
       CognitoIdentityProviders:
         - ClientId: !Ref UserPoolClient
