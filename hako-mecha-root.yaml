@@ -240,7 +240,8 @@ Resources:
         SerchslipContentsLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SerchslipContentsLambda
         SendSlipMessageLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SendSlipMessageLambda
         SendSlipQuestionLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SendSlipQuestionLambda
-
+        SalesAdminInfoLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SalesAdminInfoLambda
+        SlipAdminInfoLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SlipAdminInfoLambda
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
 

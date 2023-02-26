@@ -46,6 +46,7 @@ def put_product(PartitionKey, event):
       'officePR' : event['Keys']['officePR'],
       'officePRimageURL' : event['Keys']['officePRimageURL'],
       'officeFormList' : event['Keys']['officeFormList'],
+      'publicInfo' : event['Keys']['publicInfo'],
       'created' : event['Keys']['created'],
       'updated' :  now.strftime('%x %X')
     }
@@ -83,6 +84,7 @@ def post_product(PartitionKey, event):
       'officePR' : event['Keys']['officePR'],
       'officePRimageURL' : event['Keys']['officePRimageURL'],
       'officeFormList' : event['Keys']['officeFormList'],
+      'publicInfo' : event['Keys']['publicInfo'],
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')
     }

@@ -44,6 +44,7 @@ def put_product(PartitionKey, event):
       'profileImageUrl' : event['Keys']['profileImageUrl'],
       'Introduction' : event['Keys']['Introduction'],
       'evaluationInfoIdList' : event['Keys']['evaluationInfoIdList'],
+      'publicInfo' : event['Keys']['publicInfo'],
       'updateUserId' : event['Keys']['updateUserId'],
       'created' : event['Keys']['created'],
       'updated' :  now.strftime('%x %X')
@@ -79,6 +80,7 @@ def post_product(PartitionKey, event):
       'profileImageUrl' : event['Keys']['profileImageUrl'],
       'Introduction' : event['Keys']['Introduction'],
       'evaluationInfoIdList' : event['Keys']['evaluationInfoIdList'],
+      'publicInfo' : event['Keys']['publicInfo'],
       'updateUserId' : event['Keys']['updateUserId'],
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')

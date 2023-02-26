@@ -15,7 +15,7 @@ def operation_query(partitionKey):
     )
     items=queryData['Items']
     print(items)
-    return items
+    return items[0]
 
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))

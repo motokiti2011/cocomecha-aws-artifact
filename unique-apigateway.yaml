@@ -54,6 +54,14 @@ Parameters:
   SendSlipQuestionLambdaArn:
     Type: String
 
+  # SalesAdminInfoLambdaArnのARN
+  SalesAdminInfoLambdaArn:
+    Type: String
+
+  # SlipAdminInfoLambdaArnのARN
+  SlipAdminInfoLambdaArn:
+    Type: String
+
   # CognitoUserPoolのARN
   UserPoolArn:
     Type: String
@@ -66,7 +74,7 @@ Resources:
     Type: 'AWS::ApiGateway::RestApi'
     Properties:
       Description: This is the Description of ApiGwRestAPI
-      Name: 'cocomecha-UNIQUE-APIGW'
+      Name: 'hokomecha-UNIQUE-APIGW'
       EndpointConfiguration:
         Types:
           - REGIONAL
@@ -654,6 +662,86 @@ Resources:
     DependsOn: LambdaPermission8
 
 
+  # SalesAdminInfoリソース
+  SalesAdminInfoResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: salesadmininfo
+      RestApiId: !Ref ApiGwRestAPI
+  # SalesAdminInfoメソッド
+  SalesAdminInfoMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SalesAdminInfoResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SalesAdminInfoLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission14
+
+
+  # SlipAdminInfoリソース
+  SlipAdminInfoResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: slipadmininfo
+      RestApiId: !Ref ApiGwRestAPI
+  # SlipAdminInfoメソッド
+  SlipAdminInfoMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SlipAdminInfoResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SlipAdminInfoLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission15
+
+
   # LambdaPermission
   LambdaPermission1:
     Type: 'AWS::Lambda::Permission'
@@ -745,4 +833,20 @@ Resources:
       FunctionName: multipleFavoriteLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
+
+  LambdaPermission14:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: salesAdminInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission15:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: slipAdminInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+
 

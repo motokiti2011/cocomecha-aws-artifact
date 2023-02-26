@@ -44,7 +44,8 @@ def post_product(PartitionKey, event):
       'baseId' : event['Keys']['baseId'],
       'officeRole' : event['Keys']['officeRole'],
       'profileImageUrl' : event['Keys']['profileImageUrl'],
-      'Introduction' : event['Keys']['Introduction'],
+      'introduction' : event['Keys']['introduction'],
+      'publicInfo' : event['Keys']['publicInfo'],
       'updateUserId' : event['Keys']['updateUserId'],
       'created' : event['Keys']['created'],
       'updated' : now.strftime('%x %X')

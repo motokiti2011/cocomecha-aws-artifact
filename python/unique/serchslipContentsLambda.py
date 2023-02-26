@@ -140,7 +140,7 @@ def lambda_handler(event, context) :
         # i‚è‚İ
         for item in queryItems :
           # ƒJƒeƒSƒŠ[
-          if category != "" :
+          if category != "0" :
             if category != item['category'] :
               continue
           # “üD•û®
