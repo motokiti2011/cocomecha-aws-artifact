@@ -261,6 +261,23 @@ Resources:
           - '/unique/zip'
           - '/slipAdminInfoLambda.zip'
 
+  PastTransactionLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/unique/pastTransactionLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/unique/zip'
+          - '/pastTransactionLambda.zip'
+
+
 Outputs:
 
   # GetSlipLambda‚ÌARN
@@ -323,5 +340,7 @@ Outputs:
   SlipAdminInfoLambda:
     Value: !GetAtt SlipAdminInfoLambda.Outputs.SlipAdminInfoLambda
 
-
+  # PastTransactionLambda‚ÌARN
+  PastTransactionLambda:
+    Value: !GetAtt PastTransactionLambda.Outputs.PastTransactionLambda
 

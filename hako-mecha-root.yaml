@@ -25,7 +25,7 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'iam/cocomecha-role.yaml'
+          - 'iam/hakomecha-role.yaml'
 
 
   # DynamoDBの作成
@@ -129,6 +129,24 @@ Resources:
         - - !Ref TemplateUrl
 
 
+  InternalLambdaRoot:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'internal-lambda-root.yaml'
+      Parameters:
+        LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
+        S3Buket: !Ref S3Buket
+        LambdaCodeDirectory: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+        TemplateUrl: !Join 
+        - ''
+        - - !Ref TemplateUrl
+
+
   # Cognitoの作成
   Cognito:
     Type: AWS::CloudFormation::Stack
@@ -136,7 +154,7 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 'cognito/cocomecha-cognito.yaml'
+          - 'cognito/hakomecha-cognito.yaml'
 
 
   # APIGatewayの作成
@@ -215,6 +233,7 @@ Resources:
       Parameters:
         SlipMegPrmUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.SlipMegPrmUserCheckLambda
         SlipAdminUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.SlipAdminUserCheckLambda
+        CheckAcceseAdminLambdaArn: !GetAtt CheckLambdaRoot.Outputs.CheckAcceseAdminLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
@@ -242,6 +261,7 @@ Resources:
         SendSlipQuestionLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SendSlipQuestionLambda
         SalesAdminInfoLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SalesAdminInfoLambda
         SlipAdminInfoLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SlipAdminInfoLambda
+        PastTransactionLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.PastTransactionLambda
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
 
@@ -269,9 +289,9 @@ Resources:
       TemplateURL: !Join 
         - ''
         - - !Ref TemplateUrl
-          - 's3/cocomecha-s3-upload.yaml'
+          - 's3/hakomecha-s3-upload.yaml'
       Parameters:
-        S3BucketName: 'cocomecha-s3-upload'
+        S3BucketName: 'hakomecha-s3-upload'
 
 
 Outputs:

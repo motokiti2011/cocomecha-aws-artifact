@@ -12,6 +12,7 @@ Resources:
           - Effect: Allow
             Action:
               - 'dynamodb:*'
+              - 'lambda:InvokeFunction'
               - 'logs:CreateLogGroup'
               - 'logs:CreateLogStream'
               - 'logs:PutLogEvents'

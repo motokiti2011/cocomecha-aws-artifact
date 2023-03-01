@@ -9,6 +9,11 @@ Parameters:
   SlipAdminUserCheckLambdaArn:
     Type: String
 
+  # checkAcceseAdminLambdaArnのARN
+  CheckAcceseAdminLambdaArn:
+    Type: String
+
+
 
   # CognitoUserPoolのARN
   UserPoolArn:
@@ -152,6 +157,43 @@ Resources:
     DependsOn: LambdaPermission2
 
 
+  # CheckAcceseAdminリソース
+  CheckAcceseAdminResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref CheckResource
+      PathPart: checkacceseadmin
+      RestApiId: !Ref ApiGwRestAPI
+  # CheckAcceseAdminメソッド
+  CheckAcceseAdminMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref CheckAcceseAdminResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref CheckAcceseAdminLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission3
 
 
   # LambdaPermission
@@ -168,3 +210,11 @@ Resources:
       FunctionName: slipAdminUserCheckLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
+
+  LambdaPermission3:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: slipAdminUserCheckLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+

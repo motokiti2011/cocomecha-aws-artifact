@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: IaC for Lambda
+Parameters:
+  # LambdaにアタッチするIAMロールのARN
+  LambdaRoleArn:
+    Type: String
+    Description: Role of Lambda Function
+  # S3Buket:Lambdaコードの格納先S3Buket
+  S3Buket:
+    Type: String
+    Description: S3Buket
+  # Lambdaコード格納先のディレクトリ名
+  LambdaCodeDirectory:
+    Type: String
+    Description: LambdaCodeDirectory
+  # テンプレート格納先のURL
+  TemplateUrl:
+    Type: String
+    Description: TemplateURL
+
+
+Resources:
+
+  InternalAdminCheckLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/internal/internalAdminCheckLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/internal/zip'
+          - '/internalAdminCheckLambda.zip'
+
+
+Outputs:
+  # InternalAdminCheckLambdaのARN
+  InternalAdminCheckLambda:
+    Value: !GetAtt InternalAdminCheckLambda.Outputs.InternalAdminCheckLambda
+
+
+

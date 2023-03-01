@@ -47,6 +47,7 @@ def lambda_handler(event, context) :
           items = mechanicInfo_query(id)
           # Œ‹‰Ê‚ÌŠi”[
           result={
+            'adminId' :items[0]['mechanicId'],
             'adminName' :items[0]['mechanicName'],
             'mail' :items[0]['mailAdress'],
             'telNo':items[0]['telList'],
@@ -67,6 +68,7 @@ def lambda_handler(event, context) :
           items = officeInfo_query(id)
           # Œ‹‰Ê‚ÌŠi”[
           result={
+            'adminId' :items[0]['officeId'],
             'adminName' :items[0]['officeName'],
             'mail' :items[0]['officeMailAdress'],
             'telNo': items[0]['userName'],

@@ -98,7 +98,7 @@ def user_post(userId, mechanicId, officeId, officeDiv, event):
       'baseId' : items[0]['baseId'],
       'officeRole' : role,
       'profileImageUrl' : items[0]['profileImageUrl'],
-      'Introduction' : items[0]['Introduction'],
+      'introduction' : items[0]['introduction'],
       'updateUserId' : items[0]['updateUserId'],
       'created' : items[0]['created'],
       'updated' : items[0]['updated']

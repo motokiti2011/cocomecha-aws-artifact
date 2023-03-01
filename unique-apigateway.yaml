@@ -2,64 +2,68 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: IaC for API Gateway
 Parameters:
 
-  # getSlipLambdaArnのARN
+  # getSlipLambdaのARN
   GetSlipLambdaArn:
     Type: String
 
-  # getSalesServiceLambdaArnのARN
+  # getSalesServiceLambdaのARN
   GetSalesServiceLambdaArn:
     Type: String
 
-  # messageParmRequestLambdaArnのARN
+  # messageParmRequestLambdaのARN
   MessageParmRequestLambdaArn:
     Type: String
 
-  # multipleBrowsingHistoryLambdaArnのARN
+  # multipleBrowsingHistoryLambdaのARN
   MultipleBrowsingHistoryLambdaArn:
     Type: String
 
-  # multipleFavoriteLambdaArnのARN
+  # multipleFavoriteLambdaのARN
   MultipleFavoriteLambdaArn:
     Type: String
 
-  # initPostSlipLambdaArnのARN
+  # initPostSlipLambdaのARN
   InitPostSlipLambdaArn:
     Type: String
 
-  # initMechanicUserLambdaArnのARN
+  # initMechanicUserLambdaのARN
   InitMechanicUserLambdaArn:
     Type: String
 
-  # initOfficeLambdaArnのARN
+  # initOfficeLambdaのARN
   InitOfficeLambdaArn:
     Type: String
 
-  # initSalesServiceLambdaArnのARN
+  # initSalesServiceLambdaのARN
   InitSalesServiceLambdaArn:
     Type: String
 
-  # SerchSalesServiceContentsLambdaArnのARN
+  # SerchSalesServiceContentsLambdaのARN
   SerchSalesServiceContentsLambdaArn:
     Type: String
 
-  # SerchslipContentsLambdaArnのARN
+  # SerchslipContentsLambdaのARN
   SerchslipContentsLambdaArn:
     Type: String
 
-  # SendSlipMessageLambdaArnのARN
+  # SendSlipMessageLambdaのARN
   SendSlipMessageLambdaArn:
     Type: String
 
-  # SendSlipQuestionLambdaArnのARN
+  # SendSlipQuestionLambdaのARN
   SendSlipQuestionLambdaArn:
     Type: String
 
-  # SalesAdminInfoLambdaArnのARN
+  # SalesAdminInfoLambdaのARN
   SalesAdminInfoLambdaArn:
     Type: String
 
-  # SlipAdminInfoLambdaArnのARN
+  # SlipAdminInfoLambdaのARN
   SlipAdminInfoLambdaArn:
+    Type: String
+
+  # PastTransactionLambdaのARN
+  PastTransactionLambdaArn:
     Type: String
 
   # CognitoUserPoolのARN
@@ -742,6 +746,46 @@ Resources:
     DependsOn: LambdaPermission15
 
 
+  # PastTransactionリソース
+  PastTransactionResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: pasttransaction
+      RestApiId: !Ref ApiGwRestAPI
+  # PastTransactionメソッド
+  PastTransactionMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref PastTransactionResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref PastTransactionLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission16
+
+
   # LambdaPermission
   LambdaPermission1:
     Type: 'AWS::Lambda::Permission'
@@ -848,5 +892,10 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 
-
+  LambdaPermission16:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: pastTransactionLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
 

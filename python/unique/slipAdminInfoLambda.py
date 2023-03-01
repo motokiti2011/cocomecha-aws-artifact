@@ -37,6 +37,7 @@ def lambda_handler(event, context) :
         
         # Œ‹‰Ê‚ÌŠi”[
         result={
+          'adminId' :items['userId'],
           'adminName' :items['userName'],
           'mail' :None,
           'telNo':None,

@@ -30,9 +30,9 @@ def slipAdminOffice_query(partitionKey):
     return items
 
 # 3ÉåÉRÅ[Éhåüçı slipAdminMechanicId-index
-def slipAdminBaseId_query(partitionKey):
+def slipAdminMechanicId_query(partitionKey):
     queryData = table.query(
-        IndexName = 'slipAdminBaseId-index',
+        IndexName = 'slipAdminMechanicId-index',
         KeyConditionExpression = Key("slipAdminMechanicId").eq(partitionKey)
     )
     items=queryData['Items']
@@ -55,7 +55,7 @@ def lambda_handler(event, context):
 
         elif IndexType == 'SLIPADMINMECHANIC-INDEX':
           PartitionKey = event['Keys']['id']
-          return slipAdminBaseId_query(PartitionKey)
+          return slipAdminMechanicId_query(PartitionKey)
 
     except Exception as e:
         print("Error Exception.")
