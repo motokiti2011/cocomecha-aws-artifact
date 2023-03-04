@@ -10,15 +10,15 @@ from boto3.dynamodb.conditions import Key
 # Dynamodbアクセスのためのオブジェクト取得
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
-table = dynamodb.Table("transactionSlip")
-table2 = dynamodb.Table("userMyList")
+transactionSlip = dynamodb.Table("transactionSlip")
+userMyList = dynamodb.Table("userMyList")
 
 
 
 # 取引依頼TBLレコード登録
 def post_transaction(PartitionKey, event):
   now = datetime.now()
-  putResponse = table.put_item(
+  putResponse = transactionSlip.put_item(
     Item={
       'id' : PartitionKey,
       'serviceType' : event['Keys']['serviceType'],
@@ -50,7 +50,7 @@ def post_transaction(PartitionKey, event):
 def put_adminMyList(PartitionKey, event):
   # マイリストTBLの登録
   # 伝票管理者
-  userMyListAdminResponse = table2.put_item(
+  userMyListAdminResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),
       'userId' : event['Keys']['slipAdminUserId'],
@@ -64,6 +64,7 @@ def put_adminMyList(PartitionKey, event):
       'readDiv' : '0',
       'messageDate' : now.strftime('%x %X'),
       'messageOrQuastionId' : '' ,
+      'requestInfo' : NONE,
       'deleteDiv' : '0',
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')
@@ -80,7 +81,7 @@ def put_adminMyList(PartitionKey, event):
 
 # 取引依頼者のマイリストの更新
 def put_requestMyList(PartitionKey, event):
-  userMyListResponse = table2.put_item(
+  userMyListResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),
       'userId' : event['Keys']['slipAdminUserId'],
@@ -94,6 +95,7 @@ def put_requestMyList(PartitionKey, event):
       'readDiv' : '0',
       'messageDate' : now.strftime('%x %X'),
       'messageOrQuastionId' : '' ,
+      'requestInfo' : NONE,
       'deleteDiv' : '0',
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')
@@ -110,7 +112,7 @@ def put_requestMyList(PartitionKey, event):
 
 # 伝票番号に紐づくユーザーマイリストTBL情報取得
 def mylist_slipNo_query(partitionKey):
-    queryData = table2.query(
+    queryData = userMyList.query(
         IndexName = 'slipNo-index',
         KeyConditionExpression = Key("slipNo").eq(partitionKey)
     )

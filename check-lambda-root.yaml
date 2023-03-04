@@ -82,6 +82,6 @@ Outputs:
 
   # CheckAcceseAdminLambda‚ÌARN
   CheckAcceseAdminLambda:
-    Value: !GetAtt CheckAcceseAdminLambda.Outputs.SlipAdminUserCheckLambda
+    Value: !GetAtt CheckAcceseAdminLambda.Outputs.CheckAcceseAdminLambda
 
 

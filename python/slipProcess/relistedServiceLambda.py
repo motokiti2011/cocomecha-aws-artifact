@@ -125,6 +125,7 @@ def put_slipMyList(event):
       'readDiv' : '0',
       'messageDate' : now.strftime('%x %X'),
       'messageOrQuastionId' : '' ,
+      'requestInfo' : NONE,
       'deleteDiv' : '0',
       'created' : datetime.now().strftime('%x %X'),
       'updated' : datetime.now().strftime('%x %X')
@@ -155,6 +156,7 @@ def put_serviceContentsMyList(event):
       'readDiv' : '0',
       'messageDate' : now.strftime('%x %X'),
       'messageOrQuastionId' : '' ,
+      'requestInfo' : NONE,
       'deleteDiv' : '0',
       'created' : datetime.now().strftime('%x %X'),
       'updated' : datetime.now().strftime('%x %X')

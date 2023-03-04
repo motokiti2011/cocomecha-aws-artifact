@@ -10,7 +10,7 @@ from boto3.dynamodb.conditions import Key
 # Dynamodbアクセスのためのオブジェクト取得
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
-table = dynamodb.Table("slipQuestion")
+slipQuestion = dynamodb.Table("slipQuestion")
 slipDetailInfo = dynamodb.Table("slipDetailInfo")
 salesServiceInfo = dynamodb.Table("salesServiceInfo")
 userMyList = dynamodb.Table("userMyList")
@@ -20,7 +20,7 @@ def post_product(PartitionKey, event, adminUser, adminMecha, adminOffice, servic
 
   now = datetime.now()
 
-  putResponse = table.put_item(
+  putResponse = slipQuestion.put_item(
     Item={
       'id' : PartitionKey,
       'slipNo' : event['Keys']['slipNo'],
@@ -57,6 +57,7 @@ def post_product(PartitionKey, event, adminUser, adminMecha, adminOffice, servic
       'readDiv' : '0',
       'messageDate' : now.strftime('%x %X'),
       'messageOrQuastionId' : '' ,
+      'requestInfo' : NONE,
       'deleteDiv' : '0',
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')
@@ -84,6 +85,7 @@ def post_product(PartitionKey, event, adminUser, adminMecha, adminOffice, servic
       'readDiv' : '0',
       'messageDate' : now.strftime('%x %X'),
       'messageOrQuastionId' : '' ,
+      'requestInfo' : NONE,
       'deleteDiv' : '0',
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')

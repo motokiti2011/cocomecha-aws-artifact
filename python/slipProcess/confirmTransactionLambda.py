@@ -10,18 +10,18 @@ from boto3.dynamodb.conditions import Key
 # Dynamodbアクセスのためのオブジェクト取得
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
-table = dynamodb.Table("serviceTransactionRequest")
-table2 = dynamodb.Table("userMyList")
-slipDetailInfo = dynamodb.Table("slipDetailInfo")
-salesServiceInfo = dynamodb.Table("salesServiceInfo")
-transactionSlip = dynamodb.Table("transactionSlip")
+serviceTransactionRequest = dynamodb.serviceTransactionRequest("serviceTransactionRequest")
+userMyList = dynamodb.serviceTransactionRequest("userMyList")
+slipDetailInfo = dynamodb.serviceTransactionRequest("slipDetailInfo")
+salesServiceInfo = dynamodb.serviceTransactionRequest("salesServiceInfo")
+transactionSlip = dynamodb.serviceTransactionRequest("transactionSlip")
 
 # 取引依頼TBL
 def post_transactionRequest(PartitionKey, event, adminUser, confirmUser):
 
   # 取引依頼TBL(管理者)
   now = datetime.now()
-  putResponse = table.put_item(
+  putResponse = serviceTransactionRequest.put_item(
     Item={
       'id' : PartitionKey,
       'slipNo' : event['Keys']['slipNo'],
@@ -67,7 +67,7 @@ def post_myList(PartitionKey, event, adminUser, confirmUser,adminMecha,adminOffi
   now = datetime.now()
   # マイリストTBLの登録
   # 伝票管理者
-  userMyListAdminResponse = table2.put_item(
+  userMyListAdminResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),
       'userId' : adminUser,
@@ -81,6 +81,7 @@ def post_myList(PartitionKey, event, adminUser, confirmUser,adminMecha,adminOffi
       'readDiv' : '0',
       'messageDate' : now.strftime('%x %X'),
       'messageOrQuastionId' : '' ,
+      'requestInfo' : NONE,
       'deleteDiv' : '0',
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')
@@ -110,7 +111,7 @@ def post_myList(PartitionKey, event, adminUser, confirmUser,adminMecha,adminOffi
 
 # 伝票番号に紐づく取引依頼TBL情報取得
 def transactionSlipNo_query(partitionKey):
-    queryData = table.query(
+    queryData = serviceTransactionRequest.query(
         IndexName = 'slipNo-index',
         KeyConditionExpression = Key("slipNo").eq(partitionKey)
     )
@@ -124,11 +125,12 @@ def postAnConfirmTransactionRequest(item):
 
   # 取引依頼TBL(管理者)
   now = datetime.now()
-  putResponse = table.put_item(
+  putResponse = serviceTransactionRequest.put_item(
     Item={
       'id' : item['id'],
       'slipNo' : item['slipNo'],
       'requestId' : item['requestId'],
+      'requestUserName' : item['requestUserName'],
       'serviceUserType' : item['serviceUserType'],
       'requestType' : item['requestType'],
       'files' : item['files'],
@@ -151,11 +153,12 @@ def postConfirmTransactionRequest(item):
 
   # 取引依頼TBL(管理者)
   now = datetime.now()
-  putResponse = table.put_item(
+  putResponse = serviceTransactionRequest.put_item(
     Item={
       'id' : item['id'],
       'slipNo' : item['slipNo'],
       'requestId' : item['requestId'],
+      'requestUserName' : item['requestUserName'],
       'serviceUserType' : item['serviceUserType'],
       'requestType' : item['requestType'],
       'files' : item['files'],
@@ -175,7 +178,7 @@ def postConfirmTransactionRequest(item):
 
 # 伝票番号に紐づくユーザーマイリストTBL情報取得
 def mylist_slipNo_query(partitionKey):
-    queryData = table2.query(
+    queryData = userMyList.query(
         IndexName = 'slipNo-index',
         KeyConditionExpression = Key("slipNo").eq(partitionKey)
     )
@@ -189,11 +192,12 @@ def postAnConfirmMylistRequest(item):
 
   # 取引依頼TBL(管理者)
   now = datetime.now()
-  putResponse = table2.put_item(
+  putResponse = serviceTransactionRequest.put_item(
     Item={
       'id' : item['id'],
       'slipNo' : item['slipNo'],
       'requestId' : item['requestId'],
+      'requestUserName' : item['requestUserName'],
       'serviceUserType' : item['serviceUserType'],
       'requestType' : item['requestType'],
       'files' : item['files'],
@@ -217,11 +221,12 @@ def postConfirmMylistRequest(item):
 
   # 取引依頼TBL(管理者)
   now = datetime.now()
-  putResponse = table2.put_item(
+  putResponse = serviceTransactionRequest.put_item(
     Item={
       'id' : item['id'],
       'slipNo' : item['slipNo'],
       'requestId' : item['requestId'],
+      'requestUserName' : item['requestUserName'],
       'serviceUserType' : item['serviceUserType'],
       'requestType' : item['requestType'],
       'files' : item['files'],
@@ -293,6 +298,7 @@ def postTransactionSlip(queryData,serviceKey):
 
   print('3B')
 
+  # 取引伝票情報に登録
   putResponse = transactionSlip.put_item(
     Item={
       'id' : str(uuid.uuid4()),

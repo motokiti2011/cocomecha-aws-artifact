@@ -262,6 +262,9 @@ Resources:
         SalesAdminInfoLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SalesAdminInfoLambda
         SlipAdminInfoLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SlipAdminInfoLambda
         PastTransactionLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.PastTransactionLambda
+        SerchRequestMechanicInfoLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SerchRequestMechanicInfoLambda
+        EditConnectionOfficeStatusLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.EditConnectionOfficeStatusLambda
+        SerchFcMcInfoLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SerchFcMcInfoLambda
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
 

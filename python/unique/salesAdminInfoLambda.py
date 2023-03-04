@@ -60,7 +60,7 @@ def lambda_handler(event, context) :
             'specialtyWork' :items[0]['specialtyWork'],
             'workContentList' : None,
             'businessHours' : None,
-            'baseInfoList' : None,
+            'connectionOfficeInfoList' : None,
             'evaluationInfo' : None,
             'profileImageUrl' :items[0]['profileImageUrl']
           }
@@ -81,7 +81,7 @@ def lambda_handler(event, context) :
             'specialtyWork' : None,
             'workContentList' : items[0]['workContentList'],
             'businessHours' : items[0]['businessHours'],
-            'baseInfoList' : items[0]['baseInfoList'],
+            'connectionOfficeInfoList' : items[0]['connectionOfficeInfoList'],
             'evaluationInfo' : None,
             'profileImageUrl' :items['profileImageUrl']
           }

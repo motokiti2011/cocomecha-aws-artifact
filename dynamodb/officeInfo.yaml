@@ -8,7 +8,21 @@ Resources:
       AttributeDefinitions:
         - AttributeName: officeId
           AttributeType: S
+        - AttributeName: officeArea1
+          AttributeType: S
+        - AttributeName: officeArea
+          AttributeType: S
       KeySchema:
         - AttributeName: officeId
           KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: areaNo1AndAreaNo2-index
+          KeySchema:
+            - AttributeName: officeArea1
+              KeyType: HASH
+            - AttributeName: officeArea
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
       TableName: officeInfo

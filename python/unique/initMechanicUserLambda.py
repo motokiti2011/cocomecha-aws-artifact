@@ -25,6 +25,9 @@ def mechanic_post(PartitionKey, officeId, event):
       'adminAddressDiv' : event['Keys']['adminAddressDiv'],
       'telList' : event['Keys']['telList'],
       'mailAdress' : event['Keys']['mailAdress'],
+      'areaNo1' : event['Keys']['areaNo1'],
+      'areaNo2' : event['Keys']['areaNo2'],
+      'adress' : event['Keys']['adress'],
       'officeConnectionDiv' : event['Keys']['officeConnectionDiv'],
       'officeId' : officeId,
       'qualification' : event['Keys']['qualification'],
@@ -50,11 +53,29 @@ def office_post(userId, mechanicId, officeId, event):
   
   adminId = [userId]
   employee = [mechanicId]
+  
+  mechanicInfoList = [{
+    mechanicId: mechanicId
+    mechanicName: event['Keys']['mechanicName'],
+    belongsDiv: : NONE, 
+    belongs: : NONE
+  }]
+  
+  adminInfoList = [{
+    mechanicId : mechanicId,
+    mechanicName : event['Keys']['mechanicName'],
+    belongsDiv : NONE,
+    belongs : NONE,
+    role : '管理者',
+    roleDiv : '管理者'
+  }]
+
+
   putResponse = officetable.put_item(
     Item={
       'officeId' : officeId,
-      'employeeList' : employee,
-      'adminIdList' : adminId,
+      'connectionMechanicInfo' : mechanicInfoList,
+      'adminSettingInfo' : adminInfoList,
       'created' : event['Keys']['created'],
       'updated' : event['Keys']['updated']
     }
@@ -141,7 +162,7 @@ def lambda_handler(event, context):
 
     # 企業情報にメカニック情報を追加
     if officeDiv == '1':
-      officeResponse = office_post(userId, mechanicId, office)
+      officeResponse = office_post(userId, mechanicId, event)
       print(officeResponse)
 
       if officeResponse['ResponseMetadata']['HTTPStatusCode'] != 200:

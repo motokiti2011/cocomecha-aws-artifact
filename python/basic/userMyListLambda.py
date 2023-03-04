@@ -41,6 +41,7 @@ def put_product(PartitionKey, event):
       'readDiv' : event['Keys']['readDiv'],
       'messageDate' : event['Keys']['messageDate'],
       'messageOrQuastionId' : event['Keys']['messageOrQuastionId'],
+      'requestInfo' : event['Keys']['requestInfo'],
       'deleteDiv' : event['Keys']['deleteDiv'],
       'created' : event['Keys']['created'],
       'updated' :  now.strftime('%x %X')
@@ -85,6 +86,7 @@ def post_product(PartitionKey, event):
       'readDiv' : event['Keys']['readDiv'],
       'messageDate' : event['Keys']['messageDate'],
       'messageOrQuastionId' : event['Keys']['messageOrQuastionId'],
+      'requestInfo' : event['Keys']['requestInfo'],
       'deleteDiv' : event['Keys']['deleteDiv'],
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')

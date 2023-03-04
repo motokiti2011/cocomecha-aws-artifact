@@ -10,10 +10,10 @@ from boto3.dynamodb.conditions import Key
 # Dynamodb
 dynamodb = boto3.resource('dynamodb')
 
-table1 = dynamodb.Table("slipDetailInfo")
-table2 = dynamodb.Table("slipMegPrmUser")
-table3 = dynamodb.Table("transactionSlip")
-table4 = dynamodb.Table("userMyList")
+slipDetailInfo = dynamodb.Table("slipDetailInfo")
+slipMegPrmUser = dynamodb.Table("slipMegPrmUser")
+transactionSlip = dynamodb.Table("transactionSlip")
+userMyList = dynamodb.Table("userMyList")
 
 
 def post_product(PartitionKey, event):
@@ -21,7 +21,7 @@ def post_product(PartitionKey, event):
   now = datetime.now()
 
   # slipDetailInfo‚ÌPOST
-  slipDetailInfoPutResponse = table1.put_item(
+  slipDetailInfoPutResponse = slipDetailInfo.put_item(
     Item={
       'slipNo' : PartitionKey,
       'deleteDiv' : '0',
@@ -64,7 +64,7 @@ def post_product(PartitionKey, event):
 
 
   # “`•[ƒƒbƒZ[ƒWŠÇ—ƒ†[ƒU‚Ì“o˜^
-  slipMegPrmUserPutResponse = table2.put_item(
+  slipMegPrmUserPutResponse = slipMegPrmUser.put_item(
     Item={
       'slipNo' : PartitionKey,
       'slipAdminUserId' : event['Keys']['slipAdminUserId'],
@@ -82,7 +82,7 @@ def post_product(PartitionKey, event):
 
 
   # æˆø“`•[î•ñ‚Ì“o˜^
-  transactionSlipResponse = table3.put_item(
+  transactionSlipResponse = transactionSlip.put_item(
     Item={
       'id' : str(uuid.uuid4()),
       'serviceType' : '0',
@@ -109,7 +109,7 @@ def post_product(PartitionKey, event):
 
 
   # ƒ}ƒCƒŠƒXƒgTBL‚Ì“o˜^
-  userMyListResponse = table4.put_item(
+  userMyListResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),
       'userId' : event['Keys']['slipAdminUserId'],
@@ -123,6 +123,7 @@ def post_product(PartitionKey, event):
       'readDiv' : '0',
       'messageDate' : now.strftime('%x %X'),
       'messageOrQuastionId' : '' ,
+      'requestInfo' : NONE,
       'deleteDiv' : '0',
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')

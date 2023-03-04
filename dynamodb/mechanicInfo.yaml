@@ -14,6 +14,10 @@ Resources:
           AttributeType: S
         - AttributeName: officeId
           AttributeType: S
+        - AttributeName: areaNo1
+          AttributeType: S
+        - AttributeName: areaNo2
+          AttributeType: S
       KeySchema:
         - AttributeName: mechanicId
           KeyType: HASH
@@ -36,4 +40,14 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+
+        - IndexName: areaNo1AndAreaNo2-index
+          KeySchema:
+            - AttributeName: areaNo1
+              KeyType: HASH
+            - AttributeName: areaNo2
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
       TableName: mechanicInfo

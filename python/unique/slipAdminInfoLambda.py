@@ -50,7 +50,7 @@ def lambda_handler(event, context) :
           'specialtyWork' :None,
           'workContentList' :None,
           'businessHours' :None,
-          'baseInfoList' :None,
+          'connectionOfficeInfoList' :None,
           'evaluationInfo' :None,
           'profileImageUrl' :items['profileImageUrl']
         }

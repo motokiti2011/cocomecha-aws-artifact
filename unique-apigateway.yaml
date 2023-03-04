@@ -66,6 +66,18 @@ Parameters:
   PastTransactionLambdaArn:
     Type: String
 
+  # SerchRequestMechanicInfoLambdaのARN
+  SerchRequestMechanicInfoLambdaArn:
+    Type: String
+
+  # EditConnectionOfficeStatusLambdaのARN
+  EditConnectionOfficeStatusLambdaArn:
+    Type: String
+
+  # SerchFcMcInfoLambdaのARN
+  SerchFcMcInfoLambdaArn:
+    Type: String
+
   # CognitoUserPoolのARN
   UserPoolArn:
     Type: String
@@ -786,6 +798,127 @@ Resources:
     DependsOn: LambdaPermission16
 
 
+  # SerchRequestMechanicInfoリソース
+  SerchRequestMechanicInfoResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: getrequestmechanicinfo
+      RestApiId: !Ref ApiGwRestAPI
+  # SerchRequestMechanicInfoメソッド
+  SerchRequestMechanicInfoMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SerchRequestMechanicInfoResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SerchRequestMechanicInfoLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission17
+
+
+  # EditConnectionOfficeStatusリソース
+  EditConnectionOfficeStatusResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: connectionofficestatus
+      RestApiId: !Ref ApiGwRestAPI
+  # EditConnectionOfficeStatusメソッド
+  EditConnectionOfficeStatusMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref EditConnectionOfficeStatusResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref EditConnectionOfficeStatusLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission18
+
+
+
+  # SerchFcMcInfoリソース
+  SerchFcMcInfoResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: serchfcmcdata
+      RestApiId: !Ref ApiGwRestAPI
+  # SerchFcMcInfoメソッド
+  SerchFcMcInfoMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SerchFcMcInfoResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SerchFcMcInfoLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission19
+
+
   # LambdaPermission
   LambdaPermission1:
     Type: 'AWS::Lambda::Permission'
@@ -898,4 +1031,26 @@ Resources:
       FunctionName: pastTransactionLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
+
+  LambdaPermission17:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: serchRequestMechanicInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission18:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: editConnectionOfficeStatusLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission19:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: serchFcMcInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
 
