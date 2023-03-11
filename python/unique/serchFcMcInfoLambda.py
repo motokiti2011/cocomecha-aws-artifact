@@ -76,7 +76,7 @@ def lambda_handler(event, context) :
               'area1' :item['areaNo1'],
               'area2' :item['areaNo2'],
               'adress' :item['adress'],
-              'postCode' :NONE,
+              'postCode' :None,
               'introduction' :item['introduction'],
               'PRimageURL' :item['profileImageUrl']
             }

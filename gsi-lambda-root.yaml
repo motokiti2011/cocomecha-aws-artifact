@@ -351,6 +351,23 @@ Resources:
           - '/gsi/zip'
           - '/serchSlipContents-gsi.zip'
 
+
+  FactoryMechaInicItemGsi:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/gsi/factoryMechaInicItem-gsi.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
+          - '/factoryMechaInicItem-gsi.zip'
+
 Outputs:
 
   # BrowsingHistory-gsi‚ÌARN
@@ -432,4 +449,9 @@ Outputs:
   # SerchSlipContents-gsi‚ÌARN
   SerchSlipContentsGSILambda:
     Value: !GetAtt SerchSlipContentsGsi.Outputs.SerchSlipContentsGSILambda
+
+  # FactoryMechaInicItem-gsi‚ÌARN
+  FactoryMechaInicItemsGSILambda:
+    Value: !GetAtt FactoryMechaInicItemGsi.Outputs.FactoryMechaInicItemGSILambda
+
 

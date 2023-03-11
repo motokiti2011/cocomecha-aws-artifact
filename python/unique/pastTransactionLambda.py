@@ -9,7 +9,7 @@ dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("completionSlip")
 
-
+# 過去取引情報取得
 def lambda_handler(event, context) :
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
@@ -35,7 +35,7 @@ def lambda_handler(event, context) :
         print("---01: Payload:", Payload)
         # 呼び出し
         response = boto3.client('lambda').invoke(
-            FunctionName='proto-internalAdminCheckLambda',
+            FunctionName='internalAdminCheckLambda',
             InvocationType='RequestResponse',
             Payload=Payload
         )
@@ -121,8 +121,8 @@ def setItems(itemList) :
         'targetService' : item['targetService'],
         'targetVehicleId' : '',
         'targetVehicleName' : item['targetVehicleName'],
-        'targetVehicleInfo' : NONE,
-        'workAreaInfo' : NONE,
+        'targetVehicleInfo' : None,
+        'workAreaInfo' : None,
         'evaluationId' : item['evaluationId'],
         'completionDate' : item['completionDate'],
         'transactionCompletionDate' : item['transactionCompletionDate'],

@@ -1,6 +1,7 @@
 import json
 import boto3
 
+from datetime import datetime
 from boto3.dynamodb.conditions import Key
 # Keyオブジェクトを利用できるようにする
 

@@ -188,6 +188,7 @@ Resources:
         FactoryMechanicFavoriteLambdaArn: !GetAtt BasicLambdaRoot.Outputs.FactoryMechanicFavoriteLambda
         ServiceTransactionRequestLambdaArn: !GetAtt BasicLambdaRoot.Outputs.ServiceTransactionRequestLambda
         HistoryUserInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.HistoryUserInfoLambda
+        FactoryMechaInicItemLambdaArn: !GetAtt BasicLambdaRoot.Outputs.FactoryMechaInicItemLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
@@ -219,6 +220,7 @@ Resources:
         HistoryUserInfoGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.HistoryUserInfoGSILambda
         SerchServiceContentsGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SerchServiceContentsGSILambda
         SerchSlipContentsGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.SerchSlipContentsGSILambda
+        FactoryMechaInicItemsGSILambdaArn: !GetAtt GsiLambdaRoot.Outputs.FactoryMechaInicItemsGSILambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
@@ -265,6 +267,7 @@ Resources:
         SerchRequestMechanicInfoLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SerchRequestMechanicInfoLambda
         EditConnectionOfficeStatusLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.EditConnectionOfficeStatusLambda
         SerchFcMcInfoLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SerchFcMcInfoLambda
+        FcmcItemSerchLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.FcmcItemSerchLambda
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
 

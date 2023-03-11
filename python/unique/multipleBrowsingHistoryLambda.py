@@ -9,21 +9,7 @@ dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("browsingHistory")
 
-
-# レコード削除
-def operation_delete(partitionKey):
-    delResponse = table.delete_item(
-       key={
-           'id': partitionKey,
-       }
-    )
-    if delResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
-        print(delResponsee['ResponseMetadata']['HTTPStatusCode'])
-    else:
-        print('DEL Successed.')
-    return delResponsee
-
-
+# 複数閲覧履歴情報削除
 def lambda_handler(event, context) :
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
@@ -52,3 +38,18 @@ def lambda_handler(event, context) :
     except Exception as e:
         print("Error Exception.")
         print(e)
+
+# レコード削除
+def operation_delete(partitionKey):
+    delResponse = table.delete_item(
+       key={
+           'id': partitionKey,
+       }
+    )
+    if delResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+        print(delResponsee['ResponseMetadata']['HTTPStatusCode'])
+    else:
+        print('DEL Successed.')
+    return delResponsee
+
+

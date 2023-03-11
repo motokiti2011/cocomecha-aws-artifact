@@ -14,17 +14,71 @@ salesServiceInfo = dynamodb.Table("salesServiceInfo")
 slipMegPrmUser = dynamodb.Table("slipMegPrmUser")
 transactionSlip = dynamodb.Table("transactionSlip")
 userMyList = dynamodb.Table("userMyList")
+officeInfo = dynamodb.Table("officeInfo")
+mechanicInfo = dynamodb.Table("mechanicInfo")
+
+def lambda_handler(event, context):
+  print("Received event: " + json.dumps(event))
+  now = datetime.now()
+  OperationType = event['OperationType']
+  try:
+    if OperationType == 'INITSALESSERVICEPOST':
+      id = str(uuid.uuid4())
+      PartitionKey = id
+      return post_product(PartitionKey, event)
+
+    else :
+      print('INITSALESSERVICEPOST_Injustice')
+
+  except Exception as e:
+      print("Error Exception.")
+      print(e)
+
 
 # salesServiceÇÃPOST
 def post_product(PartitionKey, event):
+  
+  
+  mechanicId = event['Keys']['slipAdminMechanicId']
+  officeId = event['Keys']['slipAdminOfficeId']
+  
+  if not mechanicId:
+    mechanicId = '0'
+    mechanicName = ''
+  else:
+    queryData = mechanicInfo.query(
+        KeyConditionExpression = Key("mechanicId").eq(event['Keys']['slipAdminMechanicId'])
+    )
+    mechanic = queryData['Items']
+    mechanicName = mechanic[0]['mechanicName']
+
+  if not officeId:
+    officeId = '0'
+    officeName = ''
+  else:
+    queryData = officeInfo.query(
+        KeyConditionExpression = Key("officeId").eq(event['Keys']['slipAdminOfficeId'])
+    )
+    office = queryData['Items']
+    officeName = office[0]['officeName']
+
+  print(event['Keys']['slipAdminMechanicId'])
+  print(mechanicName)
+  print(officeName)
+  print(event['Keys']['slipAdminOfficeId'])
+
+
   putResponse = salesServiceInfo.put_item(
     Item={
       'slipNo' : PartitionKey,
       'deleteDiv' : event['Keys']['deleteDiv'],
       'category' : event['Keys']['category'],
       'slipAdminUserId' : event['Keys']['slipAdminUserId'],
-      'slipAdminOfficeId' : event['Keys']['slipAdminOfficeId'],
-      'slipAdminMechanicId' : event['Keys']['slipAdminMechanicId'],
+      'slipAdminUserName' : event['Keys']['slipAdminUserName'],
+      'slipAdminOfficeId' : officeId,
+      'slipAdminOfficeName' : officeName,
+      'slipAdminMechanicId' : mechanicId,
+      'slipAdminMechanicName' : mechanicName,
       'adminDiv' : event['Keys']['adminDiv'],
       'title' : event['Keys']['title'],
       'areaNo1' : event['Keys']['areaNo1'],
@@ -65,7 +119,7 @@ def post_product(PartitionKey, event):
     Item={
       'slipNo' : PartitionKey,
       'slipAdminUserId' : event['Keys']['slipAdminUserId'],
-      'slipAdminUserName' : "",
+      'slipAdminUserName' : event['Keys']['slipAdminUserName'],
       'permissionUserList' : [],
       'created' : event['Keys']['created'],
       'updated' : event['Keys']['updated']
@@ -76,15 +130,15 @@ def post_product(PartitionKey, event):
     print(slipMegPrmUserPutResponse)
   else:
     print('slipMegPrmUser : Post Successed.')
-
+  
   # éÊà¯ì`ï[èÓïÒÇÃìoò^
   transactionSlipResponse = transactionSlip.put_item(
     Item={
       'id' : str(uuid.uuid4()),
       'serviceType' : '0',
-      'userId' : event['Keys']['userId'],
-      'mechanicId' : event['Keys']['slipAdminMechanicId'],
-      'officeId' : event['Keys']['slipAdminOfficeId'],
+      'userId' : event['Keys']['slipAdminUserId'],
+      'mechanicId' : mechanicId,
+      'officeId' : officeId,
       'slipNo' : PartitionKey,
       'serviceTitle' : event['Keys']['title'],
       'slipRelation' : '0',
@@ -92,9 +146,9 @@ def post_product(PartitionKey, event):
       'slipAdminName' : event['Keys']['slipAdminUserName'],
       'bidderId' : event['Keys']['bidderId'],
       'deleteDiv' : '0',
-      'completionScheduledDate' : event['Keys']['completionScheduledDate'],
-      'created' : now.strftime('%x %X'),
-      'updated' : now.strftime('%x %X')
+      'completionScheduledDate' : 0,
+      'created' : datetime.now().strftime('%x %X'),
+      'updated' : datetime.now().strftime('%x %X')
     }
   )
   
@@ -109,20 +163,20 @@ def post_product(PartitionKey, event):
     Item={
       'id' : str(uuid.uuid4()),
       'userId' : event['Keys']['slipAdminUserId'],
-      'mechanicId : event['Keys']['slipAdminMechanicId'],
-      'officeId' : event['Keys']['slipAdminOfficeId'],
+      'mechanicId' : mechanicId,
+      'officeId' : officeId,
       'serviceType' : event['Keys']['targetService'],
       'slipNo' :PartitionKey,
-      'serviceTitle' : event['Keys']['serviceTitle'],
+      'serviceTitle' : event['Keys']['title'],
       'category' : '9',
       'message' : 'EXHIBITING',
       'readDiv' : '0',
-      'messageDate' : now.strftime('%x %X'),
+      'messageDate' : datetime.now().strftime('%x %X'),
       'messageOrQuastionId' : '' ,
-      'requestInfo' : NONE,
+      'requestInfo' : None,
       'deleteDiv' : '0',
-      'created' : now.strftime('%x %X'),
-      'updated' : now.strftime('%x %X')
+      'created' : datetime.now().strftime('%x %X'),
+      'updated' : datetime.now().strftime('%x %X')
 
     }
   )
@@ -131,25 +185,4 @@ def post_product(PartitionKey, event):
     print(userMyListResponse)
   else:
     print('Post Successed.')
-  return userMyListResponse
-
-
-
-def lambda_handler(event, context):
-  print("Received event: " + json.dumps(event))
-  now = datetime.now()
-  OperationType = event['OperationType']
-
-  try:
-
-    if OperationType == 'INITSALESSERVICEPOST':
-      id = str(uuid.uuid4())
-      PartitionKey = id
-      return post_product(PartitionKey, event)
-
-    else :
-      print('INITSALESSERVICEPOST_Injustice')
-
-  except Exception as e:
-      print("Error Exception.")
-      print(e)
+  return userMyListResponse['ResponseMetadata']['HTTPStatusCode']

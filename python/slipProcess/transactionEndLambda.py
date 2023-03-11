@@ -64,7 +64,7 @@ def put_adminMyList(PartitionKey, event):
       'readDiv' : '0',
       'messageDate' : now.strftime('%x %X'),
       'messageOrQuastionId' : '' ,
-      'requestInfo' : NONE,
+      'requestInfo' : None,
       'deleteDiv' : '0',
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')
@@ -95,7 +95,7 @@ def put_requestMyList(PartitionKey, event):
       'readDiv' : '0',
       'messageDate' : now.strftime('%x %X'),
       'messageOrQuastionId' : '' ,
-      'requestInfo' : NONE,
+      'requestInfo' : None,
       'deleteDiv' : '0',
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')

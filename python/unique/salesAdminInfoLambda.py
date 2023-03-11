@@ -10,24 +10,6 @@ dynamodb = boto3.resource('dynamodb')
 mechanicInfo = dynamodb.Table("mechanicInfo")
 officeInfo = dynamodb.Table("officeInfo")
 
-# メカニック情報検索 mechanicInfo
-def mechanicInfo_query(id) :
-    queryData = userInfo.query(
-        KeyConditionExpression = Key("mechanicId").eq(id)
-    )
-    items=queryData['Items']
-    print(items)
-    return items
-
-
-# 工場情報検索 officeInfo
-def userInfo_query(id) :
-    queryData = officeInfo.query(
-        KeyConditionExpression = Key("officeId").eq(id)
-    )
-    items=queryData['Items']
-    print(items)
-    return items
 
 
 def lambda_handler(event, context) :
@@ -43,8 +25,9 @@ def lambda_handler(event, context) :
 
         # データ取得
         queryItems = []
-        if serviceType == '1'
+        if serviceType == '2' :
           items = mechanicInfo_query(id)
+          print(items)
           # 結果の格納
           result={
             'adminId' :items[0]['mechanicId'],
@@ -55,7 +38,7 @@ def lambda_handler(event, context) :
             'adless' : None,
             'introduction' :items[0]['introduction'],
             'affiliationOfficeId' :items[0]['officeId'],
-            'affiliationOfficeName' :items[0]['associationOfficeList'],
+            'affiliationOfficeName' :None,
             'qualification' :items[0]['qualification'],
             'specialtyWork' :items[0]['specialtyWork'],
             'workContentList' : None,
@@ -71,25 +54,43 @@ def lambda_handler(event, context) :
             'adminId' :items[0]['officeId'],
             'adminName' :items[0]['officeName'],
             'mail' :items[0]['officeMailAdress'],
-            'telNo': items[0]['userName'],
+            'telNo': items[0]['officeTel'][0],
             'post' : items[0]['officePostCode'],
             'adless' : items[0]['officeArea1'],
-            'introduction' : items[0]['introduction'],
+            'introduction' : items[0]['officePR'],
             'affiliationOfficeId' : None,
             'affiliationOfficeName' : None,
             'qualification' : None,
             'specialtyWork' : None,
             'workContentList' : items[0]['workContentList'],
             'businessHours' : items[0]['businessHours'],
-            'connectionOfficeInfoList' : items[0]['connectionOfficeInfoList'],
+            'connectionOfficeInfoList' : items[0]['connectionOfficeInfo'],
             'evaluationInfo' : None,
-            'profileImageUrl' :items['profileImageUrl']
+            'profileImageUrl' :items[0]['officePRimageURL']
           }
-        
 
         return result
-
 
     except Exception as e:
         print("Error Exception.")
         print(e)
+
+# メカニック情報検索 mechanicInfo
+def mechanicInfo_query(id) :
+    queryData = mechanicInfo.query(
+        KeyConditionExpression = Key("mechanicId").eq(id)
+    )
+    items=queryData['Items']
+    print(items)
+    return items
+
+
+# 工場情報検索 officeInfo
+def officeInfo_query(id) :
+    queryData = officeInfo.query(
+        KeyConditionExpression = Key("officeId").eq(id)
+    )
+    items=queryData['Items']
+    print(items)
+    return items
+

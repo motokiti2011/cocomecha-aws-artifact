@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Code for DynamoDB
+Resources:
+  DynamoDBTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: serviceId
+          AttributeType: S
+        - AttributeName: serviceType
+          AttributeType: S
+        - AttributeName: factoryMechanicId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: serviceId
+          KeyType: HASH
+        - AttributeName: serviceType
+          KeyType: RANGE
+
+      GlobalSecondaryIndexes:
+        - IndexName: factoryMechanicId-index
+          KeySchema:
+            - AttributeName: factoryMechanicId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+      TableName: factoryMechaInicItem

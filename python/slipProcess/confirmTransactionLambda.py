@@ -81,7 +81,7 @@ def post_myList(PartitionKey, event, adminUser, confirmUser,adminMecha,adminOffi
       'readDiv' : '0',
       'messageDate' : now.strftime('%x %X'),
       'messageOrQuastionId' : '' ,
-      'requestInfo' : NONE,
+      'requestInfo' : None,
       'deleteDiv' : '0',
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')

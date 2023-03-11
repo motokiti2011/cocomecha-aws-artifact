@@ -38,10 +38,29 @@ Resources:
           - '/internalAdminCheckLambda.zip'
 
 
+  InternalFcMcItemLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/internal/internalFcMcItemLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/internal/zip'
+          - '/internalFcMcItemLambda.zip'
+
+
 Outputs:
   # InternalAdminCheckLambda‚ÌARN
   InternalAdminCheckLambda:
     Value: !GetAtt InternalAdminCheckLambda.Outputs.InternalAdminCheckLambda
 
-
+  # InternalFcMcItemLambda‚ÌARN
+  InternalFcMcItemLambda:
+    Value: !GetAtt InternalFcMcItemLambda.Outputs.InternalFcMcItemLambda
 

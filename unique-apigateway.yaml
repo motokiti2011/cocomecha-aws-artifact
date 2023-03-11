@@ -78,6 +78,11 @@ Parameters:
   SerchFcMcInfoLambdaArn:
     Type: String
 
+  # FcmcItemSerchLambdaのARN
+  FcmcItemSerchLambdaArn:
+    Type: String
+
+
   # CognitoUserPoolのARN
   UserPoolArn:
     Type: String
@@ -104,22 +109,46 @@ Resources:
       - UnitOptionResource
 
       - GetSlipResource
+      - GetSalesServiceResource
       - MessageParmRequestResource
+      - MultipleBrowsingHistoryResource
+      - MultipleFavoriteResource
+      - SendSlipMessageResource
+      - SendSlipQuestionResource
       - InitPostSlipResource
       - InitMechanicUpResource
       - InitOfficeUpResource
       - InitSalesServiceResource
       - SerchSalesServiceContentsResource
       - SerchslipContentsResource
+      - SalesAdminInfoResource
+      - SlipAdminInfoResource
+      - PastTransactionResource
+      - SerchRequestMechanicInfoResource
+      - EditConnectionOfficeStatusResource
+      - SerchFcMcInfoResource
+      - FcmcItemSerchResource
 
       - GetSlipMethod
+      - GetSalesServiceMethod
       - MessageParmRequestMethod
+      - MultipleBrowsingHistoryMethod
+      - MultipleFavoriteMethod
+      - SendSlipMessageMethod
+      - SendSlipQuestionMethod
       - InitPostSlipMethod
       - InitMechanicUpMethod
       - InitOfficeUpMethod
       - InitSalesServiceMethod
       - SerchSalesServiceContentsMethod
       - SerchslipContentsMethod
+      - SalesAdminInfoMethod
+      - SlipAdminInfoMethod
+      - PastTransactionMethod
+      - SerchRequestMechanicInfoMethod
+      - EditConnectionOfficeStatusMethod
+      - SerchFcMcInfoMethod
+      - FcmcItemSerchMethod
 
   # ステージ
   ApiGwStage:
@@ -919,6 +948,48 @@ Resources:
     DependsOn: LambdaPermission19
 
 
+
+  # FcmcItemSerchリソース
+  FcmcItemSerchResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: serchfcmcitem
+      RestApiId: !Ref ApiGwRestAPI
+  # FcmcItemSerchメソッド
+  FcmcItemSerchMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref FcmcItemSerchResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SerchFcMcInfoLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission20
+
+
+
   # LambdaPermission
   LambdaPermission1:
     Type: 'AWS::Lambda::Permission'
@@ -1053,4 +1124,10 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 
+  LambdaPermission20:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: serchFcMcInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
 

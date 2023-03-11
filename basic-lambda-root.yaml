@@ -378,6 +378,23 @@ Resources:
           - '/historyUserInfoLambda.zip'
 
 
+  FactoryMechaInicItemLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/basic/factoryMechaInicItemLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/basic/zip'
+          - '/factoryMechaInicItemLambda.zip'
+
+
 Outputs:
 
   # BrowsingHistoryLambda‚ÌARN
@@ -467,4 +484,8 @@ Outputs:
   # HistoryUserInfoLambda‚ÌARN
   HistoryUserInfoLambda:
     Value: !GetAtt HistoryUserInfoLambda.Outputs.HistoryUserInfoLambda
+
+  # FactoryMechaInicItemLambda‚ÌARN
+  FactoryMechaInicItemLambda:
+    Value: !GetAtt FactoryMechaInicItemLambda.Outputs.FactoryMechaInicItemLambda
 

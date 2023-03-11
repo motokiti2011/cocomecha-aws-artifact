@@ -103,6 +103,11 @@ Parameters:
     Type: String
     Description: SerchSlipContentsGSI of Lambda
 
+  # FactoryMechaInicItemsGSIのARN
+  FactoryMechaInicItemsGSILambdaArn:
+    Type: String
+    Description: SerchSlipContentsGSI of Lambda
+
 
   # CognitoUserPoolのARN
   UserPoolArn:
@@ -678,6 +683,7 @@ Resources:
             application/json;charset=UTF-8: Empty
     DependsOn: LambdaPermission11
 
+
   # TransactionSlipGSIリソース
   TransactionSlipGSIResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -840,8 +846,6 @@ Resources:
     DependsOn: LambdaPermission17
 
 
-
-
   # ServiceTransactionRequestGSIリソース
   ServiceTransactionRequestGSIResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -961,7 +965,6 @@ Resources:
     DependsOn: LambdaPermission20
 
 
-
   # SerchSlipContentsGSIリソース
   SerchSlipContentsGSIResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -1001,6 +1004,45 @@ Resources:
     DependsOn: LambdaPermission21
 
 
+
+  # FactoryMechaInicItemsGSIリソース
+  FactoryMechaInicItemsGSIResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref IndexSerchResource
+      PathPart: factorymechainicitems
+      RestApiId: !Ref ApiGwRestAPI
+  # FactoryMechaInicItemsGSIメソッド
+  FactoryMechaInicItemsGSIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref FactoryMechaInicItemsGSIResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref FactoryMechaInicItemsGSILambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission22
 
 
   # LambdaPermission
@@ -1142,6 +1184,13 @@ Resources:
     Type: 'AWS::Lambda::Permission'
     Properties:
       FunctionName: serchSlipContents-gsi
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission22:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: factoryMechaInicItem-gsi
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 

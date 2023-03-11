@@ -326,6 +326,23 @@ Resources:
           - '/serchFcMcInfoLambda.zip'
 
 
+  FcmcItemSerchLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/unique/fcmcItemSerchLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/unique/zip'
+          - '/fcmcItemSerchLambda.zip'
+
+
 Outputs:
 
   # GetSlipLambda‚ÌARN
@@ -403,4 +420,9 @@ Outputs:
   # SerchFcMcInfoLambda‚ÌARN
   SerchFcMcInfoLambda:
     Value: !GetAtt SerchFcMcInfoLambda.Outputs.SerchFcMcInfoLambda
+
+  # FcmcItemSerchLambda‚ÌARN
+  FcmcItemSerchLambda:
+    Value: !GetAtt FcmcItemSerchLambda.Outputs.FcmcItemSerchLambda
+
 

@@ -36,8 +36,8 @@ def mechanic_post(PartitionKey, officeId, event):
       'introduction' : event['Keys']['introduction'],
       'evaluationInfoIdList' : event['Keys']['evaluationInfoIdList'],
       'updateUserId' : event['Keys']['updateUserId'],
-      'created' : event['Keys']['created'],
-      'updated' : event['Keys']['updated']
+      'created' : now.strftime('%x %X'),
+      'updated' : now.strftime('%x %X')
     }
   )
   if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
@@ -55,17 +55,17 @@ def office_post(userId, mechanicId, officeId, event):
   employee = [mechanicId]
   
   mechanicInfoList = [{
-    mechanicId: mechanicId
+    mechanicId: mechanicId,
     mechanicName: event['Keys']['mechanicName'],
-    belongsDiv: : NONE, 
-    belongs: : NONE
+    belongsDiv: None, 
+    belongs: None
   }]
   
   adminInfoList = [{
     mechanicId : mechanicId,
     mechanicName : event['Keys']['mechanicName'],
-    belongsDiv : NONE,
-    belongs : NONE,
+    belongsDiv : None,
+    belongs : None,
     role : 'ä«óùé“',
     roleDiv : 'ä«óùé“'
   }]
@@ -76,8 +76,8 @@ def office_post(userId, mechanicId, officeId, event):
       'officeId' : officeId,
       'connectionMechanicInfo' : mechanicInfoList,
       'adminSettingInfo' : adminInfoList,
-      'created' : event['Keys']['created'],
-      'updated' : event['Keys']['updated']
+      'created' : now.strftime('%x %X'),
+      'updated' : now.strftime('%x %X')
     }
   )
   if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
@@ -122,7 +122,7 @@ def user_post(userId, mechanicId, officeId, officeDiv, event):
       'introduction' : items[0]['introduction'],
       'updateUserId' : items[0]['updateUserId'],
       'created' : items[0]['created'],
-      'updated' : items[0]['updated']
+      'updated' : now.strftime('%x %X')
     }
   )
 

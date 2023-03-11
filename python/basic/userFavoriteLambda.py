@@ -11,6 +11,72 @@ dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("userFavorite")
 
+# お気に入り情報データアクセスLambda
+def lambda_handler(event, context):
+  print("Received event: " + json.dumps(event))
+
+  OperationType = event['OperationType']
+
+  try:
+
+    if OperationType == 'QUERY':
+      PartitionKey = event['Keys']['id']
+      return operation_query(PartitionKey)
+
+    elif OperationType == 'PUT':
+      PartitionKey = event['Keys']['id']
+      return put_product(PartitionKey, event)
+
+    elif OperationType == 'DELETE':
+      PartitionKey = event['Keys']['id']
+
+      # 工場メカニック商品情報のお気に入り数を更新
+      # 引数
+      input_event = {
+          "processDiv": '1',
+          "serviceId": event['Keys']['slipNo'],
+          "serviceType": event['Keys']['serviceType'],
+          "status": '1'
+      }
+      Payload = json.dumps(input_event) # jsonシリアライズ
+      # 呼び出し
+      boto3.client('lambda').invoke(
+          FunctionName='internalFcMcItemLambda',
+          InvocationType='Event',
+          Payload=Payload
+      )
+
+      return operation_delete(PartitionKey)
+
+    elif OperationType == 'POST':
+      id = str(uuid.uuid4())
+      PartitionKey = id
+      
+      # 工場メカニック商品情報のお気に入り数を更新
+      # 引数
+      input_event = {
+          "processDiv": '1',
+          "serviceId": event['Keys']['slipNo'],
+          "serviceType": event['Keys']['serviceType'],
+          "status": '0'
+      }
+      Payload = json.dumps(input_event) # jsonシリアライズ
+      # 呼び出し
+      boto3.client('lambda').invoke(
+          FunctionName='internalFcMcItemLambda',
+          InvocationType='Event',
+          Payload=Payload
+      )
+      
+      
+      return post_product(PartitionKey, event)
+
+  except Exception as e:
+      print("Error Exception.")
+      print(e)
+
+
+
 # レコード検索
 def operation_query(partitionKey):
     queryData = table.query(
@@ -87,30 +153,3 @@ def post_product(PartitionKey, event):
     print('Post Successed.')
   return putResponse
 
-def lambda_handler(event, context):
-  print("Received event: " + json.dumps(event))
-
-  OperationType = event['OperationType']
-
-  try:
-
-    if OperationType == 'QUERY':
-      PartitionKey = event['Keys']['id']
-      return operation_query(PartitionKey)
-
-    elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['id']
-      return put_product(PartitionKey, event)
-
-    elif OperationType == 'DELETE':
-      PartitionKey = event['Keys']['id']
-      return operation_delete(PartitionKey)
-
-    elif OperationType == 'POST':
-      id = str(uuid.uuid4())
-      PartitionKey = id
-      return post_product(PartitionKey, event)
-
-  except Exception as e:
-      print("Error Exception.")
-      print(e)
