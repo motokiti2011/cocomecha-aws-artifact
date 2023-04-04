@@ -89,7 +89,7 @@ def operation_query(partitionKey):
 # レコード追加
 def put_product(PartitionKey, event):
 
-  now = datetime.now(JST)
+  now = datetime.now()
 
   putResponse = table.put_item(
     Item={
@@ -128,7 +128,7 @@ def operation_delete(partitionKey):
 # レコード追加
 def post_product(PartitionKey, event):
 
-  now = datetime.now(JST)
+  now = datetime.now()
 
   putResponse = table.put_item(
     Item={

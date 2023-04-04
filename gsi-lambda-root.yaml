@@ -368,6 +368,23 @@ Resources:
           - '/gsi/zip'
           - '/factoryMechaInicItem-gsi.zip'
 
+
+  InquiryInfoGsi:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/gsi/inquiryInfo-gsi.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/gsi/zip'
+          - '/inquiryInfo-gsi.zip'
+
 Outputs:
 
   # BrowsingHistory-gsi‚ÌARN
@@ -454,4 +471,7 @@ Outputs:
   FactoryMechaInicItemsGSILambda:
     Value: !GetAtt FactoryMechaInicItemGsi.Outputs.FactoryMechaInicItemGSILambda
 
+  # InquiryInfo-gsi‚ÌARN
+  InquiryInfoGSILambda:
+    Value: !GetAtt InquiryInfoGsi.Outputs.InquiryInfoGSILambda
 

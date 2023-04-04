@@ -86,7 +86,7 @@ def lambda_handler(event, context) :
         return resultItems
 
 # ŒŸõğŒì¬
-def createFilter(ServiceType, name, telNo):
+def createFilter(ServiceType, name, telNo) :
 
     # ŒŸõğŒì¬
 

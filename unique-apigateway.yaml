@@ -1127,7 +1127,7 @@ Resources:
   LambdaPermission20:
     Type: 'AWS::Lambda::Permission'
     Properties:
-      FunctionName: serchFcMcInfoLambda
+      FunctionName: fcmcItemSerchLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 

@@ -214,7 +214,7 @@ Resources:
   LambdaPermission3:
     Type: 'AWS::Lambda::Permission'
     Properties:
-      FunctionName: slipAdminUserCheckLambda
+      FunctionName: checkAcceseAdminLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 

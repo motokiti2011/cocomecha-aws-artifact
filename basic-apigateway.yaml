@@ -96,6 +96,10 @@ Parameters:
   FactoryMechaInicItemLambdaArn:
     Type: String
 
+  # inquiryInfoLambdaArnのARN
+  InquiryInfoLambdaArn:
+    Type: String
+
 
   # CognitoUserPoolのARN
   UserPoolArn:
@@ -1130,6 +1134,46 @@ Resources:
     DependsOn: LambdaPermission23
 
 
+  # InquiryInfoリソース
+  InquiryInfoResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SerchResource
+      PathPart: inquiryinfo
+      RestApiId: !Ref ApiGwRestAPI
+  # InquiryInfoメソッド
+  InquiryInfoMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref InquiryInfoResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref InquiryInfoLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission24
+
+
+
   # IndexSerchリソース
   IndexSerchResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -1304,4 +1348,10 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 
+  LambdaPermission24:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: inquiryInfoLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
 

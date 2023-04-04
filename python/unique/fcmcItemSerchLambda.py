@@ -20,7 +20,7 @@ def lambda_handler(event, context) :
         # アクセスしたメカニックIDを取得
         mechanicId =event['Keys']['acceseMechanicId']
         # メカニック情報を取得
-        mcInfo = getMechanicInfo(mechanicId) :
+        mcInfo = getMechanicInfo(mechanicId)
         # メカニック情報が取得できなかった場合処理終了
         if len(mcInfo) == 0 :
           return []
@@ -28,16 +28,16 @@ def lambda_handler(event, context) :
         resultList = []
 
         # メカニックIDが管理者の工場メカニックアイテム情報を取得
-        resultList += fcMcItem_query(mechanicId) :
-        
+        resultList += fcMcItem_query(mechanicId)
+
         # 工場IDを取得
         officeId = mcInfo[0]['officeId']
-        if not officeId || officeId == '0' :
+        if not officeId or officeId == '0' :
             return resultList 
-        
+
         # 工場情報を取得
-        fcInfo = getFactorycInfo(officeId) :
-        
+        fcInfo = getFactorycInfo(officeId)
+
         # 工場情報が取得できなかった場合処理終了
         if len(fcInfo) == 0 :
           return resultList
@@ -48,14 +48,14 @@ def lambda_handler(event, context) :
         # 関連者チェック
         for mc in connectionMcList :
           # 関連者になるかをチェック
-          if mc === mechanicId :
+          if mc['mechanicId'] == mechanicId :
               connectionDiv = True
 
         if connectionDiv :
             # 工場IDで工場メカニックアイテム情報を取得
-            resultList += fcMcItem_query(officeId) :
+            resultList += fcMcItem_query(officeId)
 
-       return resultList
+        return resultList
 
     except Exception as e:
         print("Error Exception.")
@@ -73,6 +73,7 @@ def getMechanicInfo(mechanicId):
 
 # メカニック情報に紐づく工場メカニックアイテム情報を取得
 def fcMcItem_query(partitionKey):
+
     queryData = factoryMechaInicItem.query(
         IndexName = 'factoryMechanicId-index',
         KeyConditionExpression = Key("factoryMechanicId").eq(partitionKey)
@@ -90,26 +91,3 @@ def getFactorycInfo(officeId):
     print(items)
     return items
 
-# 伝票情報を返却情報に加工する
-def editItems(service):
-    if len(service) == 0 :
-        return []
-    
-    result = []
-    for se in service :
-    Item={
-      'serviceId' : PartitionKey,
-      'serviceName' : event['Keys']['officeName'],
-      'serviceType' : event['Keys']['officeTel'],
-      'transactionStatus' : event['Keys']['officeMailAdress'],
-      'browsingCount' : '0',
-      'favoriteCount' : '0'
-    }
-
-    queryData = table.query(
-        IndexName = 'slipAdminOfficeId-index',
-        KeyConditionExpression = Key("slipAdminOfficeId").eq(officeId) & Key("deleteDiv").eq('1')
-    )
-    items=queryData['Items']
-    print(items)
-    return items

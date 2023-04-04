@@ -189,6 +189,7 @@ Resources:
         ServiceTransactionRequestLambdaArn: !GetAtt BasicLambdaRoot.Outputs.ServiceTransactionRequestLambda
         HistoryUserInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.HistoryUserInfoLambda
         FactoryMechaInicItemLambdaArn: !GetAtt BasicLambdaRoot.Outputs.FactoryMechaInicItemLambda
+        InquiryInfoLambdaArn: !GetAtt BasicLambdaRoot.Outputs.InquiryInfoLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 

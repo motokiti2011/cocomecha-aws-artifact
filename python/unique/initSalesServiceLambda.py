@@ -16,6 +16,7 @@ transactionSlip = dynamodb.Table("transactionSlip")
 userMyList = dynamodb.Table("userMyList")
 officeInfo = dynamodb.Table("officeInfo")
 mechanicInfo = dynamodb.Table("mechanicInfo")
+factoryMechaInicItem = dynamodb.Table("factoryMechaInicItem")
 
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
@@ -89,7 +90,7 @@ def post_product(PartitionKey, event):
       'bidEndDate' : event['Keys']['bidEndDate'],
       'explanation' : event['Keys']['explanation'],
       'displayDiv' : event['Keys']['displayDiv'],
-      'processStatus' : event['Keys']['processStatus'],
+      'processStatus' : '1',
       'targetService' : event['Keys']['targetService'],
       'targetVehicleId' : event['Keys']['targetVehicleId'],
       'targetVehicleDiv' : event['Keys']['targetVehicleDiv'],
@@ -178,6 +179,24 @@ def post_product(PartitionKey, event):
       'created' : datetime.now().strftime('%x %X'),
       'updated' : datetime.now().strftime('%x %X')
 
+    }
+  )
+  
+  # 工場メカニックアイテムの登録
+  if event['Keys']['targetService'] == '1':
+    fcmcId = officeId
+  else :
+    fcmcId = mechanicId
+  
+  putResponse = factoryMechaInicItem.put_item(
+    Item={
+      'serviceId' : PartitionKey,
+      'serviceName' : event['Keys']['title'],
+      'factoryMechanicId' : fcmcId,
+      'serviceType' : event['Keys']['targetService'],
+      'transactionStatus' : '1',
+      'browsingCount' : 0,
+      'favoriteCount' : 0
     }
   )
   

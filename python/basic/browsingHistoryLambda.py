@@ -34,23 +34,30 @@ def lambda_handler(event, context):
       id = str(uuid.uuid4())
       PartitionKey = id
       
-      # 工場メカニック商品情報の閲覧履歴数を更新
-      # 引数
-      input_event = {
-          "processDiv": '0',
-          "serviceId": event['Keys']['slipNo'],
-          "serviceType": event['Keys']['serviceType'],
-          "status": '0'
-      }
-      Payload = json.dumps(input_event) # jsonシリアライズ
-      # 呼び出し
-      boto3.client('lambda').invoke(
-          FunctionName='internalFcMcItemLambda',
-          InvocationType='Event',
-          Payload=Payload
-      )
+      # 重複チェック
+      uniqCheck = browsingUniqCheck(event)
       
-      return post_product(PartitionKey, event)
+      if uniqCheck:
+        # 更新
+        return put_product(PartitionKey, event)
+      else :
+        # 工場メカニック商品情報の閲覧履歴数を更新
+        # 引数
+        input_event = {
+            "processDiv": '0',
+            "serviceId": event['Keys']['slipNo'],
+            "serviceType": event['Keys']['serviceType'],
+            "status": '0'
+        }
+        Payload = json.dumps(input_event) # jsonシリアライズ
+        # 呼び出し
+        boto3.client('lambda').invoke(
+            FunctionName='internalFcMcItemLambda',
+            InvocationType='Event',
+            Payload=Payload
+        )
+        # 登録
+        return post_product(PartitionKey, event)
 
   except Exception as e:
       print("Error Exception.")
@@ -129,4 +136,26 @@ def post_product(PartitionKey, event):
 
     }
   )
+
+
+# 重複チェック
+def browsingUniqCheck(event):
+    # 更新対象のユーザーIDで登録中の閲覧履歴情報を取得する
+    queryData = table.query(
+        IndexName = 'userId-index',
+        KeyConditionExpression = Key("userId").eq(event['Keys']['userId'])
+    )
+    items=queryData['Items']
+    
+    # 未取得の場合チェックを終了する。
+    if len(items) == 0 :
+      return False
+    
+    for item in items :
+      # 伝票番号が重複した場合更新
+      if item['slipNo'] == event['Keys']['slipNo']
+        return True
+   # 重複なしの場合登録
+   return False
+
 

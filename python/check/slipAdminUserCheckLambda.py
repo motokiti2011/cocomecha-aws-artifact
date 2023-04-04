@@ -37,7 +37,7 @@ def slipDetailInfo_query(slipNo, adminId):
 # ÉåÉRÅ[Éhåüçı
 def salesServiceInfoOffice_query(slipNo, adminId):
     queryData = slipDetailInfo.query(
-        IndexName = 'slipAdminOfficeId',
+        IndexName = 'slipAdminOfficeId-index',
         KeyConditionExpression = Key("slipAdminOfficeId").eq(adminId) & Key("deleteDiv").eq("0")
     )
     items=queryData['Items']
