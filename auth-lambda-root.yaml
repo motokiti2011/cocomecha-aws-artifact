@@ -1,0 +1,105 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: IaC for Lambda
+Parameters:
+  # LambdaにアタッチするIAMロールのARN
+  LambdaRoleArn:
+    Type: String
+    Description: Role of Lambda Function
+  # S3Buket:Lambdaコードの格納先S3Buket
+  S3Buket:
+    Type: String
+    Description: S3Buket
+  # Lambdaコード格納先のディレクトリ名
+  LambdaCodeDirectory:
+    Type: String
+    Description: LambdaCodeDirectory
+  # テンプレート格納先のURL
+  TemplateUrl:
+    Type: String
+    Description: TemplateURL
+
+
+Resources:
+
+  ChackCertificationLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/auth/chackCertificationLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/auth/zip'
+          - '/chackCertificationLambda.zip'
+
+
+  LogOutLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/auth/logOutLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/auth/zip'
+          - '/logOutLambda.zip'
+
+  SinginUserInfoLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/auth/singinUserInfoLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/auth/zip'
+          - '/singinUserInfoLambda.zip'
+
+  SingupUserInfoLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/auth/singupUserInfoLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/auth/zip'
+          - '/singupUserInfoLambda.zip'
+
+Outputs:
+  # ChackCertificationLambdaのARN
+  ChackCertificationLambda:
+    Value: !GetAtt ChackCertificationLambda.Outputs.ChackCertificationLambda
+
+  # LogOutLambdaのARN
+  LogOutLambda:
+    Value: !GetAtt LogOutLambda.Outputs.LogOutLambda
+
+  # SinginUserInfoLambdaのARN
+  SinginUserInfoLambda:
+    Value: !GetAtt SinginUserInfoLambda.Outputs.SinginUserInfoLambda
+
+  # SingupUserInfoLambdaのARN
+  SingupUserInfoLambda:
+    Value: !GetAtt SingupUserInfoLambda.Outputs.SingupUserInfoLambda
+

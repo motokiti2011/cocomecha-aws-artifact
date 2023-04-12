@@ -147,6 +147,23 @@ Resources:
         - - !Ref TemplateUrl
 
 
+  AuthLambdaRoot:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'auth-lambda-root.yaml'
+      Parameters:
+        LambdaRoleArn: !GetAtt Role.Outputs.DynamoDBAccessRole
+        S3Buket: !Ref S3Buket
+        LambdaCodeDirectory: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+        TemplateUrl: !Join 
+        - ''
+        - - !Ref TemplateUrl
+
   # Cognitoの作成
   Cognito:
     Type: AWS::CloudFormation::Stack
@@ -284,6 +301,19 @@ Resources:
         SendTransactionRequestLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.SendTransactionRequestLambda
         TransactionEndLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.TransactionEndLambda
         RelistedServiceLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.RelistedServiceLambda
+
+        UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
+
+
+  AuthApigateway:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'auth-apigateway.yaml'
+      Parameters:
+        LogOutLambdaArn: !GetAtt AuthLambdaRoot.Outputs.LogOutLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 

@@ -17,14 +17,14 @@ Resources:
   LambdaFunction:
     Type: 'AWS::Lambda::Function'
     Properties:
-      FunctionName: 'inquiryInfoLambda'
+      FunctionName: 'singupUserInfoLambda'
       Description: Function that put items to DynamoDB
       Runtime: python3.9
       MemorySize: '128'
       Timeout: '5'
       Role:
         Ref: LambdaRoleArn
-      Handler: inquiryInfoLambda.lambda_handler
+      Handler: singupUserInfoLambda.lambda_handler
       Architectures:
         - x86_64
       EphemeralStorage:
@@ -35,6 +35,6 @@ Resources:
         S3Key:
           Ref: S3Key
 Outputs:
-  # inquiryInfoLambda‚ÌARN
-  InquiryInfoLambda:
+  # singupUserInfoLambda‚ÌARN
+  SingupUserInfoLambda:
     Value: !GetAtt LambdaFunction.Arn

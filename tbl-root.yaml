@@ -198,3 +198,12 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/factoryMechaInicItem.yaml'
 
+
+  inquiryInfo:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/inquiryInfo.yaml'
+
