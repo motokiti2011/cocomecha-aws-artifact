@@ -207,3 +207,22 @@ Resources:
         - - !Ref TemplateUrl
           - 'dynamodb/inquiryInfo.yaml'
 
+
+  accountUserConneection:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/accountUserConneection.yaml'
+
+
+  certificationManagementInfo:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'dynamodb/certificationManagementInfo.yaml'
+
+

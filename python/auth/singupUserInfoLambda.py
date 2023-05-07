@@ -1,5 +1,6 @@
 import json
 import boto3
+import uuid
 
 from datetime import datetime
 
@@ -13,49 +14,41 @@ dynamodb = boto3.resource('dynamodb')
 userInfo = dynamodb.Table("userInfo")
 accountUserConneection = dynamodb.Table("accountUserConneection")
 
-
+# サインアップLambda
 def lambda_handler(event, context):
   print(event)
   print(event['userName'])
   print(event['request'])
+  print(event['request']['userAttributes']['email'])
+  print(event['triggerSource'])
 
   PartitionKey = event['userName']
-
-  connectionData = operation_query(PartitionKey)
-  if len(connectionData) > 0 :
-    print('user-ADD-SUCSESS')
-    userId = id = str(uuid.uuid4())
-    
+  mailAdless = event['request']['userAttributes']['email']
+  triggerSource = event['triggerSource']
+  
+  # パスワードリセット以外の場合ユーザー追加
+  if triggerSource != 'PostConfirmation_ConfirmForgotPassword' :
+    userId = str(uuid.uuid4())
     post_accountUserConneection(PartitionKey, userId)
-    post_userInfo(userId, event)
+    post_userInfo(userId, mailAdless)
+    print('USER-ADD-SUCSESS')
   else :
     print('USER-NOT-ADD')
 
-  return
-
-
-
-# レコード検索（データ確認）
-def operation_query(partitionKey):
-    queryData = accountUserConneection.query(
-        KeyConditionExpression = Key("accountUseId").eq(partitionKey)
-    )
-    items=queryData['Items']
-    print(items)
-    return items
+  return event
 
 
 # ユーザーTBLレコード追加
-def post_userInfo(userId, event):
+def post_userInfo(userId, mailAdless):
   putResponse = userInfo.put_item(
     Item={
       'userId' : userId,
       'userValidDiv' : '0',
-      'mailAdress' : event['request']['userAttributes']['email']
+      'mailAdress' : mailAdless
     }
   )
   print('post_userInfo-SUCSESS')
-  return
+
 
 
 # アカウントユーザー紐づけTBLレコード追加
@@ -64,10 +57,10 @@ def post_accountUserConneection(PartitionKey, userId):
     Item={
       'accountUseId' : PartitionKey,
       'userId' : userId,
-      'created' :  now.strftime('%x %X')
+      'created' :  datetime.now().strftime('%x %X')
     }
   )
   print('post_accountUserConneection-SUCSESS')
-  return event
+
 
 

@@ -10,6 +10,23 @@ dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table("slipDetailInfo")
 userInfo = dynamodb.Table("userInfo")
 
+
+# ì`ï[èÓïÒéÊìæ
+def lambda_handler(event, context):
+  print("Received event: " + json.dumps(event))
+  OperationType = event['OperationType']
+
+  try:
+    if OperationType == 'GETSLIP':
+      PartitionKey = event['Keys']['slipNo']
+      return operation_query(PartitionKey)
+
+
+  except Exception as e:
+      print("Error Exception.")
+      print(e)
+
+
 def operation_query(partitionKey):
     queryData = table.query(
         KeyConditionExpression = Key("slipNo").eq(partitionKey) & Key("deleteDiv").eq("0")
@@ -20,7 +37,7 @@ def operation_query(partitionKey):
     userData = userInfo.query(
         KeyConditionExpression = Key("userId").eq(items[0]['slipAdminUserId']) & Key("userValidDiv").eq("0")
     )
-    user=userData['Items']
+    user = userData['Items']
     print(user)
 
     result={
@@ -61,16 +78,3 @@ def operation_query(partitionKey):
     print(result)
     return result
 
-def lambda_handler(event, context):
-  print("Received event: " + json.dumps(event))
-  OperationType = event['OperationType']
-
-  try:
-    if OperationType == 'GETSLIP':
-      PartitionKey = event['Keys']['slipNo']
-      return operation_query(PartitionKey)
-
-
-  except Exception as e:
-      print("Error Exception.")
-      print(e)

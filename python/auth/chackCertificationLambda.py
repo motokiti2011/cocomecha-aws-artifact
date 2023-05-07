@@ -53,4 +53,3 @@ def put_certificationData(data):
     }
   )
   print('post_accountUserConneection-SUCSESS')
-  return event

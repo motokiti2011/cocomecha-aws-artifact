@@ -1,7 +1,7 @@
 import json
 import boto3
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 from boto3.dynamodb.conditions import Key
@@ -45,7 +45,7 @@ def lambda_handler(event, context):
     print('POST_certification')
 
   print('SININ-SUCSESS')
-  return
+  return event
 
 
 # レコード検索（データ確認）
@@ -71,31 +71,38 @@ def get_certification(userId):
 
 # 認証情報追加
 def post_certificationData(data):
-  putResponse = accountUserConneection.put_item(
+
+  dt2 = datetime.now() + timedelta(hours=2)
+  
+  putResponse = certificationManagementInfo.put_item(
     Item={
       'userId' : data['userId'],
-      'accountUseId' : data['accountUseId'],
-      'operationDate' :  now.strftime('%Y%m%d'),
-      'operationTime' :  now.strftime('%H%M'),
-      'created' : now.strftime('%Y%m%d%H%M%S'),
-      'operationDateTime' :  now.strftime('%Y%m%d%H%M')
+      'accountUseId': data['accountUseId'],
+      'operationDate':  dt2.strftime('%Y%m%d'),
+      'operationTime':  dt2.strftime('%H%M'),
+      'created': datetime.now().strftime('%Y%m%d%H%M%S'),
+      'operationDateTime':  dt2.strftime('%Y%m%d%H%M')
     }
   )
   print('post_accountUserConneection-SUCSESS')
-  return event
+  return
 
 
 # 認証情報更新
 def put_certificationData(data):
-  putResponse = accountUserConneection.put_item(
+
+  # 2時間後の時刻を設定
+  dt2 = datetime.now() + timedelta(hours=2)
+  
+  putResponse = certificationManagementInfo.put_item(
     Item={
       'userId' : data['userId'],
-      'accountUseId' : data['accountUseId'],
-      'operationDate' :  now.strftime('%Y%m%d'),
-      'operationTime' :  now.strftime('%H%M'),
-      'created' :  data['created'],
-      'operationDateTime' :  now.strftime('%Y%m%d%H%M')
+      'accountUseId': data['accountUseId'],
+      'operationDate':  dt2.strftime('%Y%m%d'),
+      'operationTime':  dt2.strftime('%H%M'),
+      'created':  data['created'],
+      'operationDateTime':  dt2.strftime('%Y%m%d%H%M')
     }
   )
   print('post_accountUserConneection-SUCSESS')
-  return event
+  return

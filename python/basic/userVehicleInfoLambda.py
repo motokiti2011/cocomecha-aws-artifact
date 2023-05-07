@@ -12,11 +12,41 @@ dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("userVehicleInfo")
 
+# ユーザー車両情報
+def lambda_handler(event, context):
+  print("Received event: " + json.dumps(event))
+  now = datetime.now()
+  print(now)
+  OperationType = event['OperationType']
+
+  try:
+    if OperationType == 'QUERY':
+      PartitionKey = event['Keys']['vehicleId']
+      return operation_query(PartitionKey)
+
+    elif OperationType == 'PUT':
+      PartitionKey = event['Keys']['vehicleId']
+      return put_product(PartitionKey, event)
+
+    elif OperationType == 'DELETE':
+      PartitionKey = event['Keys']['vehicleId']
+      return operation_delete(PartitionKey, event)
+
+    elif OperationType == 'POST':
+      id = str(uuid.uuid4())
+      PartitionKey = id
+      return post_product(PartitionKey, event)
+
+
+  except Exception as e:
+      print("Error Exception.")
+      print(e)
+
 
 # レコード検索
 def operation_query(partitionKey):
     queryData = table.query(
-        KeyConditionExpression = Key("userId").eq(partitionKey)
+        KeyConditionExpression = Key("vehicleId").eq(partitionKey)
     )
     items=queryData['Items']
     print(items)
@@ -25,12 +55,16 @@ def operation_query(partitionKey):
 # レコード更新
 def put_product(PartitionKey, event):
 
-  now = datetime.now()
+  # 認証情報チェック
+  userId = CertificationUserId(event)
+  if userId == None :
+    print('NOT-CERTIFICATION')
+    return 500
 
   putResponse = table.put_item(
     Item={
       'vehicleId' : PartitionKey,
-      'userId' : event['Keys']['userId'],
+      'userId' : userId,
       'vehicleName' : event['Keys']['vehicleName'],
       'vehicleDiv' : event['Keys']['vehicleDiv'],
       'vehicleNo' : event['Keys']['vehicleNo'],
@@ -47,9 +81,9 @@ def put_product(PartitionKey, event):
       'mileage' : event['Keys']['mileage'],
       'firstRegistrationDate' : event['Keys']['firstRegistrationDate'],
       'InspectionExpirationDate' : event['Keys']['InspectionExpirationDate'],
-      'updateUserId' : event['Keys']['updateUserId'],
+      'updateUserId' : userId,
       'created' : event['Keys']['created'],
-      'updated' : now.strftime('%x %X')
+      'updated' : datetime.now().strftime('%x %X')
     }
   )
   
@@ -63,12 +97,16 @@ def put_product(PartitionKey, event):
 # レコード追加
 def post_product(PartitionKey, event):
 
-  now = datetime.now()
+  # 認証情報チェック
+  userId = CertificationUserId(event)
+  if userId == None :
+    print('NOT-CERTIFICATION')
+    return 500
 
   putResponse = table.put_item(
     Item={
       'vehicleId' : PartitionKey,
-      'userId' : event['Keys']['userId'],
+      'userId' : userId,
       'vehicleName' : event['Keys']['vehicleName'],
       'vehicleNo' : event['Keys']['vehicleNo'],
       'vehicleNoAreaName' : event['Keys']['vehicleNoAreaName'],
@@ -84,9 +122,9 @@ def post_product(PartitionKey, event):
       'mileage' : event['Keys']['mileage'],
       'firstRegistrationDate' : event['Keys']['firstRegistrationDate'],
       'InspectionExpirationDate' : event['Keys']['InspectionExpirationDate'],
-      'updateUserId' : event['Keys']['updateUserId'],
-      'created' : now.strftime('%x %X'),
-      'updated' : now.strftime('%x %X')
+      'updateUserId' : userId,
+      'created' : datetime.now().strftime('%x %X'),
+      'updated' : datetime.now().strftime('%x %X')
     }
   )
   
@@ -99,44 +137,47 @@ def post_product(PartitionKey, event):
 
 
 # レコード削除
-def operation_delete(partitionKey):
-    delResponse = table.delete_item(
-       Key={
-           'userId': partitionKey,
-       }
+def operation_delete(PartitionKey, event):
+
+  # 認証情報チェック
+  userId = CertificationUserId(event)
+  if userId == None :
+    print('NOT-CERTIFICATION')
+    return 500
+
+  delResponse = table.delete_item(
+     Key={
+         'vehicleId': PartitionKey
+     }
+  )
+  if delResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+      print(delResponse)
+  else:
+      print('DEL Successed.')
+  return delResponse['ResponseMetadata']['HTTPStatusCode'] 
+
+# 認証情報からユーザー情報取得
+def CertificationUserId(event):
+    cognitoUserId = event['Keys']['userId']
+    # 認証情報チェック後ユーザーIDを取得
+    # 引数
+    input_event = {
+        "userId": cognitoUserId,
+    }
+    Payload = json.dumps(input_event) # jsonシリアライズ
+    # 同期処理で呼び出し
+    response = boto3.client('lambda').invoke(
+        FunctionName='CertificationLambda',
+        InvocationType='RequestResponse',
+        Payload=Payload
     )
-    if delResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
-        print(delResponse)
-    else:
-        print('DEL Successed.')
-    return delResponse
+    body = json.loads(response['Payload'].read())
+    print(body)
+    # ユーザー情報のユーザーIDを取得
+    if body != None :
+      return body
+    else :
+      print('NOT-CERTIFICATION')
+      return None
 
 
-def lambda_handler(event, context):
-  print("Received event: " + json.dumps(event))
-  now = datetime.now()
-  print(now)
-  OperationType = event['OperationType']
-
-  try:
-
-    if OperationType == 'QUERY':
-      PartitionKey = event['Keys']['vehicleId']
-      return operation_query(PartitionKey)
-
-    elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['vehicleId']
-      return put_product(PartitionKey, event)
-
-    elif OperationType == 'DELETE':
-      return operation_delete(PartitionKey)
-
-    elif OperationType == 'POST':
-      id = str(uuid.uuid4())
-      PartitionKey = id
-      return post_product(PartitionKey, event)
-
-
-  except Exception as e:
-      print("Error Exception.")
-      print(e)

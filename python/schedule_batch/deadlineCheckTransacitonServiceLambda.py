@@ -14,6 +14,28 @@ transactionSlip = dynamodb.Table("transactionSlip")
 userMyList = dynamodb.Table("userMyList")
 
 
+# スケジュールバッチ 期限切れ取引中伝票情報の抽出
+def lambda_handler(event, context):
+  print("Received event: " + json.dumps(event))
+  now = datetime.now()
+  print(now)
+  print('DEADLINECHECKSERVICE')
+
+  try:
+    deadLineServiceData = deadlineservice_query()
+    
+    if(len(deadLineServiceData) > 0 :
+      for service in deadLineServiceData :
+        if service['ttlDate'] == 0:
+          # TTL日付を設定する
+          setTTLDate_query(service)
+          # マイリストTBLにメッセージを設定する
+          setMyListMsg_query(service)
+  except Exception as e:
+      print("Error Exception.")
+      print(e)
+
+
 # 取引中伝票情報の期限切れ情報を抽出しマイリストTBLへのメッセージとして通知する。
 # 取引中伝票情報の期限切れデータを取得する(72時間前～現在時刻)
 def deadlineservice_query():
@@ -127,26 +149,3 @@ def get_ttl_timestamp():
     return int(3dayBeforTime.timestamp()) * 1000
 
 
-
-def lambda_handler(event, context):
-  print("Received event: " + json.dumps(event))
-  now = datetime.now()
-  print(now)
-  OperationType = event['OperationType']
-
-  try:
-    if OperationType == 'DEADLINECHECKSERVICE':
-
-      deadLineServiceData = deadlineservice_query()
-      
-      if(len(deadLineServiceData) > 0 :
-          for service in deadLineServiceData :
-            if service['ttlDate'] == 0:
-              # TTL日付を設定する
-              setTTLDate_query(service)
-              # マイリストTBLにメッセージを設定する
-              setMyListMsg_query(service)
-
-  except Exception as e:
-      print("Error Exception.")
-      print(e)

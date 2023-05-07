@@ -15,7 +15,41 @@ slipDetailInfo = dynamodb.Table("slipDetailInfo")
 transactionSlip = dynamodb.Table("transactionSlip")
 
 
-# 確定サービス移行
+# スケジュールバッチ 確定サービス移行
+def lambda_handler(event, context):
+  print("Received event: " + json.dumps(event))
+  now = datetime.now()
+  print(now)
+  print('CONFIRMMIGRATIONSERVICE')
+
+  try:    
+    # 伝票チェック
+    confirmSlipData = slip_confirm()
+
+    # 対象伝票が存在する場合
+    if(len(confirmSlipData) > 0 :
+
+        for slip in confirmSlipData :
+          # 対象伝票を削除(保留)
+          #slipconfirm_delete(slip['slipNo'])
+          # 対象伝票を取引中伝票に追加
+          slipconfirm_post(slip)
+
+    # サービス商品チェック
+    confirmServiceData = service_confirm()
+
+    if(len(confirmServiceData) > 0 :
+    # 対象サービスが存在する場合削除
+        for service in confirmServiceData :
+          # 対象サービスを削除(保留)
+          #serviceconfirm_delete(service['slipNo'])
+          # 対象サービスを取引中伝票に追加
+          serviceconfirm_post(service)
+
+  except Exception as e:
+      print("Error Exception.")
+      print(e)
+
 
 # 伝票情報確定伝票抽出
 def slip_confirm(partitionKey):
@@ -122,42 +156,3 @@ def serviceconfirm_post(service):
     print(putResponse)
 
 
-def lambda_handler(event, context):
-  print("Received event: " + json.dumps(event))
-  now = datetime.now()
-  print(now)
-  OperationType = event['OperationType']
-
-  try:
-    if OperationType == 'CONFIRMMIGRATIONSERVICE':
-      # 確定サービス移行
-      
-      # 伝票チェック
-      confirmSlipData = slip_confirm()
-
-      # 対象伝票が存在する場合
-      if(len(confirmSlipData) > 0 :
-
-          for slip in confirmSlipData :
-            # 対象伝票を削除(保留)
-            #slipconfirm_delete(slip['slipNo'])
-            # 対象伝票を取引中伝票に追加
-            slipconfirm_post(slip)
-
-
-      # サービス商品チェック
-      confirmServiceData = service_confirm()
-
-      if(len(confirmServiceData) > 0 :
-      # 対象サービスが存在する場合削除
-          for service in confirmServiceData :
-            # 対象サービスを削除(保留)
-            #serviceconfirm_delete(service['slipNo'])
-            # 対象サービスを取引中伝票に追加
-            serviceconfirm_post(service)
-
-
-
-  except Exception as e:
-      print("Error Exception.")
-      print(e)

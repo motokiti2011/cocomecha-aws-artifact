@@ -5,6 +5,40 @@ import uuid
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
+
+# スケジュールバッチ 期限切れ伝票チェック
+def lambda_handler(event, context):
+  print("Received event: " + json.dumps(event))
+  now = datetime.now()
+  print(now)
+  print('EXPIREDSERVICE')
+  try:
+    # 伝票チェック
+    expiredSlipData = slip_confirm()
+
+    # 対象伝票が存在する場合
+    if(len(expiredSlipData) > 0 :
+      for slip in expiredSlipData :
+        # 対象伝票のステータスを更新
+        expiredSlip_query(slip)
+        # マイリストTBLにメッセージを追加（期限切れ）
+        slipMylistMsg_query(slip['slipNo'])
+
+      # サービス商品チェック
+      expiredServiceData = service_confirm()
+      if(len(expiredServiceData) > 0 :
+      # 対象サービスが存在する場合削除
+        for service in expiredServiceData :
+          # 対象サービスのステータスを更新
+          expiredService_query(service)
+          # マイリストTBLにメッセージを追加（期限切れ）
+          serviceMylistMsg_query(service)
+
+  except Exception as e:
+      print("Error Exception.")
+      print(e)
+
+
 # Keyオブジェクトを利用できるようにする
 
 # Dynamodbアクセスのためのオブジェクト取得
@@ -205,37 +239,3 @@ def get_timestamp():
     return int(nowTime.timestamp()) * 1000
 
 
-def lambda_handler(event, context):
-  print("Received event: " + json.dumps(event))
-  now = datetime.now()
-  print(now)
-  OperationType = event['OperationType']
-
-  try:
-    if OperationType == 'EXPIREDSERVICE':
-      # 期限切れ伝票チェック
-      
-      # 伝票チェック
-      expiredSlipData = slip_confirm()
-
-      # 対象伝票が存在する場合
-      if(len(expiredSlipData) > 0 :
-          for slip in expiredSlipData :
-            # 対象伝票のステータスを更新
-            expiredSlip_query(slip)
-            # マイリストTBLにメッセージを追加（期限切れ）
-            slipMylistMsg_query(slip['slipNo'])
-
-      # サービス商品チェック
-      expiredServiceData = service_confirm()
-      if(len(expiredServiceData) > 0 :
-      # 対象サービスが存在する場合削除
-          for service in expiredServiceData :
-            # 対象サービスのステータスを更新
-            expiredService_query(service)
-            # マイリストTBLにメッセージを追加（期限切れ）
-            serviceMylistMsg_query(service)
-
-  except Exception as e:
-      print("Error Exception.")
-      print(e)

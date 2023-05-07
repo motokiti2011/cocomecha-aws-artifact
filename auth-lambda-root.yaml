@@ -86,6 +86,24 @@ Resources:
           - '/auth/zip'
           - '/singupUserInfoLambda.zip'
 
+
+  CertificationLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/auth/certificationLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/auth/zip'
+          - '/certificationLambda.zip'
+
+
 Outputs:
   # ChackCertificationLambda‚ÌARN
   ChackCertificationLambda:
@@ -102,4 +120,8 @@ Outputs:
   # SingupUserInfoLambda‚ÌARN
   SingupUserInfoLambda:
     Value: !GetAtt SingupUserInfoLambda.Outputs.SingupUserInfoLambda
+
+  # CertificationLambda‚ÌARN
+  CertificationLambda:
+    Value: !GetAtt CertificationLambda.Outputs.CertificationLambda
 

@@ -11,6 +11,9 @@ from boto3.dynamodb.conditions import Key
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 certificationManagementInfo = dynamodb.Table("certificationManagementInfo")
+accountUserConneection = dynamodb.Table("accountUserConneection")
+
+
 
 # ログアウト時の認証情報管理
 def lambda_handler(event, context):
@@ -18,10 +21,21 @@ def lambda_handler(event, context):
   print(event['userId'])
 
   PartitionKey = event['userId']
+  
+  # アカウント紐づけからユーザーIDを取得
+  
+  accountData = operation_queryConnection(PartitionKey)
+  if len(accountData) > 0 :
+    userId = accountData[0]['userId']
+  else :
+    print('USERID-FAILED')
+    return
+  print('userId')  
+  print(userId)
   # 認証情報管理検索
-  certificationData = operation_query(PartitionKey)
+  certificationData = operation_query(userId)
   if len(certificationData) > 0 :
-    delete_certificationData(PartitionKey)
+    delete_certificationData(userId)
     print('USER-DEL-SUCSESS')
 
   else :
@@ -29,6 +43,15 @@ def lambda_handler(event, context):
 
   return
 
+
+# アカウント紐づけレコード検索（データ確認）
+def operation_queryConnection(partitionKey):
+    queryData = accountUserConneection.query(
+        KeyConditionExpression = Key("accountUseId").eq(partitionKey)
+    )
+    items=queryData['Items']
+    print(items)
+    return items
 
 
 # レコード検索（データ確認）

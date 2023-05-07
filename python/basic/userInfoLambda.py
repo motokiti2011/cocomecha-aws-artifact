@@ -11,6 +11,54 @@ dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("userInfo")
 
+# ユーザー情報取得Lambda
+def lambda_handler(event, context):
+  print("Received event: " + json.dumps(event))
+  now = datetime.now()
+  print(now)
+  OperationType = event['OperationType']
+
+  try:
+    if OperationType == 'QUERY':
+      cognitoUserId = event['Keys']['userId']
+      # 認証情報チェック後ユーザーIDを取得
+      # 引数
+      input_event = {
+          "userId": cognitoUserId,
+      }
+      Payload = json.dumps(input_event) # jsonシリアライズ
+      # 同期処理で呼び出し
+      response = boto3.client('lambda').invoke(
+          FunctionName='CertificationLambda',
+          InvocationType='RequestResponse',
+          Payload=Payload
+      )
+      body = json.loads(response['Payload'].read())
+      print(body)
+      # ユーザー情報のユーザーIDを取得
+      if body != None :
+        userId = body
+      else :
+        print('NOT-CERTIFICATION')
+        return
+
+      PartitionKey = userId
+      sortKey = event['Keys']['userValidDiv']
+      return operation_query(PartitionKey, sortKey)
+
+    elif OperationType == 'PUT':
+      PartitionKey = event['Keys']['userId']
+      return post_product(PartitionKey, event)
+
+    elif OperationType == 'DELETE':
+      PartitionKey = userId
+      return operation_delete(PartitionKey)
+
+  except Exception as e:
+      print("Error Exception.")
+      print(e)
+
+
 
 # レコード検索
 def operation_query(partitionKey, sortKey):
@@ -71,28 +119,3 @@ def operation_delete(partitionKey):
         print('DEL Successed.')
     return delResponse
 
-
-def lambda_handler(event, context):
-  print("Received event: " + json.dumps(event))
-  now = datetime.now()
-  print(now)
-  OperationType = event['OperationType']
-
-  try:
-
-    if OperationType == 'QUERY':
-      PartitionKey = event['Keys']['userId']
-      sortKey = event['Keys']['userValidDiv']
-      return operation_query(PartitionKey, sortKey)
-
-    elif OperationType == 'PUT':
-      PartitionKey = event['Keys']['userId']
-      return post_product(PartitionKey, event)
-
-    elif OperationType == 'DELETE':
-      PartitionKey = event['Keys']['userId']
-      return operation_delete(PartitionKey)
-
-  except Exception as e:
-      print("Error Exception.")
-      print(e)

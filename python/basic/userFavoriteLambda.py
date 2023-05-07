@@ -89,12 +89,16 @@ def operation_query(partitionKey):
 # レコード追加
 def put_product(PartitionKey, event):
 
-  now = datetime.now()
+  # 認証情報チェック
+  userId = CertificationUserId(event)
+  if userId == None :
+    print('NOT-CERTIFICATION')
+    return 500
 
   putResponse = table.put_item(
     Item={
       'id' : PartitionKey,
-      'userId' : event['Keys']['userId'],
+      'userId' : userId,
       'slipNo' : event['Keys']['slipNo'],
       'title' : event['Keys']['title'],
       'price' : event['Keys']['price'],
@@ -102,7 +106,7 @@ def put_product(PartitionKey, event):
       'endDate' : event['Keys']['endDate'],
       'imageUrl' : event['Keys']['imageUrl'],
       'created' : event['Keys']['created'],
-      'updated' : now.strftime('%x %X')
+      'updated' : datetime.now().strftime('%x %X')
     }
   )
   
@@ -128,12 +132,16 @@ def operation_delete(partitionKey):
 # レコード追加
 def post_product(PartitionKey, event):
 
-  now = datetime.now()
+  # 認証情報チェック
+  userId = CertificationUserId(event)
+  if userId == None :
+    print('NOT-CERTIFICATION')
+    return 500
 
   putResponse = table.put_item(
     Item={
       'id' : PartitionKey,
-      'userId' : event['Keys']['userId'],
+      'userId' : userId,
       'slipNo' : event['Keys']['slipNo'],
       'title' : event['Keys']['title'],
       'price' : event['Keys']['price'],
@@ -141,8 +149,8 @@ def post_product(PartitionKey, event):
       'endDate' : event['Keys']['endDate'],
       'imageUrl' : event['Keys']['imageUrl'],
       'serviceType' : event['Keys']['serviceType'],
-      'created' : now.strftime('%x %X'),
-      'updated' : now.strftime('%x %X')
+      'created' : datetime.now().strftime('%x %X'),
+      'updated' : datetime.now().strftime('%x %X')
 
     }
   )
@@ -152,4 +160,29 @@ def post_product(PartitionKey, event):
   else:
     print('Post Successed.')
   return putResponse
+
+
+# 認証情報からユーザー情報取得
+def CertificationUserId(event):
+    cognitoUserId = event['Keys']['userId']
+    # 認証情報チェック後ユーザーIDを取得
+    # 引数
+    input_event = {
+        "userId": cognitoUserId,
+    }
+    Payload = json.dumps(input_event) # jsonシリアライズ
+    # 同期処理で呼び出し
+    response = boto3.client('lambda').invoke(
+        FunctionName='CertificationLambda',
+        InvocationType='RequestResponse',
+        Payload=Payload
+    )
+    body = json.loads(response['Payload'].read())
+    print(body)
+    # ユーザー情報のユーザーIDを取得
+    if body != None :
+      return body
+    else :
+      print('NOT-CERTIFICATION')
+      return None
 

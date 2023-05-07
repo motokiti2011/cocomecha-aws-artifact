@@ -24,7 +24,7 @@ def lambda_handler(event, context) :
         if OperationType != 'CHECKACCESEADMIN':
           return
 
-
+        print('1')
         adminInfo = ''
         # サービスタイプがユーザーの場合
         if serviceType == '0':
@@ -40,28 +40,55 @@ def lambda_handler(event, context) :
         accessUserInfo = []
         # ユーザーまたはメカニックの場合ユーザー情報からID判定する
         if serviceType != '2':
-          accessUserInfo = userInfo_query(accessUser)
+
+          # 認証情報チェック後ユーザーIDを取得
+          # 引数
+          input_event = {
+              "userId": accessUser,
+          }
+          Payload = json.dumps(input_event) # jsonシリアライズ
+          # 同期処理で呼び出し
+          response = boto3.client('lambda').invoke(
+              FunctionName='CertificationLambda',
+              InvocationType='RequestResponse',
+              Payload=Payload
+          )
+          body = json.loads(response['Payload'].read())
+          print(body)
+          # ユーザー情報のユーザーIDを取得
+          if body != None :
+            userId = body
+          else :
+            print('NOT-CERTIFICATION')
+            return
+
+          accessUserInfo = userInfo_query(userId)
         else:
           accessUserInfo = officeInfo_query(accessUser)
 
+        print('2')
+        print(adminInfo)
+        print(accessUserInfo)
 
         # 判定
         # サービスタイプがユーザーの場合
         idList = []
         if serviceType == '0':
-
+          print('3')
           if adminInfo[0]['userId'] == accessUserInfo[0]['userId']:
             return True
           else:
             return False
         # サービスタイプがメカニックの場合
         elif serviceType == '1':
+          print('4')
           if adminInfo[0]['mechanicId'] == accessUserInfo[0]['mechanicId']:
             return True
           else:
             return False
         # サービスタイプが工場の場合
         else:
+          print('5')
           checkList = accessUserInfo[0]['adminIdList']
           
           return adminInfo[0]['officeId'] in checkList

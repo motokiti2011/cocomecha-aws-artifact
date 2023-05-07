@@ -9,6 +9,54 @@ dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("transactionSlip")
 
+# 取引中伝票情報GSI検索
+def lambda_handler(event, context):
+    print("Received event: " + json.dumps(event))
+    IndexType = event['IndexType']
+    SortKey = event['Keys']['serviceType']
+
+    try:
+        PartitionKey = event['Keys']['id']
+        if IndexType == 'SLIPUSER-INDEX':
+
+            cognitoUserId = PartitionKey
+            # 認証情報チェック後ユーザーIDを取得
+            # 引数
+            input_event = {
+                "userId": cognitoUserId,
+            }
+            Payload = json.dumps(input_event) # jsonシリアライズ
+            # 同期処理で呼び出し
+            response = boto3.client('lambda').invoke(
+                FunctionName='CertificationLambda',
+                InvocationType='RequestResponse',
+                Payload=Payload
+            )
+            body = json.loads(response['Payload'].read())
+            print(body)
+            # ユーザー情報のユーザーIDを取得
+            if body != None :
+              userId = body
+            else :
+              print('NOT-CERTIFICATION')
+              return
+
+            return slipUser_query(userId,SortKey)
+
+        elif IndexType == 'SLIPOFFICE-INDEX':
+          PartitionKey = event['Keys']['id']
+          return slipOffice_query(PartitionKey, SortKey)
+
+        elif IndexType == 'SLIPMECHANIC-INDEX':
+          PartitionKey = event['Keys']['id']
+          return slipMechanic_query(PartitionKey,SortKey)
+
+    except Exception as e:
+        print("Error Exception.")
+        print(e)
+
+
+
 # 1レコード検索 slipUserId-index
 def slipUser_query(partitionKey, sortKey):
     queryData = table.query(
@@ -40,24 +88,3 @@ def slipMechanic_query(partitionKey):
     return items
 
 
-def lambda_handler(event, context):
-    print("Received event: " + json.dumps(event))
-    IndexType = event['IndexType']
-    SortKey = event['Keys']['serviceType']
-
-    try:
-        PartitionKey = event['Keys']['id']
-        if IndexType == 'SLIPUSER-INDEX':
-            return slipUser_query(PartitionKey,SortKey)
-
-        elif IndexType == 'SLIPOFFICE-INDEX':
-          PartitionKey = event['Keys']['id']
-          return slipOffice_query(PartitionKey, SortKey)
-
-        elif IndexType == 'SLIPMECHANIC-INDEX':
-          PartitionKey = event['Keys']['id']
-          return slipMechanic_query(PartitionKey,SortKey)
-
-    except Exception as e:
-        print("Error Exception.")
-        print(e)

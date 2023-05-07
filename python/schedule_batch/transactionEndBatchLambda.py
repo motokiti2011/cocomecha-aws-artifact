@@ -16,7 +16,38 @@ userMyList = dynamodb.Table("userMyList")
 completionSlip = dynamodb.Table("completionSlip")
 
 
-# 取引完了伝票の抽出
+# スケジュールバッチ 取引完了伝票の抽出
+def lambda_handler(event, context):
+  print("Received event: " + json.dumps(event))
+  now = datetime.now()
+  print(now)
+  print('TRANSACTIONEND')
+
+  try:
+    # 取引完了日越え取引情報を抽出
+    endTransaction = delete_transaction_query()
+    if(len(endTransaction) > 0 :
+      for service in endTransaction :
+        # 取引情報を論理削除
+        logcaldelete_query(service)
+        if service['serviceType'] == '0':
+          # 伝票情報を取得し論理削除する
+          slip = slipDetailInfo_query(service['slipNo'])
+          # 取引終了TBLに情報を登録する
+          completionSlip_query(slip)
+          # マイリストTBLにメッセージを設定する(取引完了メッセージ＋評価依頼メッセージ)
+          setMyListMsg_query(slip)
+        elif service['serviceType'] == '1' or '2':
+          # サービス商品を取得し論理削除する
+          salesService = salesServiceInfo_query(service['slipNo'])
+          # 取引終了TBLに情報を登録する
+          completionSalesService_query(salesService)
+          # マイリストTBLにメッセージを設定する(取引完了メッセージ＋評価依頼メッセージ)
+          setMyListMsgSales_query(salesService)
+  except Exception as e:
+      print("Error Exception.")
+      print(e)
+
 
 # 取引中伝票情報の削除対象の情報を抽出
 def delete_transaction_query():
@@ -351,40 +382,3 @@ def get_timestamp():
     return int(nowTime.timestamp()) * 1000
 
 
-def lambda_handler(event, context):
-  print("Received event: " + json.dumps(event))
-  now = datetime.now()
-  print(now)
-  OperationType = event['OperationType']
-
-
-  try:
-    if OperationType == 'TRANSACTIONEND':
-      # 取引完了日越え取引情報を抽出
-      endTransaction = delete_transaction_query()
-
-      if(len(endTransaction) > 0 :
-          for service in endTransaction :
-            # 取引情報を論理削除
-            logcaldelete_query(service)
-            if service['serviceType'] == '0':
-              # 伝票情報を取得し論理削除する
-              slip = slipDetailInfo_query(service['slipNo'])
-              # 取引終了TBLに情報を登録する
-              completionSlip_query(slip)
-              # マイリストTBLにメッセージを設定する(取引完了メッセージ＋評価依頼メッセージ)
-              setMyListMsg_query(slip)
-
-            elif service['serviceType'] == '1' or '2':
-              # サービス商品を取得し論理削除する
-              salesService = salesServiceInfo_query(service['slipNo'])
-              # 取引終了TBLに情報を登録する
-              completionSalesService_query(salesService)
-              # マイリストTBLにメッセージを設定する(取引完了メッセージ＋評価依頼メッセージ)
-              setMyListMsgSales_query(salesService)
-
-
-
-  except Exception as e:
-      print("Error Exception.")
-      print(e)

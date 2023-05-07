@@ -204,7 +204,7 @@ Resources:
       ResourceId: !Ref GetSlipResource
       RestApiId: !Ref ApiGwRestAPI
       AuthorizerId: !Ref Authorizer
-      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizationType: NONE
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
@@ -243,7 +243,7 @@ Resources:
       ResourceId: !Ref GetSalesServiceResource
       RestApiId: !Ref ApiGwRestAPI
       AuthorizerId: !Ref Authorizer
-      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizationType: NONE
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
@@ -642,7 +642,7 @@ Resources:
       ResourceId: !Ref SerchSalesServiceContentsResource
       RestApiId: !Ref ApiGwRestAPI
       AuthorizerId: !Ref Authorizer
-      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizationType: NONE
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
@@ -682,7 +682,7 @@ Resources:
       ResourceId: !Ref SerchslipContentsResource
       RestApiId: !Ref ApiGwRestAPI
       AuthorizerId: !Ref Authorizer
-      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizationType: NONE
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
