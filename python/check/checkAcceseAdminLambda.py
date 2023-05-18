@@ -49,7 +49,7 @@ def lambda_handler(event, context) :
           Payload = json.dumps(input_event) # jsonシリアライズ
           # 同期処理で呼び出し
           response = boto3.client('lambda').invoke(
-              FunctionName='CertificationLambda',
+              FunctionName='certificationLambda',
               InvocationType='RequestResponse',
               Payload=Payload
           )
