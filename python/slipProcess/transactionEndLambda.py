@@ -5,17 +5,17 @@ import uuid
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 transactionSlip = dynamodb.Table("transactionSlip")
 userMyList = dynamodb.Table("userMyList")
 
 
 
-# æˆøˆË—ŠTBLƒŒƒR[ƒh“o˜^
+# å–å¼•ä¾é ¼TBLãƒ¬ã‚³ãƒ¼ãƒ‰ç™»éŒ²
 def post_transaction(PartitionKey, event):
   now = datetime.now()
   putResponse = transactionSlip.put_item(
@@ -46,10 +46,10 @@ def post_transaction(PartitionKey, event):
 
 
 
-# “`•[ŠÇ—Òƒ}ƒCƒŠƒXƒg‚ÌXV
+# ä¼ç¥¨ç®¡ç†è€…ãƒã‚¤ãƒªã‚¹ãƒˆã®æ›´æ–°
 def put_adminMyList(PartitionKey, event):
-  # ƒ}ƒCƒŠƒXƒgTBL‚Ì“o˜^
-  # “`•[ŠÇ—Ò
+  # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã®ç™»éŒ²
+  # ä¼ç¥¨ç®¡ç†è€…
   userMyListAdminResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),
@@ -79,7 +79,7 @@ def put_adminMyList(PartitionKey, event):
 
 
 
-# æˆøˆË—ŠÒ‚Ìƒ}ƒCƒŠƒXƒg‚ÌXV
+# å–å¼•ä¾é ¼è€…ã®ãƒã‚¤ãƒªã‚¹ãƒˆã®æ›´æ–°
 def put_requestMyList(PartitionKey, event):
   userMyListResponse = userMyList.put_item(
     Item={
@@ -110,7 +110,7 @@ def put_requestMyList(PartitionKey, event):
 	return
 
 
-# “`•[”Ô†‚É•R‚Ã‚­ƒ†[ƒU[ƒ}ƒCƒŠƒXƒgTBLî•ñæ“¾
+# ä¼ç¥¨ç•ªå·ã«ç´ã¥ããƒ¦ãƒ¼ã‚¶ãƒ¼ãƒã‚¤ãƒªã‚¹ãƒˆTBLæƒ…å ±å–å¾—
 def mylist_slipNo_query(partitionKey):
     queryData = userMyList.query(
         IndexName = 'slipNo-index',
@@ -135,11 +135,11 @@ def lambda_handler(event, context):
     post_transaction(PartitionKey, event)
     put_adminMyList(PartitionKey, event)
 
-    # æˆø’†‚Ìƒ}ƒCƒŠƒXƒgî•ñ‚ğæ“¾
+    # å–å¼•ä¸­ã®ãƒã‚¤ãƒªã‚¹ãƒˆæƒ…å ±ã‚’å–å¾—
     requestMyList = mylist_slipNo_query( event['Keys']['slipNo'])
 
     for item in requestMyList :
-      # ŠÇ—ƒ†[ƒU[ˆÈŠOiˆË—ŠÒj‚ÌƒXƒe[ƒ^ƒXXV
+      # ç®¡ç†ãƒ¦ãƒ¼ã‚¶ãƒ¼ä»¥å¤–ï¼ˆä¾é ¼è€…ï¼‰ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æ›´æ–°
       if adminUser != item['requestId'] :
         if confirmUser != item['requestId'] :
           put_requestMyList(item)

@@ -4,32 +4,32 @@ import boto3
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("slipMegPrmUser")
 
 
-# ƒŒƒR[ƒhŒŸõ
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢
 def post_product(partitionKey, updateId, updateName):
-    # ‘ÎÛƒŒƒR[ƒhæ“¾
+    # å¯¾è±¡ãƒ¬ã‚³ãƒ¼ãƒ‰å–å¾—
     queryData = table.query(
         KeyConditionExpression = Key("slipNo").eq(partitionKey)
     )
     items=queryData['Items']
 
     if len(items) == 0:
-      # æ“¾‚Å‚«‚È‚©‚Á‚½ê‡
+      # å–å¾—ã§ããªã‹ã£ãŸå ´åˆ
       return False
 
     item = items[0]
 
-    # ‹–‰ÂÏƒ†[ƒU[ƒŠƒXƒg‚ğæ“¾
+    # è¨±å¯æ¸ˆãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒªã‚¹ãƒˆã‚’å–å¾—
     userList = item['permissionUserList']
     data = {'userId':updateId ,'userName':updateName, 'parmissionDiv': '0'}
-    # ‹–‰ÂÏƒ†[ƒU[ƒŠƒXƒg‚ª‹ó‚Ìê‡
+    # è¨±å¯æ¸ˆãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒªã‚¹ãƒˆãŒç©ºã®å ´åˆ
     if len(userList) == 0:
       userList.append(data)
      
@@ -39,7 +39,7 @@ def post_product(partitionKey, updateId, updateName):
       target = 0
       for list in userList:
         if(list['userId'] == updateId):
-          # ƒŠƒXƒg‚É‚·‚Å‚ÉŠÜ‚Ü‚ê‚éê‡,\¿æ‚èÁ‚µ‚Æ‚µ‚Äíœ
+          # ãƒªã‚¹ãƒˆã«ã™ã§ã«å«ã¾ã‚Œã‚‹å ´åˆ,ç”³è«‹å–ã‚Šæ¶ˆã—ã¨ã—ã¦å‰Šé™¤
           inListDiv = False
           target = count
         count += 1
@@ -51,7 +51,7 @@ def post_product(partitionKey, updateId, updateName):
         userList.pop(target)
         
 
-    # ƒŒƒR[ƒhXV
+    # ãƒ¬ã‚³ãƒ¼ãƒ‰æ›´æ–°
     putResponse = table.put_item(
       Item={
         'slipNo' : PartitionKey,

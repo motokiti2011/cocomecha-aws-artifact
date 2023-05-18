@@ -13,7 +13,7 @@ mechanictable = dynamodb.Table("mechanicInfo")
 usertable = dynamodb.Table("userInfo")
 officetable = dynamodb.Table("officeInfo")
 
-# ‰‰ñHêî•ñ“o˜^Lambda
+# åˆå›å·¥å ´æƒ…å ±ç™»éŒ²Lambda
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()
@@ -22,12 +22,12 @@ def lambda_handler(event, context):
 
   try:
     officeId = str(uuid.uuid4())
-    # init‚Ì‚İˆÈ‰º‚Ì”z’u‚Æ‚È‚é
+    # initã®ã¿ä»¥ä¸‹ã®é…ç½®ã¨ãªã‚‹
     userId = event['Keys']['userId']
     mechanicId = event['Keys']['mechanicId']
-    # ŠÇ—ÒƒƒJƒjƒbƒNî•ñ‚ğæ“¾ 
+    # ç®¡ç†è€…ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±ã‚’å–å¾— 
     mechanicInfo = getAdminMechanic(mechanicId)
-    # Šé‹Æî•ñ‚ğ“o˜^
+    # ä¼æ¥­æƒ…å ±ã‚’ç™»éŒ²
     officeResponse = office_post(userId, mechanicInfo, officeId, event)
     print(officeResponse)
     if officeResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
@@ -36,7 +36,7 @@ def lambda_handler(event, context):
     else:
       print('PUT Successed.office')
 
-    # ƒƒJƒjƒbƒNî•ñ‚ğ“o˜^
+    # ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±ã‚’ç™»éŒ²
     mechanicResponse = mechanic_post(mechanicInfo, officeId, event)
     if mechanicResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
       print(mechanicResponse)
@@ -44,7 +44,7 @@ def lambda_handler(event, context):
     else:
       print('PUT Successed.mechanic')
 
-    # ƒƒJƒjƒbƒNAHê‚Ì“o˜^î•ñ‚ğƒ†[ƒU[ƒe[ƒuƒ‹‚É“o˜^
+    # ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ã€å·¥å ´ã®ç™»éŒ²æƒ…å ±ã‚’ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ†ãƒ¼ãƒ–ãƒ«ã«ç™»éŒ²
     userResponse = user_post(userId, officeId, event)
     if userResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
       print(userResponse)
@@ -60,25 +60,25 @@ def lambda_handler(event, context):
 
 
 
-# Hêƒe[ƒuƒ‹
+# å·¥å ´ãƒ†ãƒ¼ãƒ–ãƒ«
 def office_post(userId, mechanicInfo, officeId, event):
 
-  # ŠÖ˜AƒƒJƒjƒbƒNî•ñ
+  # é–¢é€£ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±
   connectionMechanicInfo = [{
     'mechanicId': mechanicInfo['mechanicId'],
     'mechanicName': mechanicInfo['mechanicName'],
     'belongsDiv': '0',
-    'belongs': '“o˜^Hê'
+    'belongs': 'ç™»éŒ²å·¥å ´'
   }]
 
-  # ŠÇ—Òİ’èî•ñ
+  # ç®¡ç†è€…è¨­å®šæƒ…å ±
   adminSettingInfo = [{
     'mechanicId': mechanicInfo['mechanicId'],
     'mechanicName': mechanicInfo['mechanicName'],
     'belongsDiv': '0',
-    'belongs': '“o˜^Hê',
+    'belongs': 'ç™»éŒ²å·¥å ´',
     'roleDiv': '0',
-    'role': 'ŠÇ—Ò',
+    'role': 'ç®¡ç†è€…',
   }]
   
 
@@ -113,11 +113,11 @@ def office_post(userId, mechanicInfo, officeId, event):
     return putResponse
 
 
-# ƒƒJƒjƒbƒNƒe[ƒuƒ‹XV(ƒIƒtƒBƒXID’Ç‰Á)
+# ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ãƒ†ãƒ¼ãƒ–ãƒ«æ›´æ–°(ã‚ªãƒ•ã‚£ã‚¹IDè¿½åŠ )
 def getAdminMechanic(mechanicId):
 
   print(mechanicId)
-  # XV‘ÎÛƒf[ƒ^‚ğæ“¾
+  # æ›´æ–°å¯¾è±¡ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
   queryData = mechanictable.query(
     KeyConditionExpression = Key("mechanicId").eq(mechanicId)
   )
@@ -126,7 +126,7 @@ def getAdminMechanic(mechanicId):
 
 
 
-# ƒƒJƒjƒbƒNƒe[ƒuƒ‹XV(ƒIƒtƒBƒXID’Ç‰Á)
+# ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ãƒ†ãƒ¼ãƒ–ãƒ«æ›´æ–°(ã‚ªãƒ•ã‚£ã‚¹IDè¿½åŠ )
 def mechanic_post(mechanicInfo, officeId,  event):
 
 
@@ -161,18 +161,18 @@ def mechanic_post(mechanicInfo, officeId,  event):
     return putResponse
 
 
-# ƒ†[ƒU[ƒe[ƒuƒ‹(ƒIƒtƒBƒXID’Ç‰Á)
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ†ãƒ¼ãƒ–ãƒ«(ã‚ªãƒ•ã‚£ã‚¹IDè¿½åŠ )
 def user_post(userId, officeId, event):
   role = []
   role.append('0')
   
-  # XV‘ÎÛƒf[ƒ^‚ğæ“¾
+  # æ›´æ–°å¯¾è±¡ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
   queryData = usertable.query(
     KeyConditionExpression = Key("userId").eq(userId)
   )
   items=queryData['Items']
 
-  # HêIDAƒ[ƒ‹‚ğXV  
+  # å·¥å ´IDã€ãƒ­ãƒ¼ãƒ«ã‚’æ›´æ–°  
   putResponse = usertable.put_item(
     Item={
       'userId' : items[0]['userId'],

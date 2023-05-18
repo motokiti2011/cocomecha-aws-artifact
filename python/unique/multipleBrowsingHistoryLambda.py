@@ -2,44 +2,44 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("browsingHistory")
 
-# •¡”‰{———š—ğî•ñíœ
+# è¤‡æ•°é–²è¦§å±¥æ­´æƒ…å ±å‰Šé™¤
 def lambda_handler(event, context) :
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
     try:
-        # ŒŸõƒ^ƒCƒvŒŸØ
+        # æ¤œç´¢ã‚¿ã‚¤ãƒ—æ¤œè¨¼
         if IndexType != 'MULTIPLEDELETEBROWSINGHISTORY':
           return
 
-        # ƒf[ƒ^æ“¾
+        # ãƒ‡ãƒ¼ã‚¿å–å¾—
         queryItems =event['Keys']['idList']
         
         if len(queryItems) == 0 :
           return []
         
-        # ID”•ªíœ
+        # IDæ•°åˆ†å‰Šé™¤
         for item in queryItems :
-          # íœ
+          # å‰Šé™¤
           response = operation_delete(item) :
           if response['ResponseMetadata']['HTTPStatusCode'] != 200:
-            # ˆÙíI—¹‚Æ‚µ‚Ä•Ô‹p
+            # ç•°å¸¸çµ‚äº†ã¨ã—ã¦è¿”å´
             return response
 
-       # ‘SŒíœŒã³íƒXƒe[ƒ^ƒX•Ô‹p
+       # å…¨ä»¶å‰Šé™¤å¾Œæ­£å¸¸ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹è¿”å´
        return 200
 
     except Exception as e:
         print("Error Exception.")
         print(e)
 
-# ƒŒƒR[ƒhíœ
+# ãƒ¬ã‚³ãƒ¼ãƒ‰å‰Šé™¤
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        key={

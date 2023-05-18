@@ -2,63 +2,73 @@ import json
 import boto3
 import random
 
-from datetime import datetime
+from datetime import datetime, timedelta
+import random
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 transactionSlip = dynamodb.Table("transactionSlip")
 userMyList = dynamodb.Table("userMyList")
 
 
-# ƒXƒPƒWƒ…[ƒ‹ƒoƒbƒ` ŠúŒÀØ‚êæˆø’†“`•[î•ñ‚Ì’Šo
+# ã‚¹ã‚±ã‚¸ãƒ¥ãƒ¼ãƒ«ãƒãƒƒãƒ æœŸé™åˆ‡ã‚Œå–å¼•ä¸­ä¼ç¥¨æƒ…å ±ã®æŠ½å‡º
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()
   print(now)
   print('DEADLINECHECKSERVICE')
 
+  print('hoge1')
   try:
     deadLineServiceData = deadlineservice_query()
-    
-    if(len(deadLineServiceData) > 0 :
-      for service in deadLineServiceData :
+    print('3')
+    print(deadLineServiceData['Count'])
+
+    if deadLineServiceData['Count'] > 0 :
+      for service in deadLineServiceData['Items'] :
         if service['ttlDate'] == 0:
-          # TTL“ú•t‚ğİ’è‚·‚é
+          # TTLæ—¥ä»˜ã‚’è¨­å®šã™ã‚‹
           setTTLDate_query(service)
-          # ƒ}ƒCƒŠƒXƒgTBL‚ÉƒƒbƒZ[ƒW‚ğİ’è‚·‚é
+          # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¨­å®šã™ã‚‹
           setMyListMsg_query(service)
   except Exception as e:
       print("Error Exception.")
       print(e)
 
 
-# æˆø’†“`•[î•ñ‚ÌŠúŒÀØ‚êî•ñ‚ğ’Šo‚µƒ}ƒCƒŠƒXƒgTBL‚Ö‚ÌƒƒbƒZ[ƒW‚Æ‚µ‚Ä’Ê’m‚·‚éB
-# æˆø’†“`•[î•ñ‚ÌŠúŒÀØ‚êƒf[ƒ^‚ğæ“¾‚·‚é(72ŠÔ‘O`Œ»İ)
+# å–å¼•ä¸­ä¼ç¥¨æƒ…å ±ã®æœŸé™åˆ‡ã‚Œæƒ…å ±ã‚’æŠ½å‡ºã—ãƒã‚¤ãƒªã‚¹ãƒˆTBLã¸ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã¨ã—ã¦é€šçŸ¥ã™ã‚‹ã€‚
+# å–å¼•ä¸­ä¼ç¥¨æƒ…å ±ã®æœŸé™åˆ‡ã‚Œãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—ã™ã‚‹(72æ™‚é–“å‰ï½ç¾åœ¨æ™‚åˆ»)
 def deadlineservice_query():
 
     START_TIMESTAMP = get_min_timestamp()
     END_TIMESTAMP = get_timestamp()
-
-    queryData = table.query(
+    print('START_TIMESTAMP')
+    print(START_TIMESTAMP)
+    print('END_TIMESTAMP')
+    print(END_TIMESTAMP)    
+    print('2')
+    queryData = transactionSlip.query(
         IndexName = 'completionScheduledDate-index',
         KeyConditionExpression = Key("deleteDiv").eq("0") 
         & Key("completionScheduledDate").between(START_TIMESTAMP, END_TIMESTAMP)
     )
-    items=queryData['Items']
-    print(items)
-    return items
+    print(queryData)
+    return queryData
+    # items=queryData
+    # print(items)
+    # return items
 
 
-# TTL“ú•tİ’è
+# transactionSlipã«å¯¾ã—ã¦TTLæ—¥ä»˜è¨­å®š
 def setTTLDate_query(service):
 
   TTL_DATE = get_ttl_timestamp()
 
-  putResponse = table.put_item(
+  putResponse = transactionSlip.put_item(
     Item={
       'id' : service['id'],
       'serviceType' : service['serviceType'],
@@ -86,7 +96,7 @@ def setTTLDate_query(service):
   return putResponse['Item']
 
 
-# ƒ†[ƒU[ƒ}ƒCƒŠƒXƒgTBL(ŠúŒÀØ‚êƒƒbƒZ[ƒW“o˜^)
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒã‚¤ãƒªã‚¹ãƒˆTBL(æœŸé™åˆ‡ã‚Œãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç™»éŒ²)
 def postConfirmMylistRequest(service):
 
   now = datetime.now()
@@ -120,32 +130,33 @@ def postConfirmMylistRequest(service):
 
 
 
-# ƒoƒbƒ`Às‚Ìƒ^ƒCƒ€ƒXƒ^ƒ“ƒvì¬
+# ãƒãƒƒãƒå®Ÿè¡Œæ™‚ã®ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ä½œæˆ
 def get_timestamp():
     now = datetime.now()    
     rand_minute = int(random.uniform(0, 59))
     rand_second = int(random.uniform(0, 59))
     nowTime = datetime(now.year, now.month, now.day, now.hour, rand_minute, rand_second)
-    return int(nowTime.timestamp()) * 1000
+    # return int(nowTime.timestamp()) * 1000
+    return int(nowTime.strftime('%Y%m%d'))
 
-
-# ƒoƒbƒ`Às‚Ì3“ú‘Oƒ^ƒCƒ€ƒXƒ^ƒ“ƒvì¬
+# ãƒãƒƒãƒå®Ÿè¡Œæ™‚ã®3æ—¥å‰ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ä½œæˆ
 def get_min_timestamp():
     now = datetime.now()    
     rand_minute = int(random.uniform(0, 59))
     rand_second = int(random.uniform(0, 59))
     nowDateTime = datetime(now.year -1, now.month, now.day, now.hour, rand_minute, rand_second)
-    treeDayBeforTime = nowDateTime - datetime.timedelta(days=3))
-    return int(3dayBeforTime.timestamp()) * 1000
+    treeDayBeforTime = nowDateTime - timedelta(days=3)
+    # return int(treeDayBeforTime.timestamp()) * 1000
+    return int(treeDayBeforTime.strftime('%Y%m%d'))
 
-
-# ƒoƒbƒ`Às‚Ì3“úŒãƒ^ƒCƒ€ƒXƒ^ƒ“ƒvì¬
+# ãƒãƒƒãƒå®Ÿè¡Œæ™‚ã®3æ—¥å¾Œã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ä½œæˆ
 def get_ttl_timestamp():
     now = datetime.now()    
     rand_minute = int(random.uniform(0, 59))
     rand_second = int(random.uniform(0, 59))
     nowDateTime = datetime(now.year -1, now.month, now.day, now.hour, rand_minute, rand_second)
-    treeDayAftterTime = nowDateTime + datetime.timedelta(days=3))
-    return int(3dayBeforTime.timestamp()) * 1000
+    treeDayAftterTime = nowDateTime + timedelta(days=3)
+    # return int(treeDayAftterTime.timestamp()) * 1000
+    return int(treeDayAftterTime.strftime('%Y%m%d'))
 
 

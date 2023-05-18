@@ -2,15 +2,15 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("userMyList")
 
 
-# ƒ†[ƒU[ƒ}ƒCƒŠƒXƒgGSIŒŸõ
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒã‚¤ãƒªã‚¹ãƒˆGSIæ¤œç´¢
 def lambda_handler(event, context):
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
@@ -20,13 +20,13 @@ def lambda_handler(event, context):
         if IndexType == 'USERID-INDEX':
         
           cognitoUserId = PartitionKey
-          # ”FØî•ñƒ`ƒFƒbƒNŒãƒ†[ƒU[ID‚ğæ“¾
-          # ˆø”
+          # èªè¨¼æƒ…å ±ãƒã‚§ãƒƒã‚¯å¾Œãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’å–å¾—
+          # å¼•æ•°
           input_event = {
               "userId": cognitoUserId,
           }
-          Payload = json.dumps(input_event) # jsonƒVƒŠƒAƒ‰ƒCƒY
-          # “¯Šúˆ—‚ÅŒÄ‚Ño‚µ
+          Payload = json.dumps(input_event) # jsonã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
+          # åŒæœŸå‡¦ç†ã§å‘¼ã³å‡ºã—
           response = boto3.client('lambda').invoke(
               FunctionName='CertificationLambda',
               InvocationType='RequestResponse',
@@ -34,7 +34,7 @@ def lambda_handler(event, context):
           )
           body = json.loads(response['Payload'].read())
           print(body)
-          # ƒ†[ƒU[î•ñ‚Ìƒ†[ƒU[ID‚ğæ“¾
+          # ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’å–å¾—
           if body != None :
             userId = body
           else :
@@ -54,7 +54,7 @@ def lambda_handler(event, context):
         print(e)
 
 
-# ƒŒƒR[ƒhŒŸõ userId-index
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ userId-index
 def userId_query(partitionKey):
     queryData = table.query(
         IndexName = 'userId-index',
@@ -64,7 +64,7 @@ def userId_query(partitionKey):
     print(items)
     return items
 
-# ƒŒƒR[ƒhŒŸõ mechanicId-index
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ mechanicId-index
 def mechanicId_query(partitionKey):
     queryData = table.query(
         IndexName = 'mechanicId-index',
@@ -74,7 +74,7 @@ def mechanicId_query(partitionKey):
     print(items)
     return items
 
-# ƒŒƒR[ƒhŒŸõ officeId-index
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ officeId-index
 def officeId_query(partitionKey):
     queryData = table.query(
         IndexName = 'officeId-index',

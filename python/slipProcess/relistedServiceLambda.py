@@ -5,11 +5,11 @@ import uuid
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 slipDetailInfo = dynamodb.Table("slipDetailInfo")
 salesServiceInfo = dynamodb.Table("salesServiceInfo")
 userMyList = dynamodb.Table("userMyList")
@@ -17,7 +17,7 @@ userMyList = dynamodb.Table("userMyList")
 
 
 
-# “`•[î•ñƒŒƒR[ƒhXV
+# ä¼ç¥¨æƒ…å ±ãƒ¬ã‚³ãƒ¼ãƒ‰æ›´æ–°
 def put_slip(event):
   putResponse = slipDetailInfo.put_item(
     Item={
@@ -61,7 +61,7 @@ def put_slip(event):
 
 
 
-# ƒT[ƒrƒX¤•iƒŒƒR[ƒhXV
+# ã‚µãƒ¼ãƒ“ã‚¹å•†å“ãƒ¬ã‚³ãƒ¼ãƒ‰æ›´æ–°
 def put_serviceContents(PartitionKey, event):
   putResponse = salesServiceInfo.put_item(
     Item={
@@ -107,10 +107,10 @@ def put_serviceContents(PartitionKey, event):
 
 
 
-# “`•[ŠÇ—Òƒ}ƒCƒŠƒXƒg‚ÌXV
+# ä¼ç¥¨ç®¡ç†è€…ãƒã‚¤ãƒªã‚¹ãƒˆã®æ›´æ–°
 def put_slipMyList(event):
-  # ƒ}ƒCƒŠƒXƒgTBL‚Ì“o˜^
-  # “`•[ŠÇ—Ò
+  # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã®ç™»éŒ²
+  # ä¼ç¥¨ç®¡ç†è€…
   userMyListAdminResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),
@@ -140,7 +140,7 @@ def put_slipMyList(event):
 
 
 
-# ƒ}ƒCƒŠƒXƒgXViÄo•iF“`•[j
+# ãƒã‚¤ãƒªã‚¹ãƒˆæ›´æ–°ï¼ˆå†å‡ºå“ï¼šä¼ç¥¨ï¼‰
 def put_serviceContentsMyList(event):
   userMyListResponse = userMyList.put_item(
     Item={
@@ -183,16 +183,16 @@ def lambda_handler(event, context):
       serviceType = event['Keys']['serviceType']
 
       if serviceType == '0':
-        # “`•[î•ñ‚ğXV
+        # ä¼ç¥¨æƒ…å ±ã‚’æ›´æ–°
         response = put_slip(event)
-        # ƒ}ƒCƒŠƒXƒg‚ÉƒƒbƒZ[ƒW’Ç‰Á
+        # ãƒã‚¤ãƒªã‚¹ãƒˆã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¿½åŠ 
         put_slipMyList(event)
         return response
         
       else :
-        # ƒT[ƒrƒXƒRƒ“ƒeƒ“ƒcXV
+        # ã‚µãƒ¼ãƒ“ã‚¹ã‚³ãƒ³ãƒ†ãƒ³ãƒ„æ›´æ–°
         response = put_serviceContents(event)
-        # ƒ}ƒCƒŠƒXƒg‚ÉƒƒbƒZ[ƒW’Ç‰Á
+        # ãƒã‚¤ãƒªã‚¹ãƒˆã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¿½åŠ 
         put_serviceContentsMyList(event)
         return response
 

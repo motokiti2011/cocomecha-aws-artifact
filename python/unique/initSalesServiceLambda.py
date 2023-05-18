@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# ƒT[ƒrƒX¤•i‰‰ñ
+# ã‚µãƒ¼ãƒ“ã‚¹å•†å“åˆå›
 
 # Dynamodb
 dynamodb = boto3.resource('dynamodb')
@@ -18,6 +18,7 @@ officeInfo = dynamodb.Table("officeInfo")
 mechanicInfo = dynamodb.Table("mechanicInfo")
 factoryMechaInicItem = dynamodb.Table("factoryMechaInicItem")
 
+# ã‚µãƒ¼ãƒ“ã‚¹å•†å“åˆå›ç™»éŒ²Lambda
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()
@@ -36,7 +37,7 @@ def lambda_handler(event, context):
       print(e)
 
 
-# salesService‚ÌPOST
+# salesServiceã®POST
 def post_product(PartitionKey, event):
   
   
@@ -115,7 +116,7 @@ def post_product(PartitionKey, event):
   else:
     print('salesService : Post Successed.')
 
-  # “`•[ƒƒbƒZ[ƒWŠÇ—ƒ†[ƒU‚Ì“o˜^
+  # ä¼ç¥¨ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç®¡ç†ãƒ¦ãƒ¼ã‚¶ã®ç™»éŒ²
   slipMegPrmUserPutResponse = slipMegPrmUser.put_item(
     Item={
       'slipNo' : PartitionKey,
@@ -132,7 +133,7 @@ def post_product(PartitionKey, event):
   else:
     print('slipMegPrmUser : Post Successed.')
   
-  # æˆø“`•[î•ñ‚Ì“o˜^
+  # å–å¼•ä¼ç¥¨æƒ…å ±ã®ç™»éŒ²
   transactionSlipResponse = transactionSlip.put_item(
     Item={
       'id' : str(uuid.uuid4()),
@@ -147,7 +148,7 @@ def post_product(PartitionKey, event):
       'slipAdminName' : event['Keys']['slipAdminUserName'],
       'bidderId' : event['Keys']['bidderId'],
       'deleteDiv' : '0',
-      'completionScheduledDate' : 0,
+      'completionScheduledDate' : event['Keys']['completionDate'],
       'created' : datetime.now().strftime('%x %X'),
       'updated' : datetime.now().strftime('%x %X')
     }
@@ -159,7 +160,7 @@ def post_product(PartitionKey, event):
     print('Post Successed.')
 
 
-  # ƒ}ƒCƒŠƒXƒgTBL‚Ì“o˜^
+  # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã®ç™»éŒ²
   userMyListResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),
@@ -182,7 +183,7 @@ def post_product(PartitionKey, event):
     }
   )
   
-  # HêƒƒJƒjƒbƒNƒAƒCƒeƒ€‚Ì“o˜^
+  # å·¥å ´ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ã‚¢ã‚¤ãƒ†ãƒ ã®ç™»éŒ²
   if event['Keys']['targetService'] == '1':
     fcmcId = officeId
   else :

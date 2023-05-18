@@ -4,14 +4,14 @@ import uuid
 
 from datetime import datetime
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("userFavorite")
 
-# ‚¨‹C‚É“ü‚èî•ñƒf[ƒ^ƒAƒNƒZƒXLambda
+# ãŠæ°—ã«å…¥ã‚Šæƒ…å ±ãƒ‡ãƒ¼ã‚¿ã‚¢ã‚¯ã‚»ã‚¹Lambda
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
 
@@ -30,16 +30,16 @@ def lambda_handler(event, context):
     elif OperationType == 'DELETE':
       PartitionKey = event['Keys']['id']
 
-      # HêƒƒJƒjƒbƒN¤•iî•ñ‚Ì‚¨‹C‚É“ü‚è”‚ğXV
-      # ˆø”
+      # å·¥å ´ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯å•†å“æƒ…å ±ã®ãŠæ°—ã«å…¥ã‚Šæ•°ã‚’æ›´æ–°
+      # å¼•æ•°
       input_event = {
           "processDiv": '1',
           "serviceId": event['Keys']['slipNo'],
           "serviceType": event['Keys']['serviceType'],
           "status": '1'
       }
-      Payload = json.dumps(input_event) # jsonƒVƒŠƒAƒ‰ƒCƒY
-      # ŒÄ‚Ño‚µ
+      Payload = json.dumps(input_event) # jsonã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
+      # å‘¼ã³å‡ºã—
       boto3.client('lambda').invoke(
           FunctionName='internalFcMcItemLambda',
           InvocationType='Event',
@@ -52,16 +52,16 @@ def lambda_handler(event, context):
       id = str(uuid.uuid4())
       PartitionKey = id
       
-      # HêƒƒJƒjƒbƒN¤•iî•ñ‚Ì‚¨‹C‚É“ü‚è”‚ğXV
-      # ˆø”
+      # å·¥å ´ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯å•†å“æƒ…å ±ã®ãŠæ°—ã«å…¥ã‚Šæ•°ã‚’æ›´æ–°
+      # å¼•æ•°
       input_event = {
           "processDiv": '1',
           "serviceId": event['Keys']['slipNo'],
           "serviceType": event['Keys']['serviceType'],
           "status": '0'
       }
-      Payload = json.dumps(input_event) # jsonƒVƒŠƒAƒ‰ƒCƒY
-      # ŒÄ‚Ño‚µ
+      Payload = json.dumps(input_event) # jsonã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
+      # å‘¼ã³å‡ºã—
       boto3.client('lambda').invoke(
           FunctionName='internalFcMcItemLambda',
           InvocationType='Event',
@@ -77,7 +77,7 @@ def lambda_handler(event, context):
 
 
 
-# ƒŒƒR[ƒhŒŸõ
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢
 def operation_query(partitionKey):
     queryData = table.query(
         KeyConditionExpression = Key("id").eq(partitionKey)
@@ -86,10 +86,10 @@ def operation_query(partitionKey):
     print(items)
     return items
 
-# ƒŒƒR[ƒh’Ç‰Á
+# ãƒ¬ã‚³ãƒ¼ãƒ‰è¿½åŠ 
 def put_product(PartitionKey, event):
 
-  # ”FØî•ñƒ`ƒFƒbƒN
+  # èªè¨¼æƒ…å ±ãƒã‚§ãƒƒã‚¯
   userId = CertificationUserId(event)
   if userId == None :
     print('NOT-CERTIFICATION')
@@ -116,7 +116,7 @@ def put_product(PartitionKey, event):
     print('Post Successed.')
   return putResponse
   
-  # ƒŒƒR[ƒhíœ
+  # ãƒ¬ã‚³ãƒ¼ãƒ‰å‰Šé™¤
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        Key={
@@ -129,10 +129,10 @@ def operation_delete(partitionKey):
         print('DEL Successed.')
     return delResponse
 
-# ƒŒƒR[ƒh’Ç‰Á
+# ãƒ¬ã‚³ãƒ¼ãƒ‰è¿½åŠ 
 def post_product(PartitionKey, event):
 
-  # ”FØî•ñƒ`ƒFƒbƒN
+  # èªè¨¼æƒ…å ±ãƒã‚§ãƒƒã‚¯
   userId = CertificationUserId(event)
   if userId == None :
     print('NOT-CERTIFICATION')
@@ -162,16 +162,16 @@ def post_product(PartitionKey, event):
   return putResponse
 
 
-# ”FØî•ñ‚©‚çƒ†[ƒU[î•ñæ“¾
+# èªè¨¼æƒ…å ±ã‹ã‚‰ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±å–å¾—
 def CertificationUserId(event):
     cognitoUserId = event['Keys']['userId']
-    # ”FØî•ñƒ`ƒFƒbƒNŒãƒ†[ƒU[ID‚ğæ“¾
-    # ˆø”
+    # èªè¨¼æƒ…å ±ãƒã‚§ãƒƒã‚¯å¾Œãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’å–å¾—
+    # å¼•æ•°
     input_event = {
         "userId": cognitoUserId,
     }
-    Payload = json.dumps(input_event) # jsonƒVƒŠƒAƒ‰ƒCƒY
-    # “¯Šúˆ—‚ÅŒÄ‚Ño‚µ
+    Payload = json.dumps(input_event) # jsonã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
+    # åŒæœŸå‡¦ç†ã§å‘¼ã³å‡ºã—
     response = boto3.client('lambda').invoke(
         FunctionName='CertificationLambda',
         InvocationType='RequestResponse',
@@ -179,7 +179,7 @@ def CertificationUserId(event):
     )
     body = json.loads(response['Payload'].read())
     print(body)
-    # ƒ†[ƒU[î•ñ‚Ìƒ†[ƒU[ID‚ğæ“¾
+    # ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’å–å¾—
     if body != None :
       return body
     else :

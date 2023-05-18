@@ -5,33 +5,33 @@ from datetime import datetime, timedelta
 
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 certificationManagementInfo = dynamodb.Table("certificationManagementInfo")
 accountUserConneection = dynamodb.Table("accountUserConneection")
 
 
-# Cognitoƒ†[ƒU[ID‚©‚ç”FØî•ñ‚Ìƒ†[ƒU[î•ñæ“¾Lambda
+# Cognitoãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‹ã‚‰èªè¨¼æƒ…å ±ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±å–å¾—Lambda
 def lambda_handler(event, context):
   print(event)
   print(event['userId'])
 
   accountId = event['userId']
-  # ƒAƒJƒEƒ“ƒg•R‚Ã‚¯î•ñŒŸõ
+  # ã‚¢ã‚«ã‚¦ãƒ³ãƒˆç´ã¥ã‘æƒ…å ±æ¤œç´¢
   accountUserConneection = accountUserConneection_query(accountId)  
   print(accountUserConneection)
   if len(accountUserConneection) == 0 :
       return None
   
   PartitionKey = accountUserConneection[0]['userId']
-  # ”FØî•ñŠÇ—ŒŸõ
+  # èªè¨¼æƒ…å ±ç®¡ç†æ¤œç´¢
   certificationData = operation_query(PartitionKey)
   print(certificationData)
   if len(certificationData) > 0 :
-    # ”FØó‘Ô‚È‚çƒAƒNƒZƒXó‹µ‚ğXV‚·‚é
+    # èªè¨¼çŠ¶æ…‹ãªã‚‰ã‚¢ã‚¯ã‚»ã‚¹çŠ¶æ³ã‚’æ›´æ–°ã™ã‚‹
     data = put_certificationData(certificationData[0])
     print(PartitionKey)
     print('ALREADY-CERTIFICATION')
@@ -42,7 +42,7 @@ def lambda_handler(event, context):
   return None
 
 
-# ƒAƒJƒEƒ“ƒg•R‚Ã‚¯ƒŒƒR[ƒhŒŸõiƒf[ƒ^Šm”Fj
+# ã‚¢ã‚«ã‚¦ãƒ³ãƒˆç´ã¥ã‘ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ï¼ˆãƒ‡ãƒ¼ã‚¿ç¢ºèªï¼‰
 def accountUserConneection_query(partitionKey):
     queryData = accountUserConneection.query(
         KeyConditionExpression = Key("accountUseId").eq(partitionKey)
@@ -52,7 +52,7 @@ def accountUserConneection_query(partitionKey):
     return items
 
 
-# ”FØî•ñƒŒƒR[ƒhŒŸõiƒf[ƒ^Šm”Fj
+# èªè¨¼æƒ…å ±ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ï¼ˆãƒ‡ãƒ¼ã‚¿ç¢ºèªï¼‰
 def operation_query(partitionKey):
     queryData = certificationManagementInfo.query(
         KeyConditionExpression = Key("userId").eq(partitionKey)
@@ -62,10 +62,10 @@ def operation_query(partitionKey):
     return items
 
 
-# ”FØî•ñXV(TTLŠÖ˜A‚Ì“úXV)
+# èªè¨¼æƒ…å ±æ›´æ–°(TTLé–¢é€£ã®æ—¥æ™‚æ›´æ–°)
 def put_certificationData(data):
 
-  # 2ŠÔŒã‚Ì‚ğİ’è
+  # 2æ™‚é–“å¾Œã®æ™‚åˆ»ã‚’è¨­å®š
   dt2 = datetime.now() + timedelta(hours=2)
   
   putResponse = certificationManagementInfo.put_item(

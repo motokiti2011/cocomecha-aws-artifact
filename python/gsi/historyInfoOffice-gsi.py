@@ -2,14 +2,14 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("historyInfoOffice")
 
-# ƒŒƒR[ƒhŒŸõ slipNo-index
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ slipNo-index
 def slipNo_query(partitionKey):
     queryData = table.query(
         IndexName = 'historyId-index',
@@ -19,7 +19,7 @@ def slipNo_query(partitionKey):
     print(items)
     return items
 
-# ƒŒƒR[ƒhŒŸõ officeId-index
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ officeId-index
 def officeId_query(partitionKey):
     queryData = table.query(
         IndexName = 'officeId-index',

@@ -2,15 +2,15 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 factoryMechaInicItem = dynamodb.Table("factoryMechaInicItem")
 
 
-# HêƒƒJƒjƒbƒN¤•i‚Ì•ÒW‚ğs‚¤
+# å·¥å ´ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯å•†å“ã®ç·¨é›†ã‚’è¡Œã†
 def lambda_handler(event, context) :
     print("Received event: " + json.dumps(event))
     processDiv = event['processDiv']
@@ -20,13 +20,13 @@ def lambda_handler(event, context) :
     status = event['status']
 
     try:
-        # ˆ—‹æ•ª‚ª0‚Ìê‡‰{———š—ğî•ñ‚ğ‘€ì
+        # å‡¦ç†åŒºåˆ†ãŒ0ã®å ´åˆé–²è¦§å±¥æ­´æƒ…å ±ã‚’æ“ä½œ
         if processDiv == '0':
           editBrowsing_query(event)
-        # ˆ—‹æ•ª‚ª1‚Ìê‡‚¨‹C‚É“ü‚èî•ñ‚ğ‘€ì
+        # å‡¦ç†åŒºåˆ†ãŒ1ã®å ´åˆãŠæ°—ã«å…¥ã‚Šæƒ…å ±ã‚’æ“ä½œ
         elif processDiv == '1':
           editFavorite_query(event)
-        # ‚»‚êˆÈŠOê‡ƒXƒe[ƒ^ƒX‚ğ‘€ì
+        # ãã‚Œä»¥å¤–å ´åˆã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’æ“ä½œ
         else:
           editStatus_query(event)
     except Exception as e:
@@ -35,7 +35,7 @@ def lambda_handler(event, context) :
 
 
 
-# HêƒƒJƒjƒbƒNî•ñæ“¾
+# å·¥å ´ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±å–å¾—
 def fcmcItem_query(partitionKey,sortKey ) :
     queryData = factoryMechaInicItem.query(
         KeyConditionExpression = Key("serviceId").eq(partitionKey) & Key("serviceType").eq(sortKey)
@@ -44,7 +44,7 @@ def fcmcItem_query(partitionKey,sortKey ) :
     print(items)
     return items
 
-# HêƒƒJƒjƒbƒNî•ñXV
+# å·¥å ´ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±æ›´æ–°
 def put_fcmcItem(PartitionKey, event):
   putResponse = factoryMechaInicItem.put_item(
     Item={
@@ -66,66 +66,66 @@ def put_fcmcItem(PartitionKey, event):
 
 
 
-# ‰{———š—ğ”‚ÌXV
+# é–²è¦§å±¥æ­´æ•°ã®æ›´æ–°
 def editBrowsing_query(event) :
     serviceId = event['serviceId']
     serviceType = event['serviceType']
     status = event['status']
 
-    XVî•ñ‚Ìæ“¾
+    æ›´æ–°æƒ…å ±ã®å–å¾—
     fcmcItem = fcmcItem_query(serviceId, serviceType)
     if len(fcmcItem) === 0:
-      print('‰{———š—ğ‚È‚µˆ—I—¹'+ json.dumps(event))
+      print('é–²è¦§å±¥æ­´ãªã—å‡¦ç†çµ‚äº†'+ json.dumps(event))
       return
     putItem = fcmcItem[0]
-    # ‰ÁŒ¸‚ğ”»’è
+    # åŠ æ¸›ã‚’åˆ¤å®š
     if status === '0' :
-      # ‰ÁZ
+      # åŠ ç®—
       putItem['browsingCount']+=1
     else:
-      # Œ¸Zi‘½•ª‚È‚¢‚ªcj
+      # æ¸›ç®—ï¼ˆå¤šåˆ†ãªã„ãŒâ€¦ï¼‰
       putItem['browsingCount']-=1
-    # •ÒWî•ñ‚ğXV
+    # ç·¨é›†æƒ…å ±ã‚’æ›´æ–°
     put_fcmcItem(putItem):
 
 
-# ‚¨‹C‚É“ü‚è”‚ÌXV
+# ãŠæ°—ã«å…¥ã‚Šæ•°ã®æ›´æ–°
 def editFavorite_query(event) :
     serviceId = event['serviceId']
     serviceType = event['serviceType']
     status = event['status']
 
-    XVî•ñ‚Ìæ“¾
+    æ›´æ–°æƒ…å ±ã®å–å¾—
     fcmcItem = fcmcItem_query(serviceId, serviceType)
     if len(fcmcItem) === 0:
-      print('‚¨‹C‚É“ü‚èXVî•ñ‚È‚µˆ—I—¹'+ json.dumps(event))
+      print('ãŠæ°—ã«å…¥ã‚Šæ›´æ–°æƒ…å ±ãªã—å‡¦ç†çµ‚äº†'+ json.dumps(event))
       return
     putItem = fcmcItem[0]
-    # ‰ÁŒ¸‚ğ”»’è
+    # åŠ æ¸›ã‚’åˆ¤å®š
     if status === '0' :
-      # ‰ÁZ
+      # åŠ ç®—
       putItem['favoriteCount']+=1
     else:
-      # Œ¸Z
+      # æ¸›ç®—
       putItem['favoriteCount']-=1
-    # •ÒWî•ñ‚ğXV
+    # ç·¨é›†æƒ…å ±ã‚’æ›´æ–°
     put_fcmcItem(putItem):
 
-# ƒXƒe[ƒ^ƒX‚ÌXV
+# ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã®æ›´æ–°
 def editStatus_query(event) :
     serviceId = event['serviceId']
     serviceType = event['serviceType']
     status = event['status']
 
-    XVî•ñ‚Ìæ“¾
+    æ›´æ–°æƒ…å ±ã®å–å¾—
     fcmcItem = fcmcItem_query(serviceId, serviceType)
     if len(fcmcItem) === 0:
-      print('ƒXƒe[ƒ^ƒXXVî•ñ‚È‚µˆ—I—¹' + json.dumps(event))
+      print('ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æ›´æ–°æƒ…å ±ãªã—å‡¦ç†çµ‚äº†' + json.dumps(event))
       return
     putItem = fcmcItem[0]
-    # ƒXƒe[ƒ^ƒX‚ğXV
+    # ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’æ›´æ–°
     putItem['transactionStatus'] = status
-    # •ÒWî•ñ‚ğXV
+    # ç·¨é›†æƒ…å ±ã‚’æ›´æ–°
     put_fcmcItem(putItem):
 
 

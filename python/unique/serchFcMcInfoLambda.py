@@ -3,15 +3,15 @@ import boto3
 
 from boto3.dynamodb.conditions import Key, Attr
 
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 mechanicInfo = dynamodb.Table("mechanicInfo")
 officeInfo = dynamodb.Table("officeInfo")
 
-# HêEƒƒJƒjƒbƒNŒŸõLambda
+# å·¥å ´ãƒ»ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æ¤œç´¢Lambda
 def lambda_handler(event, context) :
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
@@ -23,11 +23,11 @@ def lambda_handler(event, context) :
 
 
     try:
-        # ŒŸõƒ^ƒCƒvŒŸØ
+        # æ¤œç´¢ã‚¿ã‚¤ãƒ—æ¤œè¨¼
         if IndexType != 'SERCHFCMCINFO':
           return
 
-        # ƒf[ƒ^æ“¾
+        # ãƒ‡ãƒ¼ã‚¿å–å¾—
         items = []
         serchFilter = createFilter(ServiceType, name, telNo)
         
@@ -47,7 +47,7 @@ def lambda_handler(event, context) :
         
         if ServiceType == '1' :
           items = mechanicInfo_query(options)
-          # Œ‹‰Ê‚ÌŠi”[(ƒƒJƒjƒbƒN)
+          # çµæœã®æ ¼ç´(ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯)
           for item in items  :
             result={
               'id' :item['officeId'],
@@ -66,7 +66,7 @@ def lambda_handler(event, context) :
             
         else :
           items = officeInfo_query(options)
-          # Œ‹‰Ê‚ÌŠi”[(Hê)
+          # çµæœã®æ ¼ç´(å·¥å ´)
           for item in items  :
             result={
               'id' :item['mechanicId'],
@@ -85,47 +85,47 @@ def lambda_handler(event, context) :
 
         return resultItems
 
-# ŒŸõğŒì¬
+# æ¤œç´¢æ¡ä»¶ä½œæˆ
 def createFilter(ServiceType, name, telNo) :
 
-    # ŒŸõğŒì¬
+    # æ¤œç´¢æ¡ä»¶ä½œæˆ
 
-    # Hê –¼ÌA“d˜b”Ô†‚È‚µ
+    # å·¥å ´ åç§°ã€é›»è©±ç•ªå·ãªã—
     if ServiceType == '2' and name == '' and telNo == '' :
       print('1')
       return ''
-    # Hê –¼ÌA“d˜b”Ô†
+    # å·¥å ´ åç§°ã€é›»è©±ç•ªå·
     if ServiceType == '2' and name != '' and telNo != '' :
       print('2')
       return Attr('name').contains(name) & Attr('telNo').contains(telNo)
-    # Hê –¼Ì
+    # å·¥å ´ åç§°
     if ServiceType == '2' and name != '' and telNo == '' :
       print('3')
       return Attr('name').contains(name)
-    # Hê “d˜b”Ô†
+    # å·¥å ´ é›»è©±ç•ªå·
     if ServiceType == '2' and name == '' and telNo != '' :
       print('4')
       return Attr('telNo').contains(telNo)
 
-    # ƒƒJƒjƒbƒN, ‚È‚µ
+    # ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯, ãªã—
     if ServiceType == '1' and telNo == '' :
       print('5')
       return ''
-    # ƒƒJƒjƒbƒN, “d˜b”Ô†
+    # ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯, é›»è©±ç•ªå·
     if ServiceType == '1' telNo != '' :
       print('6')
       return Attr('telNo').contains(telNo)
     print('7')
     return ''
 
-# ƒƒJƒjƒbƒNî•ñŒŸõ
+# ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±æ¤œç´¢
 def mechanicInfo_query(options) :
     queryData = mechanicInfo.query(**options)
     items=queryData['Items']
     print(items)
     return items
 
-# Hêî•ñŒŸõ
+# å·¥å ´æƒ…å ±æ¤œç´¢
 def officeInfo_query(options) :
     queryData = officeInfo.query(**options)
     items=queryData['Items']

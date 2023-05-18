@@ -14,7 +14,7 @@ usertable = dynamodb.Table("userInfo")
 officetable = dynamodb.Table("officeInfo")
 
 
-# ‰‰ñƒƒJƒjƒbƒN“o˜^Lambda
+# åˆå›ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ç™»éŒ²Lambda
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()
@@ -26,15 +26,15 @@ def lambda_handler(event, context):
   try:
     mechanicId = id
     officeId = '0'
-    # ƒƒJƒjƒbƒN“o˜^
+    # ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ç™»éŒ²
     if OperationType == 'INITMECHANIC':
       officeDiv = '0'
-    # Šé‹Æ“o˜^‚à‚¨‚±‚È‚¤ê‡
+    # ä¼æ¥­ç™»éŒ²ã‚‚ãŠã“ãªã†å ´åˆ
     elif OperationType == 'INITMECHANICANDOFFICE':
       officeDiv = '1'
       officeId = str(uuid.uuid4())
 
-    # ƒƒJƒjƒbƒNî•ñ‚ğ“o˜^
+    # ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±ã‚’ç™»éŒ²
     mechanicResponse = mechanic_post(mechanicId, officeId, event)
     if mechanicResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
       print(mechanicResponse)
@@ -42,7 +42,7 @@ def lambda_handler(event, context):
     else:
       print('PUT Successed.mechanic')
 
-    # Šé‹Æî•ñ‚ÉƒƒJƒjƒbƒNî•ñ‚ğ’Ç‰Á
+    # ä¼æ¥­æƒ…å ±ã«ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±ã‚’è¿½åŠ 
     if officeDiv == '1':
       officeResponse = office_post(userId, mechanicId, event)
       print(officeResponse)
@@ -53,7 +53,7 @@ def lambda_handler(event, context):
       else:
         print('PUT Successed.office')
 
-    # ƒƒJƒjƒbƒNAHê‚Ì“o˜^î•ñ‚ğƒ†[ƒU[ƒe[ƒuƒ‹‚É“o˜^
+    # ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ã€å·¥å ´ã®ç™»éŒ²æƒ…å ±ã‚’ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ†ãƒ¼ãƒ–ãƒ«ã«ç™»éŒ²
     userId = event['Keys']['adminUserId']
     userResponse = user_post(userId, mechanicId, officeId, officeDiv, event)
     if userResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
@@ -69,7 +69,7 @@ def lambda_handler(event, context):
       print(e)
 
 
-# ƒƒJƒjƒbƒNƒe[ƒuƒ‹XV
+# ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ãƒ†ãƒ¼ãƒ–ãƒ«æ›´æ–°
 def mechanic_post(PartitionKey, officeId, event):
   putResponse = mechanictable.put_item(
     Item={
@@ -103,7 +103,7 @@ def mechanic_post(PartitionKey, officeId, event):
     return putResponse
 
 
-# Hêƒe[ƒuƒ‹
+# å·¥å ´ãƒ†ãƒ¼ãƒ–ãƒ«
 def office_post(userId, mechanicId, officeId, event):
   
   adminId = [userId]
@@ -121,8 +121,8 @@ def office_post(userId, mechanicId, officeId, event):
     mechanicName : event['Keys']['mechanicName'],
     belongsDiv : None,
     belongs : None,
-    role : 'ŠÇ—Ò',
-    roleDiv : 'ŠÇ—Ò'
+    role : 'ç®¡ç†è€…',
+    roleDiv : 'ç®¡ç†è€…'
   }]
 
 
@@ -143,19 +143,19 @@ def office_post(userId, mechanicId, officeId, event):
     return putResponse
 
 
-# ƒ†[ƒU[ƒe[ƒuƒ‹
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ†ãƒ¼ãƒ–ãƒ«
 def user_post(userId, mechanicId, officeId, officeDiv, event):
   role = []
   if officeDiv == '1':
     role.append('ADMIN')
   
-  # XV‘ÎÛƒf[ƒ^‚ğæ“¾
+  # æ›´æ–°å¯¾è±¡ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
   queryData = usertable.query(
     KeyConditionExpression = Key("userId").eq(userId)
   )
   items=queryData['Items']
 
-  # ƒƒJƒjƒbƒNIDAHêIDAƒ[ƒ‹‚ğXV  
+  # ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯IDã€å·¥å ´IDã€ãƒ­ãƒ¼ãƒ«ã‚’æ›´æ–°  
   putResponse = usertable.put_item(
     Item={
       'userId' : userId,

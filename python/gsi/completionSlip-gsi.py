@@ -2,14 +2,14 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("completionSlip")
 
-# 1ƒŒƒR[ƒhŒŸõ slipAdminUserId-index
+# 1ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ slipAdminUserId-index
 def slipAdminUserId_query(partitionKey):
     queryData = table.query(
         IndexName = 'slipAdminUserId-index',
@@ -19,7 +19,7 @@ def slipAdminUserId_query(partitionKey):
     print(items)
     return items
 
-# 2ƒŒƒR[ƒhŒŸõ slipAdminOfficeId-index
+# 2ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ slipAdminOfficeId-index
 def slipAdminOffice_query(partitionKey):
     queryData = table.query(
         IndexName = 'slipAdminOffice-index',
@@ -29,7 +29,7 @@ def slipAdminOffice_query(partitionKey):
     print(items)
     return items
 
-# 3ƒŒƒR[ƒhŒŸõ slipAdminMechanicId-index
+# 3ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ slipAdminMechanicId-index
 def slipAdminMechanicId_query(partitionKey):
     queryData = table.query(
         IndexName = 'slipAdminMechanicId-index',

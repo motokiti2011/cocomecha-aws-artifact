@@ -6,15 +6,15 @@ from datetime import datetime
 
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 userInfo = dynamodb.Table("userInfo")
 accountUserConneection = dynamodb.Table("accountUserConneection")
 
-# ƒTƒCƒ“ƒAƒbƒvLambda
+# ã‚µã‚¤ãƒ³ã‚¢ãƒƒãƒ—Lambda
 def lambda_handler(event, context):
   print(event)
   print(event['userName'])
@@ -26,7 +26,7 @@ def lambda_handler(event, context):
   mailAdless = event['request']['userAttributes']['email']
   triggerSource = event['triggerSource']
   
-  # ƒpƒXƒ[ƒhƒŠƒZƒbƒgˆÈŠO‚Ìê‡ƒ†[ƒU[’Ç‰Á
+  # ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãƒªã‚»ãƒƒãƒˆä»¥å¤–ã®å ´åˆãƒ¦ãƒ¼ã‚¶ãƒ¼è¿½åŠ 
   if triggerSource != 'PostConfirmation_ConfirmForgotPassword' :
     userId = str(uuid.uuid4())
     post_accountUserConneection(PartitionKey, userId)
@@ -38,7 +38,7 @@ def lambda_handler(event, context):
   return event
 
 
-# ƒ†[ƒU[TBLƒŒƒR[ƒh’Ç‰Á
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼TBLãƒ¬ã‚³ãƒ¼ãƒ‰è¿½åŠ 
 def post_userInfo(userId, mailAdless):
   putResponse = userInfo.put_item(
     Item={
@@ -51,7 +51,7 @@ def post_userInfo(userId, mailAdless):
 
 
 
-# ƒAƒJƒEƒ“ƒgƒ†[ƒU[•R‚Ã‚¯TBLƒŒƒR[ƒh’Ç‰Á
+# ã‚¢ã‚«ã‚¦ãƒ³ãƒˆãƒ¦ãƒ¼ã‚¶ãƒ¼ç´ã¥ã‘TBLãƒ¬ã‚³ãƒ¼ãƒ‰è¿½åŠ 
 def post_accountUserConneection(PartitionKey, userId):
   putResponse = accountUserConneection.put_item(
     Item={

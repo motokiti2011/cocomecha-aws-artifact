@@ -8,51 +8,51 @@ mechanicInfo = dynamodb.Table("mechanicInfo")
 officeInfo = dynamodb.Table("officeInfo")
 factoryMechaInicItem = dynamodb.Table("factoryMechaInicItem")
 
-# HêƒƒJƒjƒbƒNæˆø¤•iæ“¾
+# å·¥å ´ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯å–å¼•å•†å“å–å¾—
 def lambda_handler(event, context) :
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
     try:
-        # ƒCƒ“ƒfƒbƒNƒXŠm”F
+        # ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ç¢ºèª
         if IndexType != 'FCMCITEM':
           return []
 
-        # ƒAƒNƒZƒX‚µ‚½ƒƒJƒjƒbƒNID‚ğæ“¾
+        # ã‚¢ã‚¯ã‚»ã‚¹ã—ãŸãƒ¡ã‚«ãƒ‹ãƒƒã‚¯IDã‚’å–å¾—
         mechanicId =event['Keys']['acceseMechanicId']
-        # ƒƒJƒjƒbƒNî•ñ‚ğæ“¾
+        # ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±ã‚’å–å¾—
         mcInfo = getMechanicInfo(mechanicId)
-        # ƒƒJƒjƒbƒNî•ñ‚ªæ“¾‚Å‚«‚È‚©‚Á‚½ê‡ˆ—I—¹
+        # ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±ãŒå–å¾—ã§ããªã‹ã£ãŸå ´åˆå‡¦ç†çµ‚äº†
         if len(mcInfo) == 0 :
           return []
         
         resultList = []
 
-        # ƒƒJƒjƒbƒNID‚ªŠÇ—Ò‚ÌHêƒƒJƒjƒbƒNƒAƒCƒeƒ€î•ñ‚ğæ“¾
+        # ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯IDãŒç®¡ç†è€…ã®å·¥å ´ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ã‚¢ã‚¤ãƒ†ãƒ æƒ…å ±ã‚’å–å¾—
         resultList += fcMcItem_query(mechanicId)
 
-        # HêID‚ğæ“¾
+        # å·¥å ´IDã‚’å–å¾—
         officeId = mcInfo[0]['officeId']
         if not officeId or officeId == '0' :
             return resultList 
 
-        # Hêî•ñ‚ğæ“¾
+        # å·¥å ´æƒ…å ±ã‚’å–å¾—
         fcInfo = getFactorycInfo(officeId)
 
-        # Hêî•ñ‚ªæ“¾‚Å‚«‚È‚©‚Á‚½ê‡ˆ—I—¹
+        # å·¥å ´æƒ…å ±ãŒå–å¾—ã§ããªã‹ã£ãŸå ´åˆå‡¦ç†çµ‚äº†
         if len(fcInfo) == 0 :
           return resultList
-        # HêŠÖ˜AÒî•ñ‚ğæ“¾
+        # å·¥å ´é–¢é€£è€…æƒ…å ±ã‚’å–å¾—
         connectionMcList = fcInfo[0]['connectionMechanicInfo']
 
         connectionDiv = False
-        # ŠÖ˜AÒƒ`ƒFƒbƒN
+        # é–¢é€£è€…ãƒã‚§ãƒƒã‚¯
         for mc in connectionMcList :
-          # ŠÖ˜AÒ‚É‚È‚é‚©‚ğƒ`ƒFƒbƒN
+          # é–¢é€£è€…ã«ãªã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯
           if mc['mechanicId'] == mechanicId :
               connectionDiv = True
 
         if connectionDiv :
-            # HêID‚ÅHêƒƒJƒjƒbƒNƒAƒCƒeƒ€î•ñ‚ğæ“¾
+            # å·¥å ´IDã§å·¥å ´ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ã‚¢ã‚¤ãƒ†ãƒ æƒ…å ±ã‚’å–å¾—
             resultList += fcMcItem_query(officeId)
 
         return resultList
@@ -62,7 +62,7 @@ def lambda_handler(event, context) :
         print(e)
 
 
-# ƒƒJƒjƒbƒNî•ñ‚ğæ“¾
+# ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±ã‚’å–å¾—
 def getMechanicInfo(mechanicId):
     queryData = mechanicInfo.query(
         KeyConditionExpression = Key("mechanicId").eq(mechanicId)
@@ -71,7 +71,7 @@ def getMechanicInfo(mechanicId):
     print(items)
     return items
 
-# ƒƒJƒjƒbƒNî•ñ‚É•R‚Ã‚­HêƒƒJƒjƒbƒNƒAƒCƒeƒ€î•ñ‚ğæ“¾
+# ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±ã«ç´ã¥ãå·¥å ´ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ã‚¢ã‚¤ãƒ†ãƒ æƒ…å ±ã‚’å–å¾—
 def fcMcItem_query(partitionKey):
 
     queryData = factoryMechaInicItem.query(
@@ -82,7 +82,7 @@ def fcMcItem_query(partitionKey):
     print(items)
     return items
 
-# Hêî•ñ‚ğæ“¾
+# å·¥å ´æƒ…å ±ã‚’å–å¾—
 def getFactorycInfo(officeId):
     queryData = officeInfo.query(
         KeyConditionExpression = Key("officeId").eq(officeId)

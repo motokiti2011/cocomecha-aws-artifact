@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# “`•[“o˜^‰‰ñ
+# ä¼ç¥¨ç™»éŒ²åˆå›
 
 # Dynamodb
 dynamodb = boto3.resource('dynamodb')
@@ -16,11 +16,34 @@ transactionSlip = dynamodb.Table("transactionSlip")
 userMyList = dynamodb.Table("userMyList")
 
 
+# ä¼ç¥¨æƒ…å ±åˆæœŸç™»éŒ²Lambda
+def lambda_handler(event, context):
+  print("Received event: " + json.dumps(event))
+  now = datetime.now()
+  OperationType = event['OperationType']
+
+  try:
+    if OperationType == 'INITSLIPPOST':
+      id = str(uuid.uuid4())
+      PartitionKey = id
+      return post_product(PartitionKey, event)
+
+    else :
+      # ã‚¢ã‚¯ã‚»ã‚¹æ–¹æ³•ãŒãŠã‹ã—ã„å ´åˆ
+      print('initPostSlipLambda_Injustice')
+      print(str(now))
+
+
+  except Exception as e:
+      print("Error Exception.")
+      print(e)
+
+# ä¼ç¥¨æƒ…å ±ã®ç™»éŒ²
 def post_product(PartitionKey, event):
 
   now = datetime.now()
 
-  # slipDetailInfo‚ÌPOST
+  # slipDetailInfoã®POST
   slipDetailInfoPutResponse = slipDetailInfo.put_item(
     Item={
       'slipNo' : PartitionKey,
@@ -63,7 +86,7 @@ def post_product(PartitionKey, event):
     print('slipDetailInfo : Post Successed.')
 
 
-  # “`•[ƒƒbƒZ[ƒWŠÇ—ƒ†[ƒU‚Ì“o˜^
+  # ä¼ç¥¨ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç®¡ç†ãƒ¦ãƒ¼ã‚¶ã®ç™»éŒ²
   slipMegPrmUserPutResponse = slipMegPrmUser.put_item(
     Item={
       'slipNo' : PartitionKey,
@@ -81,7 +104,7 @@ def post_product(PartitionKey, event):
     print('slipMegPrmUser : Post Successed.')
 
 
-  # æˆø“`•[î•ñ‚Ì“o˜^
+  # å–å¼•ä¼ç¥¨æƒ…å ±ã®ç™»éŒ²
   transactionSlipResponse = transactionSlip.put_item(
     Item={
       'id' : str(uuid.uuid4()),
@@ -96,7 +119,7 @@ def post_product(PartitionKey, event):
       'slipAdminName' : event['Keys']['slipAdminUserName'],
       'bidderId' : event['Keys']['bidderId'],
       'deleteDiv' : '0',
-      'completionScheduledDate': 0 ,
+      'completionScheduledDate': event['Keys']['completionDate'] ,
       'created' : now.strftime('%x %X'),
       'updated' : now.strftime('%x %X')
     }
@@ -108,7 +131,7 @@ def post_product(PartitionKey, event):
     print('transactionSlip : Post Successed.')
 
 
-  # ƒ}ƒCƒŠƒXƒgTBL‚Ì“o˜^
+  # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã®ç™»éŒ²
   userMyListResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),
@@ -138,23 +161,3 @@ def post_product(PartitionKey, event):
   return userMyListResponse['ResponseMetadata']['HTTPStatusCode']
 
 
-def lambda_handler(event, context):
-  print("Received event: " + json.dumps(event))
-  now = datetime.now()
-  OperationType = event['OperationType']
-
-  try:
-    if OperationType == 'INITSLIPPOST':
-      id = str(uuid.uuid4())
-      PartitionKey = id
-      return post_product(PartitionKey, event)
-
-    else :
-      # ƒAƒNƒZƒX•û–@‚ª‚¨‚©‚µ‚¢ê‡
-      print('initPostSlipLambda_Injustice')
-      print(str(now))
-
-
-  except Exception as e:
-      print("Error Exception.")
-      print(e)

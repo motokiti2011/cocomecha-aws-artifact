@@ -2,17 +2,17 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key, Attr
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("salesServiceInfo")
 
-# ’nˆæ1ŒŸõ areaNo1-index
+# åœ°åŸŸ1æ¤œç´¢ areaNo1-index
 def areaNo1_query(event):
 
-    # ŒŸõğŒì¬
+    # æ¤œç´¢æ¡ä»¶ä½œæˆ
     serchFilter = createFilter(event)
     print('serchFilter')
     print(serchFilter)
@@ -37,10 +37,10 @@ def areaNo1_query(event):
     return items
 
 
-# ’nˆæ1.2ƒŒƒR[ƒhŒŸõ areaNo1AndAreaNo2-index
+# åœ°åŸŸ1.2ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ areaNo1AndAreaNo2-index
 def areaNo1AndAreaNo2_query(event):
 
-    # ŒŸõğŒì¬
+    # æ¤œç´¢æ¡ä»¶ä½œæˆ
     serchFilter = createFilter(event)
     print('serchFilter')
     print(serchFilter)
@@ -65,33 +65,33 @@ def areaNo1AndAreaNo2_query(event):
     return items
 
 
-# ŒŸõğŒì¬
+# æ¤œç´¢æ¡ä»¶ä½œæˆ
 def createFilter(event):
 
-    # ŒŸõğŒì¬
+    # æ¤œç´¢æ¡ä»¶ä½œæˆ
     area2 = event['Keys']['area2']
     category = event['Keys']['category']
     amount1 = event['Keys']['amount1']
     amount2 = event['Keys']['amount2']
     amountSerchDiv = event['Keys']['amountSerchDiv']
 
-    # ‚»‚Ì‘¼ŒŸõğŒ‚ª‚È‚µ
+    # ãã®ä»–æ¤œç´¢æ¡ä»¶ãŒãªã—
     if category == '0' and amountSerchDiv == True :
       print('1')
       return ''
-    # ƒJƒeƒSƒŠ[‚Ì‚İ
+    # ã‚«ãƒ†ã‚´ãƒªãƒ¼ã®ã¿
     if category != '0' and amountSerchDiv == True :
       print('2')
       return Attr('category').eq(category)
-    # ‹àŠz‚Ì‚İ
+    # é‡‘é¡ã®ã¿
     if category == '0' and amountSerchDiv == False :
       print('3')
       return Attr('amount').GE(amount1) & Attr('amount').LE(amount2)
-    # ƒJƒeƒSƒŠ[,‹àŠz
+    # ã‚«ãƒ†ã‚´ãƒªãƒ¼,é‡‘é¡
     if category != '0' and amountSerchDiv == False :
       print('4')
       return Attr('category').eq(category) & Attr('amount').GE(amount1) & Attr('amount').LE(amount2)
-    # ƒJƒeƒSƒŠ[,‹àŠz
+    # ã‚«ãƒ†ã‚´ãƒªãƒ¼,é‡‘é¡
     print('5')
     return ''
 
@@ -101,10 +101,10 @@ def lambda_handler(event, context):
     IndexType = event['IndexType']
     try:
 
-        # ƒCƒ“ƒfƒbƒNƒXƒ^ƒCƒvƒ`ƒFƒbƒN
+        # ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚¿ã‚¤ãƒ—ãƒã‚§ãƒƒã‚¯
         if IndexType == 'SERCH-SLIP-INDEX':
             area2 = event['Keys']['area2']
-            # ŒŸõ’luƒGƒŠƒA2‚Ìƒ`ƒFƒbƒNv
+            # æ¤œç´¢å€¤ã€Œã‚¨ãƒªã‚¢2ã®ãƒã‚§ãƒƒã‚¯ã€
             if area2 == 0:
                 return areaNo1_query(event)
             else:

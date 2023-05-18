@@ -3,14 +3,14 @@ import boto3
 
 from datetime import datetime
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 officeInfo = dynamodb.Table("officeInfo")
 
-# ŠÖ˜AHêƒXƒe[ƒ^ƒX•ÏXLambda
+# é–¢é€£å·¥å ´ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å¤‰æ›´Lambda
 def lambda_handler(event, context) :
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
@@ -18,18 +18,18 @@ def lambda_handler(event, context) :
     connectionOffice = office['connectionOffice']
 
     try:
-        # ŒŸõƒ^ƒCƒvŒŸØ
+        # æ¤œç´¢ã‚¿ã‚¤ãƒ—æ¤œè¨¼
         if IndexType != 'CONNECTIONOFFICESTATUS':
           return
 
-        # ƒf[ƒ^æ“¾
+        # ãƒ‡ãƒ¼ã‚¿å–å¾—
         office = officeInfo_query(adminOfficeId)
         
         connectionData = office['connectionOfficeInfo']
         
         for item in connectionData  :
           if item['officeId'] == connectionOffice['officeId']
-            # Œ‹‰Ê‚ÌŠi”[
+            # çµæœã®æ ¼ç´
             result={
               'officeId' :connectionOffice['officeId'],
               'officeName' :connectionOffice['officeName'],
@@ -74,7 +74,7 @@ def lambda_handler(event, context) :
         print(e)
 
 
-# Hêî•ñŒŸõ officeInfo
+# å·¥å ´æƒ…å ±æ¤œç´¢ officeInfo
 def officeInfo_query(adminOfficeId) :
     queryData = officeInfo.query(
         KeyConditionExpression = Key("officeId").eq(adminOfficeId)

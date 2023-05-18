@@ -5,15 +5,15 @@ import uuid
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("evaluationInfo")
 
 
-# ƒŒƒR[ƒhŒŸõ
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢
 def operation_query(partitionKey):
     queryData = table.query(
         KeyConditionExpression = Key("id").eq(partitionKey)
@@ -22,7 +22,7 @@ def operation_query(partitionKey):
     print(items)
     return items
 
-# ƒŒƒR[ƒhXV
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ›´æ–°
 def put_product(PartitionKey, event):
   putResponse = table.put_item(
     Item={
@@ -53,7 +53,7 @@ def put_product(PartitionKey, event):
   return putResponse
 
 
-# ƒŒƒR[ƒh’Ç‰Á
+# ãƒ¬ã‚³ãƒ¼ãƒ‰è¿½åŠ 
 def operation_post(PartitionKey, event):
   putResponse = table.put_item(
     Item={
@@ -85,7 +85,7 @@ def operation_post(PartitionKey, event):
 
 
 
-# ƒŒƒR[ƒhíœ
+# ãƒ¬ã‚³ãƒ¼ãƒ‰å‰Šé™¤
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        Key={

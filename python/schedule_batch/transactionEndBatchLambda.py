@@ -1,14 +1,16 @@
 import json
 import boto3
+import uuid
 
 from datetime import datetime
+import random
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 transactionSlip = dynamodb.Table("transactionSlip")
 slipDetailInfo = dynamodb.Table("slipDetailInfo")
 salesServiceInfo = dynamodb.Table("salesServiceInfo")
@@ -16,7 +18,7 @@ userMyList = dynamodb.Table("userMyList")
 completionSlip = dynamodb.Table("completionSlip")
 
 
-# ƒXƒPƒWƒ…[ƒ‹ƒoƒbƒ` æˆøŠ®—¹“`•[‚Ì’Šo
+# ã‚¹ã‚±ã‚¸ãƒ¥ãƒ¼ãƒ«ãƒãƒƒãƒ å–å¼•å®Œäº†ä¼ç¥¨ã®æŠ½å‡º
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()
@@ -24,46 +26,52 @@ def lambda_handler(event, context):
   print('TRANSACTIONEND')
 
   try:
-    # æˆøŠ®—¹“ú‰z‚¦æˆøî•ñ‚ğ’Šo
+    # å–å¼•å®Œäº†æ—¥è¶Šãˆå–å¼•æƒ…å ±ã‚’æŠ½å‡º
     endTransaction = delete_transaction_query()
-    if(len(endTransaction) > 0 :
+    if len(endTransaction) > 0 :
       for service in endTransaction :
-        # æˆøî•ñ‚ğ˜_—íœ
+        # å–å¼•æƒ…å ±ã‚’è«–ç†å‰Šé™¤
         logcaldelete_query(service)
         if service['serviceType'] == '0':
-          # “`•[î•ñ‚ğæ“¾‚µ˜_—íœ‚·‚é
+          # ä¼ç¥¨æƒ…å ±ã‚’å–å¾—ã—è«–ç†å‰Šé™¤ã™ã‚‹
+          print('1')
           slip = slipDetailInfo_query(service['slipNo'])
-          # æˆøI—¹TBL‚Éî•ñ‚ğ“o˜^‚·‚é
+          # å–å¼•çµ‚äº†TBLã«æƒ…å ±ã‚’ç™»éŒ²ã™ã‚‹
+          print('2')
           completionSlip_query(slip)
-          # ƒ}ƒCƒŠƒXƒgTBL‚ÉƒƒbƒZ[ƒW‚ğİ’è‚·‚é(æˆøŠ®—¹ƒƒbƒZ[ƒW{•]‰¿ˆË—ŠƒƒbƒZ[ƒW)
+          # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¨­å®šã™ã‚‹(å–å¼•å®Œäº†ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ï¼‹è©•ä¾¡ä¾é ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸)
+          print('3')
           setMyListMsg_query(slip)
         elif service['serviceType'] == '1' or '2':
-          # ƒT[ƒrƒX¤•i‚ğæ“¾‚µ˜_—íœ‚·‚é
+          # ã‚µãƒ¼ãƒ“ã‚¹å•†å“ã‚’å–å¾—ã—è«–ç†å‰Šé™¤ã™ã‚‹
+          print('4')
           salesService = salesServiceInfo_query(service['slipNo'])
-          # æˆøI—¹TBL‚Éî•ñ‚ğ“o˜^‚·‚é
+          # å–å¼•çµ‚äº†TBLã«æƒ…å ±ã‚’ç™»éŒ²ã™ã‚‹
+          print('5')
           completionSalesService_query(salesService)
-          # ƒ}ƒCƒŠƒXƒgTBL‚ÉƒƒbƒZ[ƒW‚ğİ’è‚·‚é(æˆøŠ®—¹ƒƒbƒZ[ƒW{•]‰¿ˆË—ŠƒƒbƒZ[ƒW)
+          # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¨­å®šã™ã‚‹(å–å¼•å®Œäº†ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ï¼‹è©•ä¾¡ä¾é ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸)
+          print('6')
           setMyListMsgSales_query(salesService)
   except Exception as e:
       print("Error Exception.")
       print(e)
 
 
-# æˆø’†“`•[î•ñ‚Ìíœ‘ÎÛ‚Ìî•ñ‚ğ’Šo
+# å–å¼•ä¸­ä¼ç¥¨æƒ…å ±ã®å‰Šé™¤å¯¾è±¡ã®æƒ…å ±ã‚’æŠ½å‡º
 def delete_transaction_query():
 
     TIMESTAMP = get_timestamp()
 
     queryData = transactionSlip.query(
         IndexName = 'ttlDate-index',
-        KeyConditionExpression = Key("deleteDiv").eq("0") & Key("ttlDate").LT(TIMESTAMP)
+        KeyConditionExpression = Key("deleteDiv").eq("0") & Key("ttlDate").lt(TIMESTAMP)
     )
     items=queryData['Items']
     print(items)
     return items
 
 
-# “`•[î•ñ‚ğ’Šo‚µ˜_—íœ‚·‚é
+# ä¼ç¥¨æƒ…å ±ã‚’æŠ½å‡ºã—è«–ç†å‰Šé™¤ã™ã‚‹
 def slipDetailInfo_query(partitionKey):
 
     TIMESTAMP = get_timestamp()
@@ -73,46 +81,54 @@ def slipDetailInfo_query(partitionKey):
     )
     items=queryData['Items']
 
-    putResponse = table.put_item(
-      Item={
-        'slipNo' : items['0']['slipNo'],
+    print('1-1')
+    print(items)
+    if queryData['Count'] == 0 :
+      print('not-data:' + partitionKey)
+      return 
+    putData = items[0]
+    putData['deleteDiv'] = '1'
+
+
+    putResponse = slipDetailInfo.put_item(
+      Item= {
+        'slipNo' : items[0]['slipNo'],
         'deleteDiv' : '1',
-        'category' : items['0']['category'],
-        'slipAdminUserId' : items['0']['slipAdminUserId'],
-        'adminDiv' : items['0']['adminDiv'],
-        'title' : items['0']['title'],
-        'areaNo1' : items['0']['areaNo1'],
-        'areaNo2' : items['0']['areaNo2'],
-        'price' : items['0']['price'],
-        'bidMethod' : items['0']['bidMethod'],
-        'bidderId' : items['0']['bidderId'],
-        'bidEndDate' : items['0']['bidEndDate'],
-        'explanation' : items['0']['explanation'],
-        'displayDiv' : items['0']['displayDiv'],
-        'processStatus' : items['0']['processStatus'],
-        'targetService' : items['0']['targetService'],
-        'targetVehicleId' : items['0']['targetVehicleId'],
-        'targetVehicleName' : items['0']['targetVehicleName'],
-        'targetVehicleInfo' : items['0']['targetVehicleInfo'],
-        'workAreaInfo' : items['0']['workAreaInfo'],
-        'preferredDate' : items['0']['preferredDate'],
-        'preferredTime' : items['0']['preferredTime'],
-        'completionDate' : items['0']['completionDate'],
-        'transactionCompletionDate' : items['0']['transactionCompletionDate'],
-        'thumbnailUrl' : items['0']['thumbnailUrl'],
-        'imageUrlList' : items['0']['imageUrlList'],
-        'messageOpenLebel' : items['0']['messageOpenLebel'],
-        'updateUserId' : items['0']['updateUserId'],
-        'created' : items['0']['created'],
-        'updated' : items['0']['updated']
-    }
-  )
+        'category' : items[0]['category'],
+        'slipAdminUserId' : items[0]['slipAdminUserId'],
+        'adminDiv' : items[0]['adminDiv'],
+        'title' : items[0]['title'],
+        'areaNo1' : items[0]['areaNo1'],
+        'areaNo2' : items[0]['areaNo2'],
+        'price' : items[0]['price'],
+        'bidMethod' : items[0]['bidMethod'],
+        'bidderId' : items[0]['bidderId'],
+        'bidEndDate' : items[0]['bidEndDate'],
+        'explanation' : items[0]['explanation'],
+        'displayDiv' : items[0]['displayDiv'],
+        'processStatus' : items[0]['processStatus'],
+        'targetService' : items[0]['targetService'],
+        'targetVehicleId' : items[0]['targetVehicleId'],
+        'targetVehicleName' : items[0]['targetVehicleName'],
+        'targetVehicleInfo' : items[0]['targetVehicleInfo'],
+        'workAreaInfo' : items[0]['workAreaInfo'],
+        'preferredDate' : items[0]['preferredDate'],
+        'preferredTime' : items[0]['preferredTime'],
+        'completionDate' : items[0]['completionDate'],
+        'transactionCompletionDate' : items[0]['transactionCompletionDate'],
+        'thumbnailUrl' : items[0]['thumbnailUrl'],
+        'imageUrlList' : items[0]['imageUrlList'],
+        'messageOpenLebel' : items[0]['messageOpenLebel'],
+        'updateUserId' : items[0]['updateUserId'],
+        'created' : items[0]['created'],
+        'updated' : items[0]['updated']
+      }
+    )
+    return items[0]
 
-    return items['0']
 
-
-# ƒT[ƒrƒX¤•iî•ñ‚ğ’Šo‚µ˜_—íœ‚·‚é
-def salesServiceInfo_query(primaryKey):
+# ã‚µãƒ¼ãƒ“ã‚¹å•†å“æƒ…å ±ã‚’æŠ½å‡ºã—è«–ç†å‰Šé™¤ã™ã‚‹
+def salesServiceInfo_query(partitionKey):
 
     TIMESTAMP = get_timestamp()
 
@@ -120,48 +136,57 @@ def salesServiceInfo_query(primaryKey):
         KeyConditionExpression = Key("slipNo").eq(partitionKey) & Key("deleteDiv").eq("0")
     )
     items=queryData['Items']
+    print('1-2')
+    print(items)
 
-    putResponse = table.put_item(
+    print('1-1')
+    print(items)
+    if queryData['Count'] == 0 :
+      print('not-data:' + partitionKey)
+      return 
+    putData = items[0]
+    putData['deleteDiv'] = '1'
+
+    putResponse = salesServiceInfo.put_item(
       Item={
-        'slipNo' : items['0']['slipNo'],
+        'slipNo' : items[0]['slipNo'],
         'deleteDiv' : '1',
-        'category' : items['0']['category'],
-        'slipAdminUserId' : items['0']['slipAdminUserId'],
-        'slipAdminOfficeId' : items['0']['slipAdminOfficeId'],
-        'slipAdminMechanicId' : items['0']['slipAdminMechanicId'],
-        'adminDiv' : items['0']['adminDiv'],
-        'title' : items['0']['title'],
-        'areaNo1' : items['0']['areaNo1'],
-        'areaNo2' : items['0']['areaNo2'],
-        'price' : items['0']['price'],
-        'bidMethod' : items['0']['bidMethod'],
-        'bidderId' : items['0']['bidderId'],
-        'bidEndDate' : items['0']['bidEndDate'],
-        'explanation' : items['0']['explanation'],
-        'displayDiv' : items['0']['displayDiv'],
-        'processStatus' : items['0']['processStatus'],
-        'targetService' : items['0']['targetService'],
-        'targetVehicleId' : items['0']['targetVehicleId'],
-        'targetVehicleName' : items['0']['targetVehicleName'],
-        'targetVehicleInfo' : items['0']['targetVehicleInfo'],
-        'workAreaInfo' : items['0']['workAreaInfo'],
-        'preferredDate' : items['0']['preferredDate'],
-        'preferredTime' : items['0']['preferredTime'],
-        'completionDate' : items['0']['completionDate'],
-        'transactionCompletionDate' : items['0']['transactionCompletionDate'],
-        'thumbnailUrl' : items['0']['thumbnailUrl'],
-        'imageUrlList' : items['0']['imageUrlList'],
-        'messageOpenLebel' : items['0']['messageOpenLebel'],
-        'updateUserId' : items['0']['updateUserId'],
-        'created' : items['0']['created'],
-        'updated' : datetime.now()
+        'category' : items[0]['category'],
+        'slipAdminUserId' : items[0]['slipAdminUserId'],
+        'slipAdminOfficeId' : items[0]['slipAdminOfficeId'],
+        'slipAdminMechanicId' : items[0]['slipAdminMechanicId'],
+        'adminDiv' : items[0]['adminDiv'],
+        'title' : items[0]['title'],
+        'areaNo1' : items[0]['areaNo1'],
+        'areaNo2' : items[0]['areaNo2'],
+        'price' : items[0]['price'],
+        'bidMethod' : items[0]['bidMethod'],
+        'bidderId' : items[0]['bidderId'],
+        'bidEndDate' : items[0]['bidEndDate'],
+        'explanation' : items[0]['explanation'],
+        'displayDiv' : items[0]['displayDiv'],
+        'processStatus' : items[0]['processStatus'],
+        'targetService' : items[0]['targetService'],
+        'targetVehicleId' : items[0]['targetVehicleId'],
+        'targetVehicleName' : items[0]['targetVehicleName'],
+        'targetVehicleInfo' : items[0]['targetVehicleInfo'],
+        'workAreaInfo' : items[0]['workAreaInfo'],
+        'preferredDate' : items[0]['preferredDate'],
+        'preferredTime' : items[0]['preferredTime'],
+        'completionDate' : items[0]['completionDate'],
+        'transactionCompletionDate' : items[0]['transactionCompletionDate'],
+        'thumbnailUrl' : items[0]['thumbnailUrl'],
+        'imageUrlList' : items[0]['imageUrlList'],
+        'messageOpenLebel' : items[0]['messageOpenLebel'],
+        'updateUserId' : items[0]['updateUserId'],
+        'created' : items[0]['created'],
+        'updated' : datetime.now().strftime('%x %X')
       }
     )
+    return items[0]
 
-    return items['0']
 
-
-# æˆø“`•[î•ñ˜_—íœ
+# å–å¼•ä¼ç¥¨æƒ…å ±è«–ç†å‰Šé™¤
 def logcaldelete_query(service):
   putResponse = transactionSlip.put_item(
     Item={
@@ -179,7 +204,7 @@ def logcaldelete_query(service):
       'deleteDiv' : '1',
       'completionScheduledDate' : service['completionScheduledDate'],
       'ttlDate' : service['ttlDate'],
-      'created' : event['Keys']['created'],
+      'created' : service['created'],
       'updated' : datetime.now().strftime('%x %X')
     }
   )
@@ -187,7 +212,7 @@ def logcaldelete_query(service):
     print(putResponse)
 
 
-# æˆøŠ®—¹“`•[î•ñ“o˜^(“`•[)
+# å–å¼•å®Œäº†ä¼ç¥¨æƒ…å ±ç™»éŒ²(ä¼ç¥¨)
 def completionSlip_query(slip):
 
   now = datetime.now()
@@ -225,12 +250,12 @@ def completionSlip_query(slip):
 
 
 
-# æˆøŠ®—¹“`•[î•ñ“o˜^iƒT[ƒrƒX¤•ij
-def completionSlip_query(service):
+# å–å¼•å®Œäº†ä¼ç¥¨æƒ…å ±ç™»éŒ²ï¼ˆã‚µãƒ¼ãƒ“ã‚¹å•†å“ï¼‰
+def completionSalesService_query(service):
 
   now = datetime.now()
 
-  putResponse = salesServiceInfo.put_item(
+  putResponse = transactionSlip.put_item(
     Item={
       'slipNo' : service['slipNo'],
       'slipAdminUserId' : service['slipAdminUserId'],
@@ -263,7 +288,7 @@ def completionSlip_query(service):
 
 
 
-# ƒ†[ƒU[ƒ}ƒCƒŠƒXƒgTBL“`•[(æˆøŠ®—¹ƒƒbƒZ[ƒW{•]‰¿ˆË—ŠƒƒbƒZ[ƒW)
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒã‚¤ãƒªã‚¹ãƒˆTBLä¼ç¥¨(å–å¼•å®Œäº†ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ï¼‹è©•ä¾¡ä¾é ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸)
 def setMyListMsg_query(slip):
 
   now = datetime.now()
@@ -289,7 +314,7 @@ def setMyListMsg_query(slip):
     }
   )
   
-  if putResponse2['ResponseMetadata']['HTTPStatusCode'] != 200:
+  if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
     print(putResponse)
 
   putResponse2 = userMyList.put_item(
@@ -313,11 +338,11 @@ def setMyListMsg_query(slip):
     }
   )
   
-  if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+  if putResponse2['ResponseMetadata']['HTTPStatusCode'] != 200:
     print(putResponse)
 
 
-# ƒ†[ƒU[ƒ}ƒCƒŠƒXƒgTBL“`•[(æˆøŠ®—¹ƒƒbƒZ[ƒW{•]‰¿ˆË—ŠƒƒbƒZ[ƒW)
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒã‚¤ãƒªã‚¹ãƒˆTBLä¼ç¥¨(å–å¼•å®Œäº†ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ï¼‹è©•ä¾¡ä¾é ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸)
 def setMyListMsgSales_query(service):
 
   now = datetime.now()
@@ -371,9 +396,7 @@ def setMyListMsgSales_query(service):
     print(putResponse)
 
 
-
-
-# ƒoƒbƒ`Às‚Ìƒ^ƒCƒ€ƒXƒ^ƒ“ƒvì¬
+# ãƒãƒƒãƒå®Ÿè¡Œæ™‚ã®ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ä½œæˆ
 def get_timestamp():
     now = datetime.now()
     rand_minute = int(random.uniform(0, 59))

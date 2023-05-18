@@ -5,14 +5,14 @@ import uuid
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("browsingHistory")
 
-# ‰{———š—ğî•ñ‘€ìLambda
+# é–²è¦§å±¥æ­´æƒ…å ±æ“ä½œLambda
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()
@@ -35,29 +35,29 @@ def lambda_handler(event, context):
       id = str(uuid.uuid4())
       PartitionKey = id
       
-      # d•¡ƒ`ƒFƒbƒN
+      # é‡è¤‡ãƒã‚§ãƒƒã‚¯
       uniqCheck = browsingUniqCheck(event)
       
       if uniqCheck:
-        # XV
+        # æ›´æ–°
         return put_product(PartitionKey, event)
       else :
-        # HêƒƒJƒjƒbƒN¤•iî•ñ‚Ì‰{———š—ğ”‚ğXV
-        # ˆø”
+        # å·¥å ´ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯å•†å“æƒ…å ±ã®é–²è¦§å±¥æ­´æ•°ã‚’æ›´æ–°
+        # å¼•æ•°
         input_event = {
             "processDiv": '0',
             "serviceId": event['Keys']['slipNo'],
             "serviceType": event['Keys']['serviceType'],
             "status": '0'
         }
-        Payload = json.dumps(input_event) # jsonƒVƒŠƒAƒ‰ƒCƒY
-        # ŒÄ‚Ño‚µ
+        Payload = json.dumps(input_event) # jsonã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
+        # å‘¼ã³å‡ºã—
         boto3.client('lambda').invoke(
             FunctionName='internalFcMcItemLambda',
             InvocationType='Event',
             Payload=Payload
         )
-        # “o˜^
+        # ç™»éŒ²
         return post_product(PartitionKey, event)
 
   except Exception as e:
@@ -66,7 +66,7 @@ def lambda_handler(event, context):
 
 
 
-# ƒŒƒR[ƒhŒŸõ
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢
 def operation_query(partitionKey):
     queryData = table.query(
         KeyConditionExpression = Key("id").eq(partitionKey)
@@ -75,9 +75,9 @@ def operation_query(partitionKey):
     print(items)
     return items
 
-# ƒŒƒR[ƒhXV
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ›´æ–°
 def put_product(PartitionKey, event):
-  # ”FØî•ñƒ`ƒFƒbƒN
+  # èªè¨¼æƒ…å ±ãƒã‚§ãƒƒã‚¯
   userId = CertificationUserId(event)
   if userId == None :
     print('NOT-CERTIFICATION')
@@ -105,7 +105,7 @@ def put_product(PartitionKey, event):
     print('Post Successed.')
   return putResponse
   
-  # ƒŒƒR[ƒhíœ
+  # ãƒ¬ã‚³ãƒ¼ãƒ‰å‰Šé™¤
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        Key={
@@ -119,9 +119,9 @@ def operation_delete(partitionKey):
     return delResponse
 
 
-# ƒŒƒR[ƒh’Ç‰Á
+# ãƒ¬ã‚³ãƒ¼ãƒ‰è¿½åŠ 
 def post_product(PartitionKey, event):
-  # ”FØî•ñƒ`ƒFƒbƒN
+  # èªè¨¼æƒ…å ±ãƒã‚§ãƒƒã‚¯
   userId = CertificationUserId(event)
   if userId == None :
     print('NOT-CERTIFICATION')
@@ -145,36 +145,36 @@ def post_product(PartitionKey, event):
   )
 
 
-# d•¡ƒ`ƒFƒbƒN
+# é‡è¤‡ãƒã‚§ãƒƒã‚¯
 def browsingUniqCheck(event):
-    # XV‘ÎÛ‚Ìƒ†[ƒU[ID‚Å“o˜^’†‚Ì‰{———š—ğî•ñ‚ğæ“¾‚·‚é
+    # æ›´æ–°å¯¾è±¡ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼IDã§ç™»éŒ²ä¸­ã®é–²è¦§å±¥æ­´æƒ…å ±ã‚’å–å¾—ã™ã‚‹
     queryData = table.query(
         IndexName = 'userId-index',
         KeyConditionExpression = Key("userId").eq(event['Keys']['userId'])
     )
     items=queryData['Items']
     
-    # –¢æ“¾‚Ìê‡ƒ`ƒFƒbƒN‚ğI—¹‚·‚éB
+    # æœªå–å¾—ã®å ´åˆãƒã‚§ãƒƒã‚¯ã‚’çµ‚äº†ã™ã‚‹ã€‚
     if len(items) == 0 :
       return False
     
     for item in items :
-      # “`•[”Ô†‚ªd•¡‚µ‚½ê‡XV
+      # ä¼ç¥¨ç•ªå·ãŒé‡è¤‡ã—ãŸå ´åˆæ›´æ–°
       if item['slipNo'] == event['Keys']['slipNo'] :
         return True
-    # d•¡‚È‚µ‚Ìê‡“o˜^
+    # é‡è¤‡ãªã—ã®å ´åˆç™»éŒ²
     return False
 
-# ”FØî•ñ‚©‚çƒ†[ƒU[î•ñæ“¾
+# èªè¨¼æƒ…å ±ã‹ã‚‰ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±å–å¾—
 def CertificationUserId(event):
     cognitoUserId = event['Keys']['userId']
-    # ”FØî•ñƒ`ƒFƒbƒNŒãƒ†[ƒU[ID‚ğæ“¾
-    # ˆø”
+    # èªè¨¼æƒ…å ±ãƒã‚§ãƒƒã‚¯å¾Œãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’å–å¾—
+    # å¼•æ•°
     input_event = {
         "userId": cognitoUserId,
     }
-    Payload = json.dumps(input_event) # jsonƒVƒŠƒAƒ‰ƒCƒY
-    # “¯Šúˆ—‚ÅŒÄ‚Ño‚µ
+    Payload = json.dumps(input_event) # jsonã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
+    # åŒæœŸå‡¦ç†ã§å‘¼ã³å‡ºã—
     response = boto3.client('lambda').invoke(
         FunctionName='CertificationLambda',
         InvocationType='RequestResponse',
@@ -182,7 +182,7 @@ def CertificationUserId(event):
     )
     body = json.loads(response['Payload'].read())
     print(body)
-    # ƒ†[ƒU[î•ñ‚Ìƒ†[ƒU[ID‚ğæ“¾
+    # ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’å–å¾—
     if body != None :
       return body
     else :

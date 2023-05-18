@@ -3,35 +3,47 @@ import boto3
 import uuid
 
 from datetime import datetime
+import random
 
 from boto3.dynamodb.conditions import Key
 
-# ƒXƒPƒWƒ…[ƒ‹ƒoƒbƒ` ŠúŒÀØ‚ê“`•[ƒ`ƒFƒbƒN
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
+
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
+dynamodb = boto3.resource('dynamodb')
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
+salesServiceInfo = dynamodb.Table("salesServiceInfo")
+slipDetailInfo = dynamodb.Table("slipDetailInfo")
+userMyList = dynamodb.Table("userMyList")
+
+
+# ç¢ºå®šã‚µãƒ¼ãƒ“ã‚¹ç§»è¡Œ
+# ã‚¹ã‚±ã‚¸ãƒ¥ãƒ¼ãƒ«ãƒãƒƒãƒ æœŸé™åˆ‡ã‚Œä¼ç¥¨ãƒã‚§ãƒƒã‚¯
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()
   print(now)
   print('EXPIREDSERVICE')
   try:
-    # “`•[ƒ`ƒFƒbƒN
+    # ä¼ç¥¨ãƒã‚§ãƒƒã‚¯
     expiredSlipData = slip_confirm()
 
-    # ‘ÎÛ“`•[‚ª‘¶İ‚·‚éê‡
-    if(len(expiredSlipData) > 0 :
+    # å¯¾è±¡ä¼ç¥¨ãŒå­˜åœ¨ã™ã‚‹å ´åˆ
+    if len(expiredSlipData) > 0 :
       for slip in expiredSlipData :
-        # ‘ÎÛ“`•[‚ÌƒXƒe[ƒ^ƒX‚ğXV
+        # å¯¾è±¡ä¼ç¥¨ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’æ›´æ–°
         expiredSlip_query(slip)
-        # ƒ}ƒCƒŠƒXƒgTBL‚ÉƒƒbƒZ[ƒW‚ğ’Ç‰ÁiŠúŒÀØ‚êj
+        # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¿½åŠ ï¼ˆæœŸé™åˆ‡ã‚Œï¼‰
         slipMylistMsg_query(slip['slipNo'])
 
-      # ƒT[ƒrƒX¤•iƒ`ƒFƒbƒN
+      # ã‚µãƒ¼ãƒ“ã‚¹å•†å“ãƒã‚§ãƒƒã‚¯
       expiredServiceData = service_confirm()
-      if(len(expiredServiceData) > 0 :
-      # ‘ÎÛƒT[ƒrƒX‚ª‘¶İ‚·‚éê‡íœ
+      if len(expiredServiceData) > 0 :
+      # å¯¾è±¡ã‚µãƒ¼ãƒ“ã‚¹ãŒå­˜åœ¨ã™ã‚‹å ´åˆå‰Šé™¤
         for service in expiredServiceData :
-          # ‘ÎÛƒT[ƒrƒX‚ÌƒXƒe[ƒ^ƒX‚ğXV
+          # å¯¾è±¡ã‚µãƒ¼ãƒ“ã‚¹ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’æ›´æ–°
           expiredService_query(service)
-          # ƒ}ƒCƒŠƒXƒgTBL‚ÉƒƒbƒZ[ƒW‚ğ’Ç‰ÁiŠúŒÀØ‚êj
+          # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¿½åŠ ï¼ˆæœŸé™åˆ‡ã‚Œï¼‰
           serviceMylistMsg_query(service)
 
   except Exception as e:
@@ -39,49 +51,42 @@ def lambda_handler(event, context):
       print(e)
 
 
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
-
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
-dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
-salesServiceInfo = dynamodb.Table("salesServiceInfo")
-slipDetailInfo = dynamodb.Table("slipDetailInfo")
-userMyList = dynamodb.Table("userMyList")
-
-# Šm’èƒT[ƒrƒXˆÚs
-
-# “`•[î•ñŠm’è“`•[’Šo
+# ä¼ç¥¨æƒ…å ±ç¢ºå®šä¼ç¥¨æŠ½å‡º
 def slip_confirm():
 
-    TIMESTAMP = get_timestamp()
-
+    # TIMESTAMP = get_timestamp()
+    TIMESTAMP = datetime.now().strftime('%Y%m%d')
+    print('TIMESTAMP')
+    print(TIMESTAMP)
+    
     queryData = slipDetailInfo.query(
-        IndexName = ' preferredDate-index',
-        # uæˆø’†v‚ÌƒXƒe[ƒ^ƒX‚ªc‚Á‚Ä‚¢‚éê‡’Šo
+        IndexName = 'preferredDate-index',
+        # ã€Œå–å¼•ä¸­ã€ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãŒæ®‹ã£ã¦ã„ã‚‹å ´åˆæŠ½å‡º
         KeyConditionExpression = Key("processStatus").eq("0")
-        & Key("preferredDate").LT(TIMESTAMP)
+        & Key("preferredDate").lt(int(TIMESTAMP))
     )
     items=queryData['Items']
+    print('1')
     print(items)
     return items
 
-# ƒT[ƒrƒX¤•iî•ñ’Šo
+# ã‚µãƒ¼ãƒ“ã‚¹å•†å“æƒ…å ±æŠ½å‡º
 def service_confirm():
-
-    TIMESTAMP = get_timestamp()
-
+    # TIMESTAMP = get_timestamp()
+    TIMESTAMP = datetime.now().strftime('%Y%m%d')
     queryData = salesServiceInfo.query(
-        IndexName = ' preferredDate-index',
-        # uo•i’†v‚ÌƒXƒe[ƒ^ƒX‚ªc‚Á‚Ä‚¢‚éê‡’Šo
+        IndexName = 'preferredDate-index',
+        # ã€Œå‡ºå“ä¸­ã€ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãŒæ®‹ã£ã¦ã„ã‚‹å ´åˆæŠ½å‡º
         KeyConditionExpression = Key("processStatus").eq("0")
-        & Key("preferredDate").LT(TIMESTAMP)
+        & Key("preferredDate").lt(int(TIMESTAMP))
     )
     items=queryData['Items']
+    print('2')
     print(items)
     return items
 
 
-# æˆø’†“`•[î•ñ‚É“`•[î•ñ‚ğ’Ç‰Á
+# å–å¼•ä¸­ä¼ç¥¨æƒ…å ±ã«ä¼ç¥¨æƒ…å ±ã‚’è¿½åŠ 
 def expiredSlip_query(slip):
   putResponse = slipDetailInfo.put_item(
     Item={
@@ -122,7 +127,7 @@ def expiredSlip_query(slip):
     print(putResponse)
 
 
-# æˆø’†“`•[î•ñ‚ÉƒT[ƒrƒXî•ñ‚ğ’Ç‰Á
+# å–å¼•ä¸­ä¼ç¥¨æƒ…å ±ã«ã‚µãƒ¼ãƒ“ã‚¹æƒ…å ±ã‚’è¿½åŠ 
 def expiredService_query(service):
 
 
@@ -168,7 +173,7 @@ def expiredService_query(service):
 
 
 
-# ƒ†[ƒU[ƒ}ƒCƒŠƒXƒgTBL“`•[(ŠúŒÀØ‚êƒƒbƒZ[ƒW“o˜^)
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒã‚¤ãƒªã‚¹ãƒˆTBLä¼ç¥¨(æœŸé™åˆ‡ã‚Œãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç™»éŒ²)
 def slipMylistMsg_query(slip):
 
   now = datetime.now()
@@ -198,7 +203,7 @@ def slipMylistMsg_query(slip):
     print(putResponse)
 
 
-# ƒ†[ƒU[ƒ}ƒCƒŠƒXƒgTBLƒT[ƒrƒX¤•i(ŠúŒÀØ‚êƒƒbƒZ[ƒW“o˜^)
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒã‚¤ãƒªã‚¹ãƒˆTBLã‚µãƒ¼ãƒ“ã‚¹å•†å“(æœŸé™åˆ‡ã‚Œãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç™»éŒ²)
 def serviceMylistMsg_query(serivice):
 
   now = datetime.now()
@@ -230,7 +235,7 @@ def serviceMylistMsg_query(serivice):
 
 
 
-# ƒoƒbƒ`Às‚Ìƒ^ƒCƒ€ƒXƒ^ƒ“ƒvì¬
+# ãƒãƒƒãƒå®Ÿè¡Œæ™‚ã®ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ä½œæˆ
 def get_timestamp():
     now = datetime.now()    
     rand_minute = int(random.uniform(0, 59))

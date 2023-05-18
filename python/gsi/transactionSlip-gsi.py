@@ -2,14 +2,14 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("transactionSlip")
 
-# æˆø’†“`•[î•ñGSIŒŸõ
+# å–å¼•ä¸­ä¼ç¥¨æƒ…å ±GSIæ¤œç´¢
 def lambda_handler(event, context):
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
@@ -20,13 +20,13 @@ def lambda_handler(event, context):
         if IndexType == 'SLIPUSER-INDEX':
 
             cognitoUserId = PartitionKey
-            # ”FØî•ñƒ`ƒFƒbƒNŒãƒ†[ƒU[ID‚ğæ“¾
-            # ˆø”
+            # èªè¨¼æƒ…å ±ãƒã‚§ãƒƒã‚¯å¾Œãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’å–å¾—
+            # å¼•æ•°
             input_event = {
                 "userId": cognitoUserId,
             }
-            Payload = json.dumps(input_event) # jsonƒVƒŠƒAƒ‰ƒCƒY
-            # “¯Šúˆ—‚ÅŒÄ‚Ño‚µ
+            Payload = json.dumps(input_event) # jsonã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
+            # åŒæœŸå‡¦ç†ã§å‘¼ã³å‡ºã—
             response = boto3.client('lambda').invoke(
                 FunctionName='CertificationLambda',
                 InvocationType='RequestResponse',
@@ -34,7 +34,7 @@ def lambda_handler(event, context):
             )
             body = json.loads(response['Payload'].read())
             print(body)
-            # ƒ†[ƒU[î•ñ‚Ìƒ†[ƒU[ID‚ğæ“¾
+            # ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’å–å¾—
             if body != None :
               userId = body
             else :
@@ -57,7 +57,7 @@ def lambda_handler(event, context):
 
 
 
-# 1ƒŒƒR[ƒhŒŸõ slipUserId-index
+# 1ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ slipUserId-index
 def slipUser_query(partitionKey, sortKey):
     queryData = table.query(
         IndexName = 'userId-index',
@@ -67,7 +67,7 @@ def slipUser_query(partitionKey, sortKey):
     print(items)
     return items
 
-# 2ƒŒƒR[ƒhŒŸõ slipOffice-index
+# 2ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ slipOffice-index
 def slipOffice_query(partitionKey):
     queryData = table.query(
         IndexName = 'officeId-index',
@@ -77,7 +77,7 @@ def slipOffice_query(partitionKey):
     print(items)
     return items
 
-# 3ƒŒƒR[ƒhŒŸõ slipMechanic-index
+# 3ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ slipMechanic-index
 def slipMechanic_query(partitionKey):
     queryData = table.query(
         IndexName = 'mechanicId-index',

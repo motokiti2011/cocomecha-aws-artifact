@@ -5,17 +5,17 @@ from datetime import datetime, timedelta
 
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 userInfo = dynamodb.Table("userInfo")
 accountUserConneection = dynamodb.Table("accountUserConneection")
 certificationManagementInfo = dynamodb.Table("certificationManagementInfo")
 
 
-# ƒTƒCƒ“ƒCƒ“ƒgƒŠƒK[Lambda
+# ã‚µã‚¤ãƒ³ã‚¤ãƒ³æ™‚ãƒˆãƒªã‚¬ãƒ¼Lambda
 def lambda_handler(event, context):
   print(event)
   print(event['userName'])
@@ -24,23 +24,23 @@ def lambda_handler(event, context):
   PartitionKey = event['userName']
 
 
-  # ƒAƒJƒEƒ“ƒgEƒ†[ƒU[•R•t‚¯î•ñ
+  # ã‚¢ã‚«ã‚¦ãƒ³ãƒˆãƒ»ãƒ¦ãƒ¼ã‚¶ãƒ¼ç´ä»˜ã‘æƒ…å ±
   connectionData = operation_query(PartitionKey)
   if len(connectionData) == 0 :
     print('USER-NOT-Failure')
-    # ƒƒO“f‚¢‚Äˆ—I—¹
+    # ãƒ­ã‚°åã„ã¦å‡¦ç†çµ‚äº†
     return
 
   userId = connectionData[0]['userId']
   
-  # ”FØî•ñæ“¾
+  # èªè¨¼æƒ…å ±å–å¾—
   certificationData = get_certification(userId)
   if len(certificationData) > 0 :
-    # ‚·‚Å‚É”FØ‚³‚ê‚Ä‚¢‚éê‡XV‚·‚éB
+    # ã™ã§ã«èªè¨¼ã•ã‚Œã¦ã„ã‚‹å ´åˆæ›´æ–°ã™ã‚‹ã€‚
     put_certificationData(certificationData[0])
     print('PUT_certification')
   else :
-    # –¢”FØ‚Ìê‡’Ç‰Á‚·‚éB
+    # æœªèªè¨¼ã®å ´åˆè¿½åŠ ã™ã‚‹ã€‚
     post_certificationData(connectionData[0])
     print('POST_certification')
 
@@ -48,7 +48,7 @@ def lambda_handler(event, context):
   return event
 
 
-# ƒŒƒR[ƒhŒŸõiƒf[ƒ^Šm”Fj
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ï¼ˆãƒ‡ãƒ¼ã‚¿ç¢ºèªï¼‰
 def operation_query(partitionKey):
     queryData = accountUserConneection.query(
         KeyConditionExpression = Key("accountUseId").eq(partitionKey)
@@ -58,7 +58,7 @@ def operation_query(partitionKey):
     return items
 
 
-# ”FØî•ñæ“¾
+# èªè¨¼æƒ…å ±å–å¾—
 def get_certification(userId):
     queryData = certificationManagementInfo.query(
         KeyConditionExpression = Key("userId").eq(userId)
@@ -69,11 +69,11 @@ def get_certification(userId):
 
 
 
-# ”FØî•ñ’Ç‰Á
+# èªè¨¼æƒ…å ±è¿½åŠ 
 def post_certificationData(data):
 
   dt2 = datetime.now() + timedelta(hours=2)
-  
+  ttl = str(dt2.timestamp())
   putResponse = certificationManagementInfo.put_item(
     Item={
       'userId' : data['userId'],
@@ -81,27 +81,28 @@ def post_certificationData(data):
       'operationDate':  dt2.strftime('%Y%m%d'),
       'operationTime':  dt2.strftime('%H%M'),
       'created': datetime.now().strftime('%Y%m%d%H%M%S'),
-      'operationDateTime':  dt2.strftime('%Y%m%d%H%M')
+      'operationDateTime': ttl
     }
   )
   print('post_accountUserConneection-SUCSESS')
   return
 
 
-# ”FØî•ñXV
+# èªè¨¼æƒ…å ±æ›´æ–°
 def put_certificationData(data):
 
-  # 2ŠÔŒã‚Ì‚ğİ’è
-  dt2 = datetime.now() + timedelta(hours=2)
-  
+  # 2æ™‚é–“å¾Œã®æ™‚åˆ»ã‚’è¨­å®š
+  ttlData = datetime.now() + timedelta(hours=2)
+  ttl = str(ttlData .timestamp())
+
   putResponse = certificationManagementInfo.put_item(
     Item={
       'userId' : data['userId'],
       'accountUseId': data['accountUseId'],
-      'operationDate':  dt2.strftime('%Y%m%d'),
-      'operationTime':  dt2.strftime('%H%M'),
+      'operationDate':  ttlData.strftime('%Y%m%d'),
+      'operationTime':  ttlData.strftime('%H%M'),
       'created':  data['created'],
-      'operationDateTime':  dt2.strftime('%Y%m%d%H%M')
+      'operationDateTime':  ttl
     }
   )
   print('post_accountUserConneection-SUCSESS')

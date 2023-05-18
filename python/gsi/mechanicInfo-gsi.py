@@ -2,14 +2,14 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("mechanicInfo")
 
-# ƒŒƒR[ƒhŒŸõ adminUserId-index
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ adminUserId-index
 def mechanicId_query(partitionKey, sortKey):
     queryData = table.query(
         IndexName = 'adminUserId-index',
@@ -20,7 +20,7 @@ def mechanicId_query(partitionKey, sortKey):
     return items
 
 
-# ƒŒƒR[ƒhŒŸõ officeId-index
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ officeId-index
 def mechanicId_query(partitionKey, sortKey):
     queryData = table.query(
         IndexName = 'officeId-index',

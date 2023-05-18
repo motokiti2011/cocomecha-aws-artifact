@@ -2,14 +2,14 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("completionSlip")
 
-# ‰ß‹æˆøî•ñæ“¾
+# éå»å–å¼•æƒ…å ±å–å¾—
 def lambda_handler(event, context) :
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
@@ -19,35 +19,35 @@ def lambda_handler(event, context) :
 
 
     try:
-        # ŒŸõƒ^ƒCƒvŒŸØ
+        # æ¤œç´¢ã‚¿ã‚¤ãƒ—æ¤œè¨¼
         if IndexType != 'PASTTRANSACTION':
           return
 
 
-        #ŠÇ—Òƒ`ƒFƒbƒN
-        # ˆø”
+        #ç®¡ç†è€…ãƒã‚§ãƒƒã‚¯
+        # å¼•æ•°
         input_event = {
             "adminId": id,
             "serviceType": serviceType,
             "accessUser": accessUser
         }
-        Payload = json.dumps(input_event) # jsonƒVƒŠƒAƒ‰ƒCƒY
+        Payload = json.dumps(input_event) # jsonã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
         print("---01: Payload:", Payload)
-        # ŒÄ‚Ño‚µ
+        # å‘¼ã³å‡ºã—
         response = boto3.client('lambda').invoke(
             FunctionName='internalAdminCheckLambda',
             InvocationType='RequestResponse',
             Payload=Payload
         )
 
-        body = json.loads(response['Payload'].read()) #‚Ç‚¤‚â‚çHTTPƒwƒbƒ_[‚Í“Áê‚ÈŒ`‚ğ‚µ‚Ä‚¢‚é‚æ‚¤‚ÅA•’Ê‚Éjson.
+        body = json.loads(response['Payload'].read()) #ã©ã†ã‚„ã‚‰HTTPãƒ˜ãƒƒãƒ€ãƒ¼ã¯ç‰¹æ®Šãªå½¢ã‚’ã—ã¦ã„ã‚‹ã‚ˆã†ã§ã€æ™®é€šã«json.
         print("---03: body:", body)
 
         print(id)
 
         resultItems = []
 
-        # ƒf[ƒ^æ“¾
+        # ãƒ‡ãƒ¼ã‚¿å–å¾—
         if serviceType == '0':
           resultItems = slipAdminUserId_query(id)
         elif serviceType == '1':
@@ -55,12 +55,12 @@ def lambda_handler(event, context) :
         else:
           resultItems = slipAdminOffice_query(id)
         
-        # Œ‹‰Ê‚ÌŠi”[
+        # çµæœã®æ ¼ç´
         if body:
-          # ŠÇ—Ò‚Ìê‡‘Sƒf[ƒ^•Ô‹p
+          # ç®¡ç†è€…ã®å ´åˆå…¨ãƒ‡ãƒ¼ã‚¿è¿”å´
           return resultItems
         else :
-          # ‚»‚êˆÈŠO‚Íƒf[ƒ^•ÒW•Ô‹p
+          # ãã‚Œä»¥å¤–ã¯ãƒ‡ãƒ¼ã‚¿ç·¨é›†è¿”å´
           return setItems(resultItems)
 
     except Exception as e:
@@ -69,7 +69,7 @@ def lambda_handler(event, context) :
 
 
 
-# 1ƒŒƒR[ƒhŒŸõ slipAdminUserId-index
+# 1ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ slipAdminUserId-index
 def slipAdminUserId_query(partitionKey):
     queryData = table.query(
         IndexName = 'slipAdminUserId-index',
@@ -79,7 +79,7 @@ def slipAdminUserId_query(partitionKey):
     print(items)
     return items
 
-# 2ƒŒƒR[ƒhŒŸõ slipAdminOfficeId-index
+# 2ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ slipAdminOfficeId-index
 def slipAdminOffice_query(partitionKey):
     queryData = table.query(
         IndexName = 'slipAdminOffice-index',
@@ -89,7 +89,7 @@ def slipAdminOffice_query(partitionKey):
     print(items)
     return items
 
-# 3ƒŒƒR[ƒhŒŸõ slipAdminMechanicId-index
+# 3ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ slipAdminMechanicId-index
 def slipAdminMechanicId_query(partitionKey):
     queryData = table.query(
         IndexName = 'slipAdminMechanicId-index',
@@ -97,15 +97,15 @@ def slipAdminMechanicId_query(partitionKey):
     )
     items=queryData['Items']
     print(items)
-    return items# ƒ†[ƒU[î•ñŒŸõ userInfo
+    return items# ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±æ¤œç´¢ userInfo
 
 
-# ŠÇ—Ò—pƒf[ƒ^ƒZƒbƒg
+# ç®¡ç†è€…ç”¨ãƒ‡ãƒ¼ã‚¿ã‚»ãƒƒãƒˆ
 def setItems(itemList) :
 
     resultList = []
     for item in itemList :
-      # ƒf[ƒ^ƒZƒbƒg
+      # ãƒ‡ãƒ¼ã‚¿ã‚»ãƒƒãƒˆ
       resultList.append(dataItem={
         'slipNo' : item[slipNo],
         'slipAdminUserId' : '',

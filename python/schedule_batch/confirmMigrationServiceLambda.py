@@ -5,17 +5,17 @@ import uuid
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 salesServiceInfo = dynamodb.Table("salesServiceInfo")
 slipDetailInfo = dynamodb.Table("slipDetailInfo")
 transactionSlip = dynamodb.Table("transactionSlip")
 
 
-# ƒXƒPƒWƒ…[ƒ‹ƒoƒbƒ` Šm’èƒT[ƒrƒXˆÚs
+# ã‚¹ã‚±ã‚¸ãƒ¥ãƒ¼ãƒ«ãƒãƒƒãƒ ç¢ºå®šã‚µãƒ¼ãƒ“ã‚¹ç§»è¡Œ
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()
@@ -23,27 +23,27 @@ def lambda_handler(event, context):
   print('CONFIRMMIGRATIONSERVICE')
 
   try:    
-    # “`•[ƒ`ƒFƒbƒN
+    # ä¼ç¥¨ãƒã‚§ãƒƒã‚¯
     confirmSlipData = slip_confirm()
 
-    # ‘ÎÛ“`•[‚ª‘¶İ‚·‚éê‡
-    if(len(confirmSlipData) > 0 :
+    # å¯¾è±¡ä¼ç¥¨ãŒå­˜åœ¨ã™ã‚‹å ´åˆ
+    if len(confirmSlipData) > 0 :
 
         for slip in confirmSlipData :
-          # ‘ÎÛ“`•[‚ğíœ(•Û—¯)
+          # å¯¾è±¡ä¼ç¥¨ã‚’å‰Šé™¤(ä¿ç•™)
           #slipconfirm_delete(slip['slipNo'])
-          # ‘ÎÛ“`•[‚ğæˆø’†“`•[‚É’Ç‰Á
+          # å¯¾è±¡ä¼ç¥¨ã‚’å–å¼•ä¸­ä¼ç¥¨ã«è¿½åŠ 
           slipconfirm_post(slip)
 
-    # ƒT[ƒrƒX¤•iƒ`ƒFƒbƒN
+    # ã‚µãƒ¼ãƒ“ã‚¹å•†å“ãƒã‚§ãƒƒã‚¯
     confirmServiceData = service_confirm()
 
-    if(len(confirmServiceData) > 0 :
-    # ‘ÎÛƒT[ƒrƒX‚ª‘¶İ‚·‚éê‡íœ
+    if len(confirmServiceData) > 0 :
+    # å¯¾è±¡ã‚µãƒ¼ãƒ“ã‚¹ãŒå­˜åœ¨ã™ã‚‹å ´åˆå‰Šé™¤
         for service in confirmServiceData :
-          # ‘ÎÛƒT[ƒrƒX‚ğíœ(•Û—¯)
+          # å¯¾è±¡ã‚µãƒ¼ãƒ“ã‚¹ã‚’å‰Šé™¤(ä¿ç•™)
           #serviceconfirm_delete(service['slipNo'])
-          # ‘ÎÛƒT[ƒrƒX‚ğæˆø’†“`•[‚É’Ç‰Á
+          # å¯¾è±¡ã‚µãƒ¼ãƒ“ã‚¹ã‚’å–å¼•ä¸­ä¼ç¥¨ã«è¿½åŠ 
           serviceconfirm_post(service)
 
   except Exception as e:
@@ -51,22 +51,22 @@ def lambda_handler(event, context):
       print(e)
 
 
-# “`•[î•ñŠm’è“`•[’Šo
-def slip_confirm(partitionKey):
+# ä¼ç¥¨æƒ…å ±ç¢ºå®šä¼ç¥¨æŠ½å‡º
+def slip_confirm():
     queryData = slipDetailInfo.query(
-        IndexName = ' processStatus-index',
-        # uæˆø’†v‚ÌƒXƒe[ƒ^ƒX‚ªc‚Á‚Ä‚¢‚éê‡’Šo
+        IndexName = 'processStatus-index',
+        # ã€Œå–å¼•ä¸­ã€ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãŒæ®‹ã£ã¦ã„ã‚‹å ´åˆæŠ½å‡º
         KeyConditionExpression = Key("processStatus").eq("1")
     )
     items=queryData['Items']
     print(items)
     return items
 
-# ƒT[ƒrƒX¤•iî•ñ’Šo
-def service_confirm(partitionKey):
+# ã‚µãƒ¼ãƒ“ã‚¹å•†å“æƒ…å ±æŠ½å‡º
+def service_confirm():
     queryData = salesServiceInfo.query(
-        IndexName = ' processStatus-index',
-        # uæˆø’†v‚ÌƒXƒe[ƒ^ƒX‚ªc‚Á‚Ä‚¢‚éê‡’Šo
+        IndexName = 'processStatus-index',
+        # ã€Œå–å¼•ä¸­ã€ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãŒæ®‹ã£ã¦ã„ã‚‹å ´åˆæŠ½å‡º
         KeyConditionExpression = Key("processStatus").eq("1")
     )
     items=queryData['Items']
@@ -74,7 +74,7 @@ def service_confirm(partitionKey):
     return items
 
 
-# “`•[î•ñíœ
+# ä¼ç¥¨æƒ…å ±å‰Šé™¤
 #def slipconfirm_delete(slipNo):
 #    delResponse = slipDetailInfo.delete_item(
 #       Key={
@@ -84,7 +84,7 @@ def service_confirm(partitionKey):
 #    if delResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
 #        print(delResponse)
 #
-# ƒT[ƒrƒX¤•iíœ
+# ã‚µãƒ¼ãƒ“ã‚¹å•†å“å‰Šé™¤
 #def serviceconfirm_delete(slipNo):
 #    delResponse = salesServiceInfo.delete_item(
 #       Key={
@@ -95,7 +95,7 @@ def service_confirm(partitionKey):
 #        print(delResponse)
 
 
-# æˆø’†“`•[î•ñ‚É“`•[î•ñ‚ğ’Ç‰Á
+# å–å¼•ä¸­ä¼ç¥¨æƒ…å ±ã«ä¼ç¥¨æƒ…å ±ã‚’è¿½åŠ 
 def slipconfirm_post(slip):
   putResponse = transactionSlip.put_item(
     Item={
@@ -122,7 +122,7 @@ def slipconfirm_post(slip):
     print(putResponse)
 
 
-# æˆø’†“`•[î•ñ‚ÉƒT[ƒrƒXî•ñ‚ğ’Ç‰Á
+# å–å¼•ä¸­ä¼ç¥¨æƒ…å ±ã«ã‚µãƒ¼ãƒ“ã‚¹æƒ…å ±ã‚’è¿½åŠ 
 def serviceconfirm_post(service):
 
   adminId = service['slipAdminUserId']

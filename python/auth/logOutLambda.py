@@ -5,24 +5,24 @@ from datetime import datetime
 
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 certificationManagementInfo = dynamodb.Table("certificationManagementInfo")
 accountUserConneection = dynamodb.Table("accountUserConneection")
 
 
 
-# ƒƒOƒAƒEƒg‚Ì”FØî•ñŠÇ—
+# ãƒ­ã‚°ã‚¢ã‚¦ãƒˆæ™‚ã®èªè¨¼æƒ…å ±ç®¡ç†
 def lambda_handler(event, context):
   print(event)
   print(event['userId'])
 
   PartitionKey = event['userId']
   
-  # ƒAƒJƒEƒ“ƒg•R‚Ã‚¯‚©‚çƒ†[ƒU[ID‚ğæ“¾
+  # ã‚¢ã‚«ã‚¦ãƒ³ãƒˆç´ã¥ã‘ã‹ã‚‰ãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’å–å¾—
   
   accountData = operation_queryConnection(PartitionKey)
   if len(accountData) > 0 :
@@ -32,7 +32,7 @@ def lambda_handler(event, context):
     return
   print('userId')  
   print(userId)
-  # ”FØî•ñŠÇ—ŒŸõ
+  # èªè¨¼æƒ…å ±ç®¡ç†æ¤œç´¢
   certificationData = operation_query(userId)
   if len(certificationData) > 0 :
     delete_certificationData(userId)
@@ -44,7 +44,7 @@ def lambda_handler(event, context):
   return
 
 
-# ƒAƒJƒEƒ“ƒg•R‚Ã‚¯ƒŒƒR[ƒhŒŸõiƒf[ƒ^Šm”Fj
+# ã‚¢ã‚«ã‚¦ãƒ³ãƒˆç´ã¥ã‘ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ï¼ˆãƒ‡ãƒ¼ã‚¿ç¢ºèªï¼‰
 def operation_queryConnection(partitionKey):
     queryData = accountUserConneection.query(
         KeyConditionExpression = Key("accountUseId").eq(partitionKey)
@@ -54,7 +54,7 @@ def operation_queryConnection(partitionKey):
     return items
 
 
-# ƒŒƒR[ƒhŒŸõiƒf[ƒ^Šm”Fj
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ï¼ˆãƒ‡ãƒ¼ã‚¿ç¢ºèªï¼‰
 def operation_query(partitionKey):
     queryData = certificationManagementInfo.query(
         KeyConditionExpression = Key("userId").eq(partitionKey)
@@ -64,7 +64,7 @@ def operation_query(partitionKey):
     return items
 
 
-# ”FØî•ñƒŒƒR[ƒhíœ
+# èªè¨¼æƒ…å ±ãƒ¬ã‚³ãƒ¼ãƒ‰å‰Šé™¤
 def delete_certificationData(partitionKey):
     delResponse = certificationManagementInfo.delete_item(
        Key={

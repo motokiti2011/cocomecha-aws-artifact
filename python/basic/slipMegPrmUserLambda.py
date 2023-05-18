@@ -4,21 +4,21 @@ import boto3
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("slipMegPrmUser")
 
-# ƒe[ƒuƒ‹ƒXƒLƒƒƒ“
+# ãƒ†ãƒ¼ãƒ–ãƒ«ã‚¹ã‚­ãƒ£ãƒ³
 def operation_scan():
     scanData = table.scan()
     items=scanData['Items']
     print(items)
     return scanData
 
-# ƒŒƒR[ƒhŒŸõ
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢
 def operation_query(partitionKey):
     queryData = table.query(
         KeyConditionExpression = Key("slipNo").eq(partitionKey)
@@ -27,7 +27,7 @@ def operation_query(partitionKey):
     print(items)
     return items
 
-# ƒŒƒR[ƒh’Ç‰Á
+# ãƒ¬ã‚³ãƒ¼ãƒ‰è¿½åŠ 
 def post_product(PartitionKey, event):
   putResponse = table.put_item(
     Item={
@@ -46,7 +46,7 @@ def post_product(PartitionKey, event):
     print('Post Successed.')
   return putResponse
   
-  # ƒŒƒR[ƒhíœ
+  # ãƒ¬ã‚³ãƒ¼ãƒ‰å‰Šé™¤
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        Key={

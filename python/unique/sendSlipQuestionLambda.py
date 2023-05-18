@@ -5,17 +5,17 @@ import uuid
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 slipQuestion = dynamodb.Table("slipQuestion")
 slipDetailInfo = dynamodb.Table("slipDetailInfo")
 salesServiceInfo = dynamodb.Table("salesServiceInfo")
 userMyList = dynamodb.Table("userMyList")
 
-# ƒŒƒR[ƒh’Ç‰Á
+# ãƒ¬ã‚³ãƒ¼ãƒ‰è¿½åŠ 
 def post_product(PartitionKey, event, adminUser, adminMecha, adminOffice, serviceKey, serviceTitle):
 
   now = datetime.now()
@@ -41,8 +41,8 @@ def post_product(PartitionKey, event, adminUser, adminMecha, adminOffice, servic
 
 
 
-  # ƒ}ƒCƒŠƒXƒgTBL‚Ì“o˜^
-  # ƒ}ƒCƒŠƒXƒgTBL‚Ì“o˜^(“`•[ŠÇ—Ò)
+  # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã®ç™»éŒ²
+  # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã®ç™»éŒ²(ä¼ç¥¨ç®¡ç†è€…)
   userMyListResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),
@@ -70,7 +70,7 @@ def post_product(PartitionKey, event, adminUser, adminMecha, adminOffice, servic
 
 
 
-  # ƒ}ƒCƒŠƒXƒgTBL‚Ì“o˜^(“`•[¿–âÒ)
+  # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã®ç™»éŒ²(ä¼ç¥¨è³ªå•è€…)
   sendUserMyListResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),
@@ -101,7 +101,7 @@ def post_product(PartitionKey, event, adminUser, adminMecha, adminOffice, servic
 
 
 
-# “`•[î•ñæ“¾
+# ä¼ç¥¨æƒ…å ±å–å¾—
 def getSlipDitail(PartitionKey):
   queryData = slipDetailInfo.query(
       KeyConditionExpression = Key("slipNo").eq(PartitionKey) & Key("deleteDiv").eq("0")
@@ -115,7 +115,7 @@ def getSlipDitail(PartitionKey):
 
 
 
-# ƒT[ƒrƒX¤•iî•ñæ“¾
+# ã‚µãƒ¼ãƒ“ã‚¹å•†å“æƒ…å ±å–å¾—
 def getSalesServiceInfo(PartitionKey):
   queryData = salesServiceInfo.query(
       KeyConditionExpression = Key("slipNo").eq(PartitionKey) & Key("deleteDiv").eq("0")

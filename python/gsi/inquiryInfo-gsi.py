@@ -2,14 +2,14 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("inquiryInfo")
 
-# –â‚¢‡‚í‚¹TBLGSIŒŸõLambda
+# å•ã„åˆã‚ã›TBLGSIæ¤œç´¢Lambda
 def lambda_handler(event, context):
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
@@ -33,7 +33,7 @@ def lambda_handler(event, context):
 
 
 
-# ƒŒƒR[ƒhŒŸõ inquiryUserId-index
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ inquiryUserId-index
 def inquiryUserId_query(partitionKey):
     queryData = table.query(
         IndexName = 'inquiryUserId-index',
@@ -44,7 +44,7 @@ def inquiryUserId_query(partitionKey):
     return items
 
 
-# ƒŒƒR[ƒhŒŸõ inquiryAdless-index
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ inquiryAdless-index
 def inquiryAdless_query(partitionKey):
     queryData = table.query(
         IndexName = 'inquiryAdless-index',
@@ -54,7 +54,7 @@ def inquiryAdless_query(partitionKey):
     print(items)
     return items
 
-# ƒŒƒR[ƒhŒŸõ anserDiv-index
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ anserDiv-index
 def anserDiv_query(partitionKey):
     queryData = table.query(
         IndexName = 'anserDiv-index',

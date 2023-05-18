@@ -26,6 +26,13 @@ Resources:
         - - !Ref TemplateUrl
           - 'iam/hocomecha-batch-role.yaml'
 
+  SchedulerRole:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'iam/hocomecha-batch-scheduler-role.yaml'
 
 
   # LambdaÇÃçÏê¨
@@ -56,10 +63,12 @@ Resources:
         - - !Ref TemplateUrl
           - 'schedule-batch-days.yaml'
       Parameters:
+        SchedulerRoleArn: !GetAtt SchedulerRole.Outputs.ScheduledBatchLambdaAccessRole
         ConfirmMigrationServiceLambdaArn: !GetAtt ScheduleBatchLambdaRoot.Outputs.ConfirmMigrationServiceLambda
         DeadlineCheckTransacitonServiceLambdaArn: !GetAtt ScheduleBatchLambdaRoot.Outputs.DeadlineCheckTransacitonServiceLambda
         ExpiredServiceLambdaArn: !GetAtt ScheduleBatchLambdaRoot.Outputs.ExpiredServiceLambda
         TransactionEndBatchLambdaArn: !GetAtt ScheduleBatchLambdaRoot.Outputs.TransactionEndBatchLambda
+        CertificationScheduleLambdaArn: !GetAtt ScheduleBatchLambdaRoot.Outputs.CertificationScheduleLambda
 
 Outputs:
   # ç\ízÇµÇΩÉäÅ[ÉWÉáÉì

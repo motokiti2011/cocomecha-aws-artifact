@@ -88,6 +88,23 @@ Resources:
           - '/transactionEndBatchLambda.zip'
 
 
+  CertificationScheduleLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/schedule_batch/certificationScheduleLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/schedule_batch/zip'
+          - '/certificationScheduleLambda.zip'
+
+
 Outputs:
 
   # ConfirmMigrationServiceLambda‚ÌARN
@@ -105,5 +122,9 @@ Outputs:
   # TransactionEndBatchLambda‚ÌARN
   TransactionEndBatchLambda:
     Value: !GetAtt TransactionEndBatchLambda.Outputs.TransactionEndBatchLambda
+
+  # CertificationScheduleLambda‚ÌARN
+  CertificationScheduleLambda:
+    Value: !GetAtt CertificationScheduleLambda.Outputs.CertificationScheduleLambda
 
 

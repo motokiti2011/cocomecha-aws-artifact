@@ -2,10 +2,10 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: ScheduledBatchRole
 Resources:
   # IAMポリシー
-  DynamoDBAccess:
+  ScheduledBatchLambdaAccess:
     Type: 'AWS::IAM::ManagedPolicy'
     Properties:
-      Description: Hakomecha Lambda Role.
+      Description: Scheduled Batch Lambda Role.
       PolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -15,13 +15,14 @@ Resources:
               - 'logs:CreateLogGroup'
               - 'logs:CreateLogStream'
               - 'logs:PutLogEvents'
+              - 'lambda:InvokeFunction'
             Resource:
               - '*'
   # IAMロール
-  DynamoDBAccessRole:
+  ScheduledBatchLambdaAccessRole:
     Type: 'AWS::IAM::Role'
     Properties:
-      Description: Hakomecha Lambda Role.
+      Description: UnauthenticatedRole for Cognito ID Pool.
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -30,9 +31,10 @@ Resources:
             Principal:
               Service:
                 - lambda.amazonaws.com
+                - scheduler.amazonaws.com
       ManagedPolicyArns:
-        - !Ref DynamoDBAccess
+        - !Ref ScheduledBatchLambdaAccess
 Outputs:
   # IAMロールのARN
-  DynamoDBAccessRole:
-    Value: !GetAtt DynamoDBAccessRole.Arn
+  ScheduledBatchLambdaAccessRole:
+    Value: !GetAtt ScheduledBatchLambdaAccessRole.Arn

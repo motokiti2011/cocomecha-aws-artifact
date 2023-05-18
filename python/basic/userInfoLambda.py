@@ -4,14 +4,14 @@ import boto3
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("userInfo")
 
-# ƒ†[ƒU[î•ñæ“¾Lambda
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±å–å¾—Lambda
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()
@@ -21,13 +21,13 @@ def lambda_handler(event, context):
   try:
     if OperationType == 'QUERY':
       cognitoUserId = event['Keys']['userId']
-      # ”FØî•ñƒ`ƒFƒbƒNŒãƒ†[ƒU[ID‚ğæ“¾
-      # ˆø”
+      # èªè¨¼æƒ…å ±ãƒã‚§ãƒƒã‚¯å¾Œãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’å–å¾—
+      # å¼•æ•°
       input_event = {
           "userId": cognitoUserId,
       }
-      Payload = json.dumps(input_event) # jsonƒVƒŠƒAƒ‰ƒCƒY
-      # “¯Šúˆ—‚ÅŒÄ‚Ño‚µ
+      Payload = json.dumps(input_event) # jsonã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
+      # åŒæœŸå‡¦ç†ã§å‘¼ã³å‡ºã—
       response = boto3.client('lambda').invoke(
           FunctionName='CertificationLambda',
           InvocationType='RequestResponse',
@@ -35,7 +35,7 @@ def lambda_handler(event, context):
       )
       body = json.loads(response['Payload'].read())
       print(body)
-      # ƒ†[ƒU[î•ñ‚Ìƒ†[ƒU[ID‚ğæ“¾
+      # ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’å–å¾—
       if body != None :
         userId = body
       else :
@@ -60,7 +60,7 @@ def lambda_handler(event, context):
 
 
 
-# ƒŒƒR[ƒhŒŸõ
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢
 def operation_query(partitionKey, sortKey):
     queryData = table.query(
         KeyConditionExpression = Key("userId").eq(partitionKey) & Key("userValidDiv").eq(sortKey)
@@ -69,7 +69,7 @@ def operation_query(partitionKey, sortKey):
     print(items)
     return items
 
-# ƒŒƒR[ƒh’Ç‰Á
+# ãƒ¬ã‚³ãƒ¼ãƒ‰è¿½åŠ 
 def post_product(PartitionKey, event):
 
   now = datetime.now()
@@ -106,7 +106,7 @@ def post_product(PartitionKey, event):
     print('Post Successed.')
   return putResponse
   
-  # ƒŒƒR[ƒhíœ
+  # ãƒ¬ã‚³ãƒ¼ãƒ‰å‰Šé™¤
 def operation_delete(partitionKey):
     delResponse = table.delete_item(
        Key={

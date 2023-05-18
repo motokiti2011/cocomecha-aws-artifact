@@ -11,7 +11,7 @@ table = dynamodb.Table("slipDetailInfo")
 userInfo = dynamodb.Table("userInfo")
 
 
-# “`•[î•ñæ“¾
+# ä¼ç¥¨æƒ…å ±å–å¾—
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   OperationType = event['OperationType']

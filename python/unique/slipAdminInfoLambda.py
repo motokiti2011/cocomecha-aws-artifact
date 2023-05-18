@@ -2,15 +2,15 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 userInfo = dynamodb.Table("userInfo")
 
 
-# ƒ†[ƒU[î•ñŒŸõ userInfo
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±æ¤œç´¢ userInfo
 def userInfo_query(id) :
     queryData = userInfo.query(
         KeyConditionExpression = Key("userId").eq(id) & Key("userValidDiv").eq("0")
@@ -26,16 +26,16 @@ def lambda_handler(event, context) :
     id = event['Keys']['id']
 
     try:
-        # ŒŸõƒ^ƒCƒvŒŸØ
+        # æ¤œç´¢ã‚¿ã‚¤ãƒ—æ¤œè¨¼
         if IndexType != 'SLIPADMININFO':
           return
 
-        # ƒf[ƒ^æ“¾
+        # ãƒ‡ãƒ¼ã‚¿å–å¾—
         items = userInfo_query(id)
         
         resultItems = []
         
-        # Œ‹‰Ê‚ÌŠi”[
+        # çµæœã®æ ¼ç´
         result={
           'adminId' :items['userId'],
           'adminName' :items['userName'],

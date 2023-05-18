@@ -1,7 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Scheduled Lambda Sample'
+Description: ' Lambda Sample'
 Parameters:
 
+  # SchedulerRoleArn‚ÌARN
+  SchedulerRoleArn:
+    Type: String
 
   # confirmMigrationServiceLambda‚ÌARN
   ConfirmMigrationServiceLambdaArn:
@@ -19,41 +22,18 @@ Parameters:
   TransactionEndBatchLambdaArn:
     Type: String
 
+  # certificationScheduleLambda‚ÌARN
+  CertificationScheduleLambdaArn:
+    Type: String
 
 Resources:
 
-  # Role
-  EventScheduleRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - scheduler.amazonaws.com
-          Action:
-          - sts:AssumeRole
-      Path: "/"
-      Policies:
-        - PolicyName: CallStepFunctions
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - states:StartExecution
-                Resource:
-                  - "*"
-
 
   # EventBridgeSchedule
-
   ConfirmMigrationServiceSchedule:
     Type: AWS::Scheduler::Schedule
     Properties:
-      Description: Recurring StepFunctions Schedule
+      Description: ConfirmMigrationServiceSchedule
       ScheduleExpression: rate(12 hours)
       FlexibleTimeWindow:
         Mode: FLEXIBLE
@@ -61,16 +41,13 @@ Resources:
       State: ENABLED
       Target:
         Arn: !Ref ConfirmMigrationServiceLambdaArn
-        RoleArn:
-          Fn::GetAtt:
-          - EventScheduleRole
-          - Arn
+        RoleArn: !Ref SchedulerRoleArn
 
 
   DeadlineCheckTransacitonServiceSchedule:
     Type: AWS::Scheduler::Schedule
     Properties:
-      Description: Recurring StepFunctions Schedule
+      Description: DeadlineCheckTransacitonService Schedule
       ScheduleExpression: rate(12 hours)
       FlexibleTimeWindow:
         Mode: FLEXIBLE
@@ -78,16 +55,13 @@ Resources:
       State: ENABLED
       Target:
         Arn: !Ref DeadlineCheckTransacitonServiceLambdaArn
-        RoleArn:
-          Fn::GetAtt:
-          - EventScheduleRole
-          - Arn
+        RoleArn: !Ref SchedulerRoleArn
 
 
   ExpiredServiceSchedule:
     Type: AWS::Scheduler::Schedule
     Properties:
-      Description: Recurring StepFunctions Schedule
+      Description: ExpiredService Schedule
       ScheduleExpression: rate(12 hours)
       FlexibleTimeWindow:
         Mode: FLEXIBLE
@@ -95,16 +69,12 @@ Resources:
       State: ENABLED
       Target:
         Arn: !Ref ExpiredServiceLambdaArn
-        RoleArn:
-          Fn::GetAtt:
-          - EventScheduleRole
-          - Arn
-
+        RoleArn: !Ref SchedulerRoleArn
 
   TransactionEndBatchSchedule:
     Type: AWS::Scheduler::Schedule
     Properties:
-      Description: Recurring StepFunctions Schedule
+      Description: TransactionEnd Batch Schedule
       ScheduleExpression: rate(12 hours)
       FlexibleTimeWindow:
         Mode: FLEXIBLE
@@ -112,10 +82,21 @@ Resources:
       State: ENABLED
       Target:
         Arn: !Ref TransactionEndBatchLambdaArn
-        RoleArn:
-          Fn::GetAtt:
-          - EventScheduleRole
-          - Arn
+        RoleArn: !Ref SchedulerRoleArn
+
+  CertificationSchedule:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Description: Certification End Schedule
+      ScheduleExpression: rate(2 hours)
+      FlexibleTimeWindow:
+        Mode: FLEXIBLE
+        MaximumWindowInMinutes: 60
+      State: ENABLED
+      Target:
+        Arn: !Ref CertificationScheduleLambdaArn
+        RoleArn: !Ref SchedulerRoleArn
+
 
 
   # LambdaPermission
@@ -151,4 +132,11 @@ Resources:
       Principal: events.amazonaws.com
       SourceArn: !GetAtt 'TransactionEndBatchSchedule.Arn'
 
+  PermissionForEventsToInvokeLambda5:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: certificationScheduleLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt 'CertificationSchedule.Arn'
 

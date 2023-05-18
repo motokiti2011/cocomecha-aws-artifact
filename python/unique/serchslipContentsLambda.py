@@ -2,15 +2,15 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 table = dynamodb.Table("slipDetailInfo")
 
 
-# 1ƒŒƒR[ƒhŒŸõ areaNo1-index
+# 1ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ areaNo1-index
 def areaNo1_query(partitionKey) :
     queryData = table.query(
         IndexName = 'areaNo1AndAreaNo2-index',
@@ -22,7 +22,7 @@ def areaNo1_query(partitionKey) :
 
 
 
-# 2ƒŒƒR[ƒhŒŸõ areaNo1AndAreaNo2-index
+# 2ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ areaNo1AndAreaNo2-index
 def areaNo1AndAreaNo2_query(partitionKey, sortKey) :
     queryData = table.query(
         IndexName = 'areaNo1AndAreaNo2-index',
@@ -34,9 +34,9 @@ def areaNo1AndAreaNo2_query(partitionKey, sortKey) :
 
 
 
-# ƒ^ƒCƒgƒ‹ƒ`ƒFƒbƒN serchTitle
+# ã‚¿ã‚¤ãƒˆãƒ«ãƒã‚§ãƒƒã‚¯ serchTitle
 def serchTitle(checkTitle, title) :
-    # •”•ªˆê’vƒ`ƒFƒbƒN
+    # éƒ¨åˆ†ä¸€è‡´ãƒã‚§ãƒƒã‚¯
     if checkTitle in title :
       return False
     else :
@@ -44,10 +44,10 @@ def serchTitle(checkTitle, title) :
 
 
 
-# ‰¿Šiƒ`ƒFƒbƒN serchPrice
+# ä¾¡æ ¼ãƒã‚§ãƒƒã‚¯ serchPrice
 def serchPrice(price, priceB, priceU) :
-    # ‰¿Ši”ÍˆÍƒ`ƒFƒbƒN
-    # i‚è‚İğŒ‚ª‚È‚¢ê‡
+    # ä¾¡æ ¼ç¯„å›²ãƒã‚§ãƒƒã‚¯
+    # çµã‚Šè¾¼ã¿æ¡ä»¶ãŒãªã„å ´åˆ
     if priceB == priceU == '' :
       return False
     if priceB == '' :
@@ -63,9 +63,9 @@ def serchPrice(price, priceB, priceU) :
       return True
 
 
-# “ú•tƒ`ƒFƒbƒN serchDate
+# æ—¥ä»˜ãƒã‚§ãƒƒã‚¯ serchDate
 def serchDate(preferredDate, date1, date2, dateKey) :
-    # ŒŸõ•û–@i”ÍˆÍj
+    # æ¤œç´¢æ–¹æ³•ï¼ˆç¯„å›²ï¼‰
     if dateKey == '0' :
       if preferredDate >= date1 :
         if preferredDate <= date2 :
@@ -75,14 +75,14 @@ def serchDate(preferredDate, date1, date2, dateKey) :
       else :
         return True
 
-    # ŒŸõ•û–@iˆÈãj
+    # æ¤œç´¢æ–¹æ³•ï¼ˆä»¥ä¸Šï¼‰
     if dateKey == '1' :
       if preferredDate >= date1 :
           return False
       else :
         return True
 
-    # ŒŸõ•û–@i–¢–j
+    # æ¤œç´¢æ–¹æ³•ï¼ˆæœªæº€ï¼‰
     if dateKey == '2' :
       if preferredDate <= date2 :
           return False
@@ -93,41 +93,41 @@ def lambda_handler(event, context) :
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
     try:
-        # íœ‹æ•ª
+        # å‰Šé™¤åŒºåˆ†
         deleteDiv = '0'
-        # ƒŠƒNƒGƒXƒgƒ{ƒfƒB‚ğƒpƒ‰ƒ[ƒ^‚ÉŠ„‚èU‚é
-        # ƒT[ƒrƒXƒJƒeƒSƒŠ[
+        # ãƒªã‚¯ã‚¨ã‚¹ãƒˆãƒœãƒ‡ã‚£ã‚’ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã«å‰²ã‚ŠæŒ¯ã‚‹
+        # ã‚µãƒ¼ãƒ“ã‚¹ã‚«ãƒ†ã‚´ãƒªãƒ¼
         category = event['Keys']['category']
-        # ƒ^ƒCƒgƒ‹
+        # ã‚¿ã‚¤ãƒˆãƒ«
         title = event['Keys']['title']
-        # ƒT[ƒrƒX’nˆæ1
+        # ã‚µãƒ¼ãƒ“ã‚¹åœ°åŸŸ1
         areaNo1 = event['Keys']['areaNo1']
-        # ƒT[ƒrƒX’nˆæ2
+        # ã‚µãƒ¼ãƒ“ã‚¹åœ°åŸŸ2
         areaNo2 = event['Keys']['areaNo2']
-        # ‰¿Ši‰ºŒÀ
+        # ä¾¡æ ¼ä¸‹é™
         priceB = event['Keys']['priceBottom']
-        # ‰¿ŠiãŒÀ
+        # ä¾¡æ ¼ä¸Šé™
         priceU = event['Keys']['priceUpper']
-        # “üD•û®
+        # å…¥æœ­æ–¹å¼
         bidMethod = event['Keys']['bidMethod']
-        # H’öƒXƒe[ƒ^ƒX
+        # å·¥ç¨‹ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹
         processStatus = event['Keys']['processStatus']
-        # ‘ÎÛÔ—¼î•ñ
+        # å¯¾è±¡è»Šä¸¡æƒ…å ±
         targetVehicleInfo = event['Keys']['targetVehicleInfo']
-        # ì‹ÆêŠî•ñ
+        # ä½œæ¥­å ´æ‰€æƒ…å ±
         workAreaInfo = event['Keys']['workAreaInfo']
-        # Šó–]“ú1
+        # å¸Œæœ›æ—¥1
         date1 = event['Keys']['date']
-        # Šó–]“ú2
+        # å¸Œæœ›æ—¥2
         date2 = event['Keys']['date2']
-        # Šó–]“úŒŸõƒL[
+        # å¸Œæœ›æ—¥æ¤œç´¢ã‚­ãƒ¼
         preferredDateKey = event['Keys']['preferredDateKey']
 
-        # ŒŸõƒ^ƒCƒvŒŸØ
+        # æ¤œç´¢ã‚¿ã‚¤ãƒ—æ¤œè¨¼
         if IndexType != 'SERCHSLIPCONTENTS':
           return
 
-        # ƒf[ƒ^æ“¾
+        # ãƒ‡ãƒ¼ã‚¿å–å¾—
         queryItems = []
         if not areaNo2 :
          queryItems = areaNo1_query(areaNo1)
@@ -137,51 +137,51 @@ def lambda_handler(event, context) :
         
         resultItems = []
         
-        # i‚è‚İ
+        # çµã‚Šè¾¼ã¿
         for item in queryItems :
-          # ƒJƒeƒSƒŠ[
+          # ã‚«ãƒ†ã‚´ãƒªãƒ¼
           if category != "0" :
             if category != item['category'] :
               continue
-          # “üD•û®
+          # å…¥æœ­æ–¹å¼
           if bidMethod != "" :
             if bidMethod != item['bidMethod'] :
               continue
 
-          # íœ‹æ•ª
+          # å‰Šé™¤åŒºåˆ†
           if item['deleteDiv'] != "0" :
             continue
 
-          # H’öƒXƒe[ƒ^ƒX
+          # å·¥ç¨‹ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹
           if processStatus != "" :
             if processStatus != item['processStatus'] :
               continue
 
-          # ‘ÎÛÔ—¼î•ñ
+          # å¯¾è±¡è»Šä¸¡æƒ…å ±
           if targetVehicleInfo != "" :
             if targetVehicleInfo != item['targetVehicleInfo'] :
               continue
 
-          # ì‹ÆêŠî•ñ
+          # ä½œæ¥­å ´æ‰€æƒ…å ±
           if workAreaInfo != "" :
             if workAreaInfo != item['workAreaInfo'] :
               continue
 
-          # ƒ^ƒCƒgƒ‹i•”•ªˆê’vj
+          # ã‚¿ã‚¤ãƒˆãƒ«ï¼ˆéƒ¨åˆ†ä¸€è‡´ï¼‰
           if title != "" :
             if serchTitle(item['title'], title) :
               continue
 
-          # ‰¿Ši
+          # ä¾¡æ ¼
           if serchPrice(item['price'], priceB, priceU) :
             continue          
           
-          # Šó–]“ú
+          # å¸Œæœ›æ—¥
           if preferredDateKey != "" :
             if serchDate(item['preferredDate'], date1, date2, preferredDateKey) :
               continue
 
-          # ƒ`ƒFƒbƒNŒã’l‚ğŠi”[
+          # ãƒã‚§ãƒƒã‚¯å¾Œå€¤ã‚’æ ¼ç´
           resultItems.append(item)
 
         return resultItems

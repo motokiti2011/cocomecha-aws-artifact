@@ -5,21 +5,21 @@ import uuid
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 serviceTransactionRequest = dynamodb.serviceTransactionRequest("serviceTransactionRequest")
 userMyList = dynamodb.serviceTransactionRequest("userMyList")
 slipDetailInfo = dynamodb.serviceTransactionRequest("slipDetailInfo")
 salesServiceInfo = dynamodb.serviceTransactionRequest("salesServiceInfo")
 transactionSlip = dynamodb.serviceTransactionRequest("transactionSlip")
 
-# æˆøˆË—ŠTBL
+# å–å¼•ä¾é ¼TBL
 def post_transactionRequest(PartitionKey, event, adminUser, confirmUser):
 
-  # æˆøˆË—ŠTBL(ŠÇ—Ò)
+  # å–å¼•ä¾é ¼TBL(ç®¡ç†è€…)
   now = datetime.now()
   putResponse = serviceTransactionRequest.put_item(
     Item={
@@ -44,13 +44,13 @@ def post_transactionRequest(PartitionKey, event, adminUser, confirmUser):
     print('post_transactionRequest : Post Successed.')
 
 
-  # “`•[î•ñ‚É•R‚Ã‚­ˆË—ŠÒî•ñ‚ğæ“¾
+  # ä¼ç¥¨æƒ…å ±ã«ç´ã¥ãä¾é ¼è€…æƒ…å ±ã‚’å–å¾—
   PartitionKey = event['Keys']['slipNo']
   requestUserTransaction = transactionSlipNo_query(PartitionKey)
 
 
   for item in requestUserTransaction :
-    # ŠÇ—ƒ†[ƒU[ˆÈŠOiˆË—ŠÒj‚ÌƒXƒe[ƒ^ƒXXV
+    # ç®¡ç†ãƒ¦ãƒ¼ã‚¶ãƒ¼ä»¥å¤–ï¼ˆä¾é ¼è€…ï¼‰ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æ›´æ–°
     if adminUser != item['requestId'] :
       if confirmUser != item['requestId'] :
         postAnConfirmTransactionRequest(item)
@@ -61,12 +61,12 @@ def post_transactionRequest(PartitionKey, event, adminUser, confirmUser):
   return putResponse
 
 
-# ƒ}ƒCƒŠƒXƒgTBL
+# ãƒã‚¤ãƒªã‚¹ãƒˆTBL
 def post_myList(PartitionKey, event, adminUser, confirmUser,adminMecha,adminOffice,serviceTitle):
   
   now = datetime.now()
-  # ƒ}ƒCƒŠƒXƒgTBL‚Ì“o˜^
-  # “`•[ŠÇ—Ò
+  # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã®ç™»éŒ²
+  # ä¼ç¥¨ç®¡ç†è€…
   userMyListAdminResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),
@@ -95,11 +95,11 @@ def post_myList(PartitionKey, event, adminUser, confirmUser,adminMecha,adminOffi
     print('post_myList : Post Successed.')
 
   print('2D')
-  # æˆø’†‚Ìƒ}ƒCƒŠƒXƒgî•ñ‚ğæ“¾
+  # å–å¼•ä¸­ã®ãƒã‚¤ãƒªã‚¹ãƒˆæƒ…å ±ã‚’å–å¾—
   requestMyList = mylist_slipNo_query( event['Keys']['slipNo'])
 
   for item in requestMyList :
-    # ŠÇ—ƒ†[ƒU[ˆÈŠOiˆË—ŠÒj‚ÌƒXƒe[ƒ^ƒXXV
+    # ç®¡ç†ãƒ¦ãƒ¼ã‚¶ãƒ¼ä»¥å¤–ï¼ˆä¾é ¼è€…ï¼‰ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æ›´æ–°
     if adminUser != item['userId'] :
       if confirmUser != item['userId'] :
         postAnConfirmMylistRequest(item)
@@ -109,7 +109,7 @@ def post_myList(PartitionKey, event, adminUser, confirmUser,adminMecha,adminOffi
   return userMyListAdminResponse
 
 
-# “`•[”Ô†‚É•R‚Ã‚­æˆøˆË—ŠTBLî•ñæ“¾
+# ä¼ç¥¨ç•ªå·ã«ç´ã¥ãå–å¼•ä¾é ¼TBLæƒ…å ±å–å¾—
 def transactionSlipNo_query(partitionKey):
     queryData = serviceTransactionRequest.query(
         IndexName = 'slipNo-index',
@@ -120,10 +120,10 @@ def transactionSlipNo_query(partitionKey):
     return items
 
 
-# æˆøˆË—ŠTBL(ˆË—ŠÒ(Šm’èˆÈŠO)ƒf[ƒ^XV)
+# å–å¼•ä¾é ¼TBL(ä¾é ¼è€…(ç¢ºå®šä»¥å¤–)ãƒ‡ãƒ¼ã‚¿æ›´æ–°)
 def postAnConfirmTransactionRequest(item):
 
-  # æˆøˆË—ŠTBL(ŠÇ—Ò)
+  # å–å¼•ä¾é ¼TBL(ç®¡ç†è€…)
   now = datetime.now()
   putResponse = serviceTransactionRequest.put_item(
     Item={
@@ -148,10 +148,10 @@ def postAnConfirmTransactionRequest(item):
     print('AnConfirmTransactionRequest : Post Successed.')
 
 
-# æˆøˆË—ŠTBL(ˆË—ŠÒ(Šm’è)ƒf[ƒ^XV)
+# å–å¼•ä¾é ¼TBL(ä¾é ¼è€…(ç¢ºå®š)ãƒ‡ãƒ¼ã‚¿æ›´æ–°)
 def postConfirmTransactionRequest(item):
 
-  # æˆøˆË—ŠTBL(ŠÇ—Ò)
+  # å–å¼•ä¾é ¼TBL(ç®¡ç†è€…)
   now = datetime.now()
   putResponse = serviceTransactionRequest.put_item(
     Item={
@@ -176,7 +176,7 @@ def postConfirmTransactionRequest(item):
     print('ConfirmTransactionRequest : Post Successed.')
 
 
-# “`•[”Ô†‚É•R‚Ã‚­ƒ†[ƒU[ƒ}ƒCƒŠƒXƒgTBLî•ñæ“¾
+# ä¼ç¥¨ç•ªå·ã«ç´ã¥ããƒ¦ãƒ¼ã‚¶ãƒ¼ãƒã‚¤ãƒªã‚¹ãƒˆTBLæƒ…å ±å–å¾—
 def mylist_slipNo_query(partitionKey):
     queryData = userMyList.query(
         IndexName = 'slipNo-index',
@@ -187,10 +187,10 @@ def mylist_slipNo_query(partitionKey):
     return items
 
 
-# ƒ†[ƒU[ƒ}ƒCƒŠƒXƒgTBL(ˆË—ŠÒƒf[ƒ^XV)
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒã‚¤ãƒªã‚¹ãƒˆTBL(ä¾é ¼è€…ãƒ‡ãƒ¼ã‚¿æ›´æ–°)
 def postAnConfirmMylistRequest(item):
 
-  # æˆøˆË—ŠTBL(ŠÇ—Ò)
+  # å–å¼•ä¾é ¼TBL(ç®¡ç†è€…)
   now = datetime.now()
   putResponse = serviceTransactionRequest.put_item(
     Item={
@@ -216,10 +216,10 @@ def postAnConfirmMylistRequest(item):
     print('AnConfirmMylistRequest : Post Successed.')
 
 
-# ƒ†[ƒU[ƒ}ƒCƒŠƒXƒgTBL(ˆË—ŠÒƒf[ƒ^XV)
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒã‚¤ãƒªã‚¹ãƒˆTBL(ä¾é ¼è€…ãƒ‡ãƒ¼ã‚¿æ›´æ–°)
 def postConfirmMylistRequest(item):
 
-  # æˆøˆË—ŠTBL(ŠÇ—Ò)
+  # å–å¼•ä¾é ¼TBL(ç®¡ç†è€…)
   now = datetime.now()
   putResponse = serviceTransactionRequest.put_item(
     Item={
@@ -246,7 +246,7 @@ def postConfirmMylistRequest(item):
 
 
 
-# “`•[î•ñæ“¾
+# ä¼ç¥¨æƒ…å ±å–å¾—
 def getSlipDitail(PartitionKey,serviceKey):
   queryData = slipDetailInfo.query(
       KeyConditionExpression = Key("slipNo").eq(PartitionKey) & Key("deleteDiv").eq("0")
@@ -260,7 +260,7 @@ def getSlipDitail(PartitionKey,serviceKey):
     return queryData['Items']
 
 
-# ƒT[ƒrƒX¤•iî•ñæ“¾
+# ã‚µãƒ¼ãƒ“ã‚¹å•†å“æƒ…å ±å–å¾—
 def getSalesServiceInfo(PartitionKey,serviceKey):
   queryData = salesServiceInfo.query(
       KeyConditionExpression = Key("slipNo").eq(PartitionKey) & Key("deleteDiv").eq("0")
@@ -274,7 +274,7 @@ def getSalesServiceInfo(PartitionKey,serviceKey):
 
 
 
-# æˆø’†“`•[î•ñ’Ç‰Á
+# å–å¼•ä¸­ä¼ç¥¨æƒ…å ±è¿½åŠ 
 def postTransactionSlip(queryData,serviceKey):
 
   now = datetime.now()
@@ -298,7 +298,7 @@ def postTransactionSlip(queryData,serviceKey):
 
   print('3B')
 
-  # æˆø“`•[î•ñ‚É“o˜^
+  # å–å¼•ä¼ç¥¨æƒ…å ±ã«ç™»éŒ²
   putResponse = transactionSlip.put_item(
     Item={
       'id' : str(uuid.uuid4()),
@@ -327,7 +327,7 @@ def postTransactionSlip(queryData,serviceKey):
 
 
 
-# “`•[î•ñF˜_—íœ
+# ä¼ç¥¨æƒ…å ±ï¼šè«–ç†å‰Šé™¤
 def put_SlipDitail(queryData):
   now = datetime.now()
   putResponse = slipDetailInfo.put_item(
@@ -383,7 +383,7 @@ def put_SlipDitail(queryData):
   return 
 
 
-# ƒT[ƒrƒX¤•iî•ñF˜_—íœ
+# ã‚µãƒ¼ãƒ“ã‚¹å•†å“æƒ…å ±ï¼šè«–ç†å‰Šé™¤
 def put_SalesServiceInfo(queryData):
   now = datetime.now()
   putResponse = salesServiceInfo.put_item(
@@ -458,7 +458,7 @@ def lambda_handler(event, context):
         adminMecha = '0'
         adminOffice = '0'
         serviceTitle = slip[0]['title']
-        # •K—vƒf[ƒ^æ“¾Œã‚É“`•[î•ñ‚ğ˜_—íœ
+        # å¿…è¦ãƒ‡ãƒ¼ã‚¿å–å¾—å¾Œã«ä¼ç¥¨æƒ…å ±ã‚’è«–ç†å‰Šé™¤
         put_SlipDitail(slip)
       else:
         service = getSalesServiceInfo(key,serviceKey)
@@ -466,7 +466,7 @@ def lambda_handler(event, context):
         adminMecha = service[0]['slipAdminMechanicId']
         adminOffice = service[0]['slipAdminOfficeId']
         serviceTitle = service[0]['title']
-        # •K—vƒf[ƒ^æ“¾Œã‚ÉƒT[ƒrƒX¤•i‚ğ˜_—íœ
+        # å¿…è¦ãƒ‡ãƒ¼ã‚¿å–å¾—å¾Œã«ã‚µãƒ¼ãƒ“ã‚¹å•†å“ã‚’è«–ç†å‰Šé™¤
         put_SalesServiceInfo(service)
 
       id = str(uuid.uuid4())

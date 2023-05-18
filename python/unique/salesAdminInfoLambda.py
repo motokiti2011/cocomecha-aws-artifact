@@ -2,11 +2,11 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 mechanicInfo = dynamodb.Table("mechanicInfo")
 officeInfo = dynamodb.Table("officeInfo")
 
@@ -19,16 +19,16 @@ def lambda_handler(event, context) :
     serviceType = event['Keys']['serviceType']
 
     try:
-        # ŒŸõƒ^ƒCƒvŒŸØ
+        # æ¤œç´¢ã‚¿ã‚¤ãƒ—æ¤œè¨¼
         if IndexType != 'SALESADMININFO':
           return
 
-        # ƒf[ƒ^æ“¾
+        # ãƒ‡ãƒ¼ã‚¿å–å¾—
         queryItems = []
         if serviceType == '2' :
           items = mechanicInfo_query(id)
           print(items)
-          # Œ‹‰Ê‚ÌŠi”[
+          # çµæœã®æ ¼ç´
           result={
             'adminId' :items[0]['mechanicId'],
             'adminName' :items[0]['mechanicName'],
@@ -49,7 +49,7 @@ def lambda_handler(event, context) :
           }
         else:
           items = officeInfo_query(id)
-          # Œ‹‰Ê‚ÌŠi”[
+          # çµæœã®æ ¼ç´
           result={
             'adminId' :items[0]['officeId'],
             'adminName' :items[0]['officeName'],
@@ -75,7 +75,7 @@ def lambda_handler(event, context) :
         print("Error Exception.")
         print(e)
 
-# ƒƒJƒjƒbƒNî•ñŒŸõ mechanicInfo
+# ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±æ¤œç´¢ mechanicInfo
 def mechanicInfo_query(id) :
     queryData = mechanicInfo.query(
         KeyConditionExpression = Key("mechanicId").eq(id)
@@ -85,7 +85,7 @@ def mechanicInfo_query(id) :
     return items
 
 
-# Hêî•ñŒŸõ officeInfo
+# å·¥å ´æƒ…å ±æ¤œç´¢ officeInfo
 def officeInfo_query(id) :
     queryData = officeInfo.query(
         KeyConditionExpression = Key("officeId").eq(id)

@@ -2,11 +2,11 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 userInfo = dynamodb.Table("userInfo")
 mechanicInfo = dynamodb.Table("mechanicInfo")
 officeInfo = dynamodb.Table("officeInfo")
@@ -20,34 +20,34 @@ def lambda_handler(event, context) :
     accessUser = event['Keys']['accessUser']
 
     try:
-        # ƒAƒNƒZƒX•û–@‚ª‚¨‚©‚µ‚¢ê‡ˆ—I—¹
+        # ã‚¢ã‚¯ã‚»ã‚¹æ–¹æ³•ãŒãŠã‹ã—ã„å ´åˆå‡¦ç†çµ‚äº†
         if OperationType != 'CHECKACCESEADMIN':
           return
 
         print('1')
         adminInfo = ''
-        # ƒT[ƒrƒXƒ^ƒCƒv‚ªƒ†[ƒU[‚Ìê‡
+        # ã‚µãƒ¼ãƒ“ã‚¹ã‚¿ã‚¤ãƒ—ãŒãƒ¦ãƒ¼ã‚¶ãƒ¼ã®å ´åˆ
         if serviceType == '0':
           adminInfo = userInfo_query(adminId)
-        # ƒT[ƒrƒXƒ^ƒCƒv‚ªƒƒJƒjƒbƒN‚Ìê‡
+        # ã‚µãƒ¼ãƒ“ã‚¹ã‚¿ã‚¤ãƒ—ãŒãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ã®å ´åˆ
         elif serviceType == '1':
           adminInfo = mechanicInfo_query(adminId)
-        # ƒT[ƒrƒXƒ^ƒCƒv‚ªHê‚Ìê‡
+        # ã‚µãƒ¼ãƒ“ã‚¹ã‚¿ã‚¤ãƒ—ãŒå·¥å ´ã®å ´åˆ
         else:
           adminInfo = officeInfo_query(adminId)
 
-        # ƒAƒNƒZƒXƒ†[ƒU[î•ñæ“¾
+        # ã‚¢ã‚¯ã‚»ã‚¹ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±å–å¾—
         accessUserInfo = []
-        # ƒ†[ƒU[‚Ü‚½‚ÍƒƒJƒjƒbƒN‚Ìê‡ƒ†[ƒU[î•ñ‚©‚çID”»’è‚·‚é
+        # ãƒ¦ãƒ¼ã‚¶ãƒ¼ã¾ãŸã¯ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ã®å ´åˆãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±ã‹ã‚‰IDåˆ¤å®šã™ã‚‹
         if serviceType != '2':
 
-          # ”FØî•ñƒ`ƒFƒbƒNŒãƒ†[ƒU[ID‚ğæ“¾
-          # ˆø”
+          # èªè¨¼æƒ…å ±ãƒã‚§ãƒƒã‚¯å¾Œãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’å–å¾—
+          # å¼•æ•°
           input_event = {
               "userId": accessUser,
           }
-          Payload = json.dumps(input_event) # jsonƒVƒŠƒAƒ‰ƒCƒY
-          # “¯Šúˆ—‚ÅŒÄ‚Ño‚µ
+          Payload = json.dumps(input_event) # jsonã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
+          # åŒæœŸå‡¦ç†ã§å‘¼ã³å‡ºã—
           response = boto3.client('lambda').invoke(
               FunctionName='CertificationLambda',
               InvocationType='RequestResponse',
@@ -55,7 +55,7 @@ def lambda_handler(event, context) :
           )
           body = json.loads(response['Payload'].read())
           print(body)
-          # ƒ†[ƒU[î•ñ‚Ìƒ†[ƒU[ID‚ğæ“¾
+          # ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’å–å¾—
           if body != None :
             userId = body
           else :
@@ -70,8 +70,8 @@ def lambda_handler(event, context) :
         print(adminInfo)
         print(accessUserInfo)
 
-        # ”»’è
-        # ƒT[ƒrƒXƒ^ƒCƒv‚ªƒ†[ƒU[‚Ìê‡
+        # åˆ¤å®š
+        # ã‚µãƒ¼ãƒ“ã‚¹ã‚¿ã‚¤ãƒ—ãŒãƒ¦ãƒ¼ã‚¶ãƒ¼ã®å ´åˆ
         idList = []
         if serviceType == '0':
           print('3')
@@ -79,14 +79,14 @@ def lambda_handler(event, context) :
             return True
           else:
             return False
-        # ƒT[ƒrƒXƒ^ƒCƒv‚ªƒƒJƒjƒbƒN‚Ìê‡
+        # ã‚µãƒ¼ãƒ“ã‚¹ã‚¿ã‚¤ãƒ—ãŒãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ã®å ´åˆ
         elif serviceType == '1':
           print('4')
           if adminInfo[0]['mechanicId'] == accessUserInfo[0]['mechanicId']:
             return True
           else:
             return False
-        # ƒT[ƒrƒXƒ^ƒCƒv‚ªHê‚Ìê‡
+        # ã‚µãƒ¼ãƒ“ã‚¹ã‚¿ã‚¤ãƒ—ãŒå·¥å ´ã®å ´åˆ
         else:
           print('5')
           checkList = accessUserInfo[0]['adminIdList']
@@ -99,7 +99,7 @@ def lambda_handler(event, context) :
 
 
 
-# ƒ†[ƒU[î•ñŒŸõ
+# ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±æ¤œç´¢
 def userInfo_query(id) :
     queryData = userInfo.query(
         KeyConditionExpression = Key("userId").eq(id) & Key("userValidDiv").eq("0")
@@ -108,7 +108,7 @@ def userInfo_query(id) :
     print(items)
     return items
 
-# ƒƒJƒjƒbƒNî•ñŒŸõ
+# ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯æƒ…å ±æ¤œç´¢
 def mechanicInfo_query(id) :
     queryData = mechanicInfo.query(
         KeyConditionExpression = Key("mechanicId").eq(id)
@@ -117,7 +117,7 @@ def mechanicInfo_query(id) :
     print(items)
     return items
 
-# Hêî•ñŒŸõ
+# å·¥å ´æƒ…å ±æ¤œç´¢
 def officeInfo_query(id) :
     queryData = officeInfo.query(
         KeyConditionExpression = Key("officeId").eq(id)

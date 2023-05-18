@@ -2,29 +2,29 @@ import json
 import boto3
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 userMyList = dynamodb.Table("userMyList")
 
-# ƒƒJƒjƒbƒN\‚µ‚İî•ñ‚Ìæ“¾Lambda
+# ãƒ¡ã‚«ãƒ‹ãƒƒã‚¯ç”³ã—è¾¼ã¿æƒ…å ±ã®å–å¾—Lambda
 def lambda_handler(event, context) :
     print("Received event: " + json.dumps(event))
     IndexType = event['IndexType']
     adminOfficeId = event['Keys']['adminOfficeId']
 
     try:
-        # ŒŸõƒ^ƒCƒvŒŸØ
+        # æ¤œç´¢ã‚¿ã‚¤ãƒ—æ¤œè¨¼
         if IndexType != 'GETREQUESTMECHANICINFO':
           return
 
-        # ƒf[ƒ^æ“¾
+        # ãƒ‡ãƒ¼ã‚¿å–å¾—
         items = userMyList_query(adminOfficeId)
 
         resultItems = []
-        # Œ‹‰Ê‚ÌŠi”[
+        # çµæœã®æ ¼ç´
         for item in items  :
 
           resultItems.append(item['requestInfo'])
@@ -37,7 +37,7 @@ def lambda_handler(event, context) :
         print(e)
 
 
-# ƒ}ƒCƒŠƒXƒgî•ñŒŸõ 
+# ãƒã‚¤ãƒªã‚¹ãƒˆæƒ…å ±æ¤œç´¢ 
 def userMyList_query(adminOfficeId) :
 
     options = {

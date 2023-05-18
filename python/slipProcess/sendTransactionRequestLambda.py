@@ -5,17 +5,17 @@ import uuid
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 serviceTransactionRequest = dynamodb.Table("serviceTransactionRequest")
 userMyList = dynamodb.Table("userMyList")
 slipDetailInfo = dynamodb.Table("slipDetailInfo")
 salesServiceInfo = dynamodb.Table("salesServiceInfo")
 
-# æˆøˆË—ŠTBLƒŒƒR[ƒh“o˜^
+# å–å¼•ä¾é ¼TBLãƒ¬ã‚³ãƒ¼ãƒ‰ç™»éŒ²
 def post_product(PartitionKey, event, adminUser, adminMecha, adminOffice, serviceTitle):
 
   now = datetime.now()
@@ -46,8 +46,8 @@ def post_product(PartitionKey, event, adminUser, adminMecha, adminOffice, servic
 
 
 
-  # ƒ}ƒCƒŠƒXƒgTBL‚Ì“o˜^
-  # “`•[ŠÇ—Ò
+  # ãƒã‚¤ãƒªã‚¹ãƒˆTBLã®ç™»éŒ²
+  # ä¼ç¥¨ç®¡ç†è€…
   userMyListAdminResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),
@@ -76,7 +76,7 @@ def post_product(PartitionKey, event, adminUser, adminMecha, adminOffice, servic
     print('Post Successed.')
 
 
-  # æˆøˆË—ŠÒ
+  # å–å¼•ä¾é ¼è€…
   userMyListResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),

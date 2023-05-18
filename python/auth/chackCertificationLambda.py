@@ -1,27 +1,27 @@
 import json
 import boto3
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 from boto3.dynamodb.conditions import Key
-# KeyƒIƒuƒWƒFƒNƒg‚ğ—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚é
+# Keyã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
-# DynamodbƒAƒNƒZƒX‚Ì‚½‚ß‚ÌƒIƒuƒWƒFƒNƒgæ“¾
+# Dynamodbã‚¢ã‚¯ã‚»ã‚¹ã®ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 dynamodb = boto3.resource('dynamodb')
-# w’èƒe[ƒuƒ‹‚ÌƒAƒNƒZƒXƒIƒuƒWƒFƒNƒgæ“¾
+# æŒ‡å®šãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾—
 certificationManagementInfo = dynamodb.Table("certificationManagementInfo")
 
-# ”FØó‹µƒ`ƒFƒbƒNLambda
+# èªè¨¼çŠ¶æ³ãƒã‚§ãƒƒã‚¯Lambda
 def lambda_handler(event, context):
   print(event)
   print(event['userId'])
 
   PartitionKey = event['userId']
-  # ”FØî•ñŠÇ—ŒŸõ
+  # èªè¨¼æƒ…å ±ç®¡ç†æ¤œç´¢
   certificationData = operation_query(PartitionKey)
   if len(certificationData) > 0 :
-    # ”FØó‘Ô‚È‚çƒAƒNƒZƒXó‹µ‚ğXV‚·‚é
+    # èªè¨¼çŠ¶æ…‹ãªã‚‰ã‚¢ã‚¯ã‚»ã‚¹çŠ¶æ³ã‚’æ›´æ–°ã™ã‚‹
     put_certificationData(certificationData[0])
     print('ALREADY-CERTIFICATION')
     return True
@@ -30,7 +30,7 @@ def lambda_handler(event, context):
 
   return False
 
-# ƒŒƒR[ƒhŒŸõiƒf[ƒ^Šm”Fj
+# ãƒ¬ã‚³ãƒ¼ãƒ‰æ¤œç´¢ï¼ˆãƒ‡ãƒ¼ã‚¿ç¢ºèªï¼‰
 def operation_query(partitionKey):
     queryData = certificationManagementInfo.query(
         KeyConditionExpression = Key("userId").eq(partitionKey)
@@ -40,16 +40,20 @@ def operation_query(partitionKey):
     return items
 
 
-# ”FØî•ñXV(TTLŠÖ˜A‚Ì“úXV)
+# èªè¨¼æƒ…å ±æ›´æ–°(TTLé–¢é€£ã®æ—¥æ™‚æ›´æ–°)
 def put_certificationData(data):
+  # 2æ™‚é–“å¾Œã®æ™‚åˆ»ã‚’è¨­å®š
+  ttlData = datetime.now() + timedelta(hours=2)
+  ttl = str(ttlData .timestamp())
+
   putResponse = accountUserConneection.put_item(
     Item={
       'userId' : data['userId'],
       'accountUseId' : data['accountUseId'],
-      'operationDate' :  now.strftime('%Y%m%d'),
-      'operationTime' :  now.strftime('%H%M'),
+      'operationDate' :  ttlData.strftime('%Y%m%d'),
+      'operationTime' :  ttlData.strftime('%H%M'),
       'created' :  data['created'],
-      'operationDateTime' :  now.strftime('%Y%m%d%H%M')
+      'operationDateTime' :  ttl
     }
   )
   print('post_accountUserConneection-SUCSESS')
