@@ -83,7 +83,8 @@ def slipDetailInfo_query(slipNo, adminId):
 
 # レコード検索
 def salesServiceInfoOffice_query(slipNo, adminId):
-    queryData = slipDetailInfo.query(
+    # メカニック、工場用の伝票テーブルから工場IDで検索
+    queryData = salesServiceInfo.query(
         IndexName = 'slipAdminOfficeId-index',
         KeyConditionExpression = Key("slipAdminOfficeId").eq(adminId) & Key("deleteDiv").eq("0")
     )
@@ -103,7 +104,8 @@ def salesServiceInfoOffice_query(slipNo, adminId):
 
 # レコード検索
 def salesServiceInfoMecha_query(slipNo, adminId):
-    queryData = slipDetailInfo.query(
+    # メカニック、工場用の伝票テーブルから工場IDで検索
+    queryData = salesServiceInfo.query(
         IndexName = 'slipAdminMechanic-index',
         KeyConditionExpression = Key("slipAdminMechanicId").eq(adminId) & Key("deleteDiv").eq("0")
     )
