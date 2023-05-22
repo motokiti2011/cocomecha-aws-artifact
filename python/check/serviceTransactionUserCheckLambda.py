@@ -7,7 +7,7 @@ from boto3.dynamodb.conditions import Key
 # Dynamodbアクセスのためのオブジェクト取得
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
-serviceTransactionRequest = dynamodb.Table("serviceTransactionRequest")
+transactionSlip = dynamodb.Table("transactionSlip")
 userInfo = dynamodb.Table("userInfo")
 
 # 取引中ユーザーチェック
@@ -19,14 +19,14 @@ def lambda_handler(event, context):
   try:
     if OperationType == 'CHECKTRANSACTION':
       slipNo = event['Keys']['slipNo']
+      slipServiceType = event['Keys']['slipServiceType']
       userId = event['Keys']['userId']
-      serviceType = event['Keys']['serviceType']
 
-    # 伝票番号から伝票取引依頼情報を取得
-    transactionReqData = serviceTransactionRequest_query(slipNo)
+    # 伝票番号から伝票取引情報を取得
+    transactionData = serviceTransaction_query(slipNo, slipServiceType)
     
     # 取引依頼がない場合処理を終了
-    if len(transactionReqData) == 0 :
+    if len(transactionData) == 0 :
       return False
 
     # 取引依頼がある場合チェックを続行
@@ -39,15 +39,15 @@ def lambda_handler(event, context):
     userData = userInfo[0]
 
     # 取引依頼者にユーザーが含まれるかをチェックする
-    for data in transactionReqData :
-      if item['serviceUserType'] == '0' :
-        if item['requestId'] == userData['useId'] :
+    for data in transactionData :
+      if item['serviceType'] == '0' :
+        if item['userId'] == userData['useId'] :
           return True
-      if item['serviceUserType'] == '1' :
-        if item['requestId'] == userData['officeId'] :
+      if item['serviceType'] == '1' :
+        if item['officeId'] == userData['officeId'] :
           return True
-      if item['serviceUserType'] == '2' :
-        if item['requestId'] == userData['mechanicId'] :
+      if item['serviceType'] == '2' :
+        if item['mechanicId'] == userData['mechanicId'] :
           return True
 
     # 含まれない場合は申請者以外として判断する
@@ -58,14 +58,13 @@ def lambda_handler(event, context):
       print(e)
 
 # レコード検索
-def slipDetailInfo_query(slipNo):
-  queryData = serviceTransactionRequest.query(
-      IndexName = 'slipNo-index',
-      KeyConditionExpression = Key("slipNo ").eq(slipNo)
-  )
-  items=queryData['Items']
-  print(items)
-  return items
+def serviceTransaction_query(slipNo, serviceType):
+    queryData = transactionSlip.query(
+        KeyConditionExpression = Key("slipNo").eq(slipNo) & Key("serviceType").eq(serviceType)
+    )
+    items=queryData['Items']
+    print(items)
+    return items
 
 
 # レコード検索

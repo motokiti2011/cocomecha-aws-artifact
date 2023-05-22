@@ -13,6 +13,13 @@ Parameters:
   CheckAcceseAdminLambdaArn:
     Type: String
 
+  # serviceTransactionReqUserCheckLambdaのARN
+  ServiceTransactionReqUserCheckLambdaArn:
+    Type: String
+
+  # serviceTransactionUserCheckLambdaのARN
+  ServiceTransactionUserCheckLambdaArn:
+    Type: String
 
 
   # CognitoUserPoolのARN
@@ -196,6 +203,88 @@ Resources:
     DependsOn: LambdaPermission3
 
 
+  # ServiceTransactionReqUserCheckリソース
+  ServiceTransactionReqUserCheckResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref CheckResource
+      PathPart: checktransactionreq
+      RestApiId: !Ref ApiGwRestAPI
+  # ServiceTransactionReqUserCheckメソッド
+  ServiceTransactionReqUserCheckMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref ServiceTransactionReqUserCheckResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref ServiceTransactionReqUserCheckLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission4
+
+
+
+  # ServiceTransactionUserCheckリソース
+  ServiceTransactionUserCheckResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref CheckResource
+      PathPart: checktransaction
+      RestApiId: !Ref ApiGwRestAPI
+  # ServiceTransactionUserCheckメソッド
+  ServiceTransactionUserCheckMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref ServiceTransactionUserCheckResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref ServiceTransactionUserCheckLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission5
+
+
+
   # LambdaPermission
   LambdaPermission1:
     Type: 'AWS::Lambda::Permission'
@@ -217,4 +306,19 @@ Resources:
       FunctionName: checkAcceseAdminLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
+
+  LambdaPermission4:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: serviceTransactionReqUserCheckLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission5:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: serviceTransactionUserCheckLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
 

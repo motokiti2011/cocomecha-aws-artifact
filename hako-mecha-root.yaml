@@ -254,6 +254,8 @@ Resources:
         SlipMegPrmUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.SlipMegPrmUserCheckLambda
         SlipAdminUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.SlipAdminUserCheckLambda
         CheckAcceseAdminLambdaArn: !GetAtt CheckLambdaRoot.Outputs.CheckAcceseAdminLambda
+        ServiceTransactionReqUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.ServiceTransactionReqUserCheckLambda
+        ServiceTransactionUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.ServiceTransactionUserCheckLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 

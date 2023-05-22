@@ -70,6 +70,37 @@ Resources:
           - '/check/zip'
           - '/checkAcceseAdminLambda.zip'
 
+  ServiceTransactionReqUserCheckLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/check/serviceTransactionReqUserCheckLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/check/zip'
+          - '/serviceTransactionReqUserCheckLambda.zip'
+
+  ServiceTransactionUserCheckLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/check/serviceTransactionUserCheckLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/check/zip'
+          - '/serviceTransactionUserCheckLambda.zip'
 
 Outputs:
   # SlipMegPrmUserCheckLambda‚ÌARN
@@ -84,4 +115,11 @@ Outputs:
   CheckAcceseAdminLambda:
     Value: !GetAtt CheckAcceseAdminLambda.Outputs.CheckAcceseAdminLambda
 
+  # ServiceTransactionReqUserCheckLambda‚ÌARN
+  ServiceTransactionReqUserCheckLambda:
+    Value: !GetAtt ServiceTransactionReqUserCheckLambda.Outputs.ServiceTransactionReqUserCheckLambda
+
+  # ServiceTransactionUserCheckLambda‚ÌARN
+  ServiceTransactionUserCheckLambda:
+    Value: !GetAtt ServiceTransactionUserCheckLambda.Outputs.ServiceTransactionUserCheckLambda
 
