@@ -1,8 +1,8 @@
 import json
 import boto3
 
+from datetime import datetime
 from boto3.dynamodb.conditions import Key
-# Keyオブジェクトを利用できるようにする
 
 # Dynamodbアクセスのためのオブジェクト取得
 dynamodb = boto3.resource('dynamodb')
@@ -123,6 +123,9 @@ def lambda_handler(event, context) :
         # 希望日検索キー
         preferredDateKey = event['Keys']['preferredDateKey']
 
+        # 処理時間
+        TIMESTAMP = datetime.now().strftime('%H')
+
         # 検索タイプ検証
         if IndexType != 'SERCHSLIPCONTENTS':
           return
@@ -180,6 +183,10 @@ def lambda_handler(event, context) :
           if preferredDateKey != "" :
             if serchDate(item['preferredDate'], date1, date2, preferredDateKey) :
               continue
+
+          # 期限切れチェック
+          if TIMESTAMP > item['preferredTime'] :
+            continue
 
           # チェック後値を格納
           resultItems.append(item)

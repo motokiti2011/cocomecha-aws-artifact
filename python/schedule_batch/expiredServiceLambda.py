@@ -36,15 +36,15 @@ def lambda_handler(event, context):
         # マイリストTBLにメッセージを追加（期限切れ）
         slipMylistMsg_query(slip['slipNo'])
 
-      # サービス商品チェック
-      expiredServiceData = service_confirm()
-      if len(expiredServiceData) > 0 :
-      # 対象サービスが存在する場合削除
-        for service in expiredServiceData :
-          # 対象サービスのステータスを更新
-          expiredService_query(service)
-          # マイリストTBLにメッセージを追加（期限切れ）
-          serviceMylistMsg_query(service)
+    # サービス商品チェック
+    expiredServiceData = service_confirm()
+    if len(expiredServiceData) > 0 :
+    # 対象サービスが存在する場合削除
+      for service in expiredServiceData :
+        # 対象サービスのステータスを更新
+        expiredService_query(service)
+        # マイリストTBLにメッセージを追加（期限切れ）
+        serviceMylistMsg_query(service)
 
   except Exception as e:
       print("Error Exception.")
@@ -130,8 +130,7 @@ def expiredSlip_query(slip):
 # 取引中伝票情報にサービス情報を追加
 def expiredService_query(service):
 
-
-  putResponse = transactionSlip.put_item(
+  putResponse = salesServiceInfo.put_item(
     Item={
       'slipNo' : service['slipNo'],
       'deleteDiv' : service['deleteDiv'],

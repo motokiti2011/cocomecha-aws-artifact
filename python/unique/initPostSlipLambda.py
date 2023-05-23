@@ -60,7 +60,7 @@ def post_product(PartitionKey, event):
       'bidEndDate' : event['Keys']['bidEndDate'],
       'explanation' : event['Keys']['explanation'],
       'displayDiv' : event['Keys']['displayDiv'],
-      'processStatus' : '1',
+      'processStatus' : '0',
       'targetService' : event['Keys']['targetService'],
       'targetVehicleId' : event['Keys']['targetVehicleId'],
       'targetVehicleDiv' : event['Keys']['targetVehicleDiv'],
