@@ -35,7 +35,7 @@ def lambda_handler(event, context):
     if salesServiceData['Count'] > 0 :
       for service in salesServiceData['Items']  :
         # 希望日から72時間超えている場合
-        if service['preferredDate'] < targetDate && service['preferredTime'] < targetTime :
+        if service['preferredDate'] < targetDate and service['preferredTime'] < targetTime :
           # 論理削除を行う
           delete_query(service)
           # マイリストTBLにメッセージを設定する

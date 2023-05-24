@@ -26,6 +26,14 @@ Parameters:
   CertificationScheduleLambdaArn:
     Type: String
 
+  # expiredServiceDeleteLambda‚ÌARN
+  ExpiredServiceDeleteLambdaArn:
+    Type: String
+
+  # expiredSlipDeleteLambda‚ÌARN
+  ExpiredSlipDeleteLambdaArn:
+    Type: String
+
 Resources:
 
 
@@ -97,6 +105,31 @@ Resources:
         Arn: !Ref CertificationScheduleLambdaArn
         RoleArn: !Ref SchedulerRoleArn
 
+  ExpiredServiceDeleteHourSchedule:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Description: TransactionEnd Batch Schedule
+      ScheduleExpression: rate(12 hours)
+      FlexibleTimeWindow:
+        Mode: FLEXIBLE
+        MaximumWindowInMinutes: 60
+      State: ENABLED
+      Target:
+        Arn: !Ref ExpiredServiceDeleteLambdaArn
+        RoleArn: !Ref SchedulerRoleArn
+
+  ExpiredSlipDeleteHourSchedule:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Description: Certification End Schedule
+      ScheduleExpression: rate(2 hours)
+      FlexibleTimeWindow:
+        Mode: FLEXIBLE
+        MaximumWindowInMinutes: 60
+      State: ENABLED
+      Target:
+        Arn: !Ref ExpiredSlipDeleteLambdaArn
+        RoleArn: !Ref SchedulerRoleArn
 
 
   # LambdaPermission
@@ -139,4 +172,20 @@ Resources:
       Action: lambda:InvokeFunction
       Principal: events.amazonaws.com
       SourceArn: !GetAtt 'CertificationSchedule.Arn'
+
+  PermissionForEventsToInvokeLambda6:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: expiredServiceDeleteLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt 'ExpiredServiceDeleteHourSchedule.Arn'
+
+  PermissionForEventsToInvokeLambda7:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: expiredSlipDeleteLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt 'ExpiredSlipDeleteHourSchedule.Arn'
 

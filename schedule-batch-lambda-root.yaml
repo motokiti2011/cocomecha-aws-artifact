@@ -105,6 +105,40 @@ Resources:
           - '/certificationScheduleLambda.zip'
 
 
+  ExpiredServiceDeleteLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/schedule_batch/expiredServiceDeleteLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/schedule_batch/zip'
+          - '/expiredServiceDeleteLambda.zip'
+
+
+  ExpiredSlipDeleteLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/schedule_batch/expiredSlipDeleteLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/schedule_batch/zip'
+          - '/expiredSlipDeleteLambda.zip'
+
+
 Outputs:
 
   # ConfirmMigrationServiceLambda‚ÌARN
@@ -127,4 +161,11 @@ Outputs:
   CertificationScheduleLambda:
     Value: !GetAtt CertificationScheduleLambda.Outputs.CertificationScheduleLambda
 
+  # ExpiredServiceDeleteLambda‚ÌARN
+  ExpiredServiceDeleteLambda:
+    Value: !GetAtt ExpiredServiceDeleteLambda.Outputs.ExpiredServiceDeleteLambda
+
+  # ExpiredSlipDeleteLambda‚ÌARN
+  ExpiredSlipDeleteLambda:
+    Value: !GetAtt ExpiredSlipDeleteLambda.Outputs.ExpiredSlipDeleteLambda
 

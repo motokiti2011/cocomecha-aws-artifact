@@ -35,7 +35,7 @@ def lambda_handler(event, context):
     if slipData['Count'] > 0 :
       for service in slipData['Items']  :
         # 希望日から72時間超えている場合
-        if service['preferredDate'] < targetDate && service['preferredTime'] < targetTime :
+        if service['preferredDate'] < targetDate and service['preferredTime'] < targetTime :
           # 論理削除を行う
           delete_query(service)
           # マイリストTBLにメッセージを設定する
@@ -48,7 +48,7 @@ def lambda_handler(event, context):
 # 伝票情報の期限切れデータを取得する
 def slipDetail_query():
 
-    queryData = salesServiceInfo.query(
+    queryData = slipDetailInfo.query(
       IndexName = 'processStatus-index',
       KeyConditionExpression = Key("processStatus").eq("3") 
     )
@@ -94,8 +94,6 @@ def delete_query(service):
       }
     )
   
-  return
-
 
 # ユーザーマイリストTBL(期限切れメッセージ登録)
 def postConfirmMylistRequest(service):
