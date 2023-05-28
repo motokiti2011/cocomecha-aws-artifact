@@ -123,9 +123,18 @@ def lambda_handler(event, context):
         preferredDateKey = event['Keys']['preferredDateKey']
 
         # 処理時間
+        
+        SERCHDATE = int(datetime.now().strftime('%Y%m%d'))
+        print('SERCHDATE')
+        print(SERCHDATE)
+        
         TIMESTAMP = datetime.now().strftime('%H')
-
-
+        print('TIMESTAMP')
+        print(TIMESTAMP)
+        
+        
+        
+        
         # 検索タイプ検証
         if IndexType != 'SERCHSLIPCONTENTS':
           return
@@ -185,9 +194,9 @@ def lambda_handler(event, context):
               continue
 
           # 期限切れチェック
-          if TIMESTAMP > item['preferredTime'] :
-            continue
-
+          if SERCHDATE > item['preferredDate'] :
+            if TIMESTAMP > item['preferredTime'] :
+              continue
           # チェック後値を格納
           resultItems.append(item)
 
