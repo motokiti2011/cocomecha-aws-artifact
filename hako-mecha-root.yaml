@@ -256,6 +256,8 @@ Resources:
         CheckAcceseAdminLambdaArn: !GetAtt CheckLambdaRoot.Outputs.CheckAcceseAdminLambda
         ServiceTransactionReqUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.ServiceTransactionReqUserCheckLambda
         ServiceTransactionUserCheckLambdaArn: !GetAtt CheckLambdaRoot.Outputs.ServiceTransactionUserCheckLambda
+        CheckAcceseUserSentTransactionReqLambdaArn: !GetAtt CheckLambdaRoot.Outputs.CheckAcceseUserSentTransactionReqLambda
+        CheckAcceseUserSlipLambdaArn: !GetAtt CheckLambdaRoot.Outputs.CheckAcceseUserSlipLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 

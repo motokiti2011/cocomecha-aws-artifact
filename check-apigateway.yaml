@@ -21,6 +21,14 @@ Parameters:
   ServiceTransactionUserCheckLambdaArn:
     Type: String
 
+  # CheckAcceseUserSentTransactionReqLambdaのARN
+  CheckAcceseUserSentTransactionReqLambdaArn:
+    Type: String
+
+  # CheckAcceseUserSlipLambdaのARN
+  CheckAcceseUserSlipLambdaArn:
+    Type: String
+
 
   # CognitoUserPoolのARN
   UserPoolArn:
@@ -284,6 +292,85 @@ Resources:
     DependsOn: LambdaPermission5
 
 
+  # CheckAcceseUserSentTransactionReqリソース
+  CheckAcceseUserSentTransactionReqResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref CheckResource
+      PathPart: checkacceseusersenttransactionreq
+      RestApiId: !Ref ApiGwRestAPI
+  # CheckAcceseUserSentTransactionReqメソッド
+  CheckAcceseUserSentTransactionReqMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref CheckAcceseUserSentTransactionReqResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref CheckAcceseUserSentTransactionReqLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission6
+
+
+  # CheckAcceseUserSlipリソース
+  CheckAcceseUserSlipResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref CheckResource
+      PathPart: checkaccessuserslip
+      RestApiId: !Ref ApiGwRestAPI
+  # CheckAcceseUserSlipメソッド
+  CheckAcceseUserSlipMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref CheckAcceseUserSlipResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref CheckAcceseUserSlipLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission7
+
 
   # LambdaPermission
   LambdaPermission1:
@@ -321,4 +408,17 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 
+  LambdaPermission6:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: checkAcceseUserSentTransactionReqLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+  LambdaPermission7:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: checkAcceseUserSlipLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
 

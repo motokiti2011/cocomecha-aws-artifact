@@ -92,7 +92,7 @@ def userInfo_query(requestUserId):
     return []
 
   queryData = table.query(
-      KeyConditionExpression = Key("userId").eq(partitionKey) & Key("userValidDiv").eq('0')
+      KeyConditionExpression = Key("userId").eq(userId) & Key("userValidDiv").eq('0')
   )
   items=queryData['Items']
   print(items)
