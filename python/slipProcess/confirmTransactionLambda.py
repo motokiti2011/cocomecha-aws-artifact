@@ -16,6 +16,100 @@ slipDetailInfo = dynamodb.serviceTransactionRequest("slipDetailInfo")
 salesServiceInfo = dynamodb.serviceTransactionRequest("salesServiceInfo")
 transactionSlip = dynamodb.serviceTransactionRequest("transactionSlip")
 
+
+# 取引依頼確定Lambda
+def lambda_handler(event, context):
+  print("Received event: " + json.dumps(event))
+  now = datetime.now()
+  print(now)
+
+  OperationType = event['OperationType']
+  requestData = event['Keys']['serviceTransactionRequest']
+  adminUserId = event['Keys']['userId']
+  serviceType = event['Keys']['serviceUserType']
+ 
+  try:
+    if OperationType != 'CONFIRMTRANSACTION':
+      print('CONFIRMTRANSACTION_Failure')
+      return 400
+
+    print('LABEL_1')
+    # 承認者情報取得
+    userInfo = userInfo_query(adminUserId)
+    if len(userInfo) == 0 :
+      print('Not_AdminUser_Failure')
+      return 400
+
+    print('LABEL_2')
+    # 対象伝票取得
+    slipData = getSlip(requestData['requestId'], serviceType)
+    if len(userInfo) == 0 :
+      print('Not_Slip_Failure')
+      return 400
+
+    print('LABEL_3')
+    # 伝票管理者チェック
+    checkAdmin = getSlip(requestData['requestId'], serviceType)
+    if not checkAdmin :
+      print('Not_ADMIN_Failure')
+      return 400
+
+
+    print('LABEL_4')
+    # 取引依頼の承認
+    approvalResult = approvalRequest_query(requestData['requestId'])
+    if approvalResult != 200 :
+      print('Not_Approval_Failure')
+      return 400
+
+    print('LABEL_5')
+    # 対象伝票のステータス更新 「0」(出品中) → 「1」(取引中)
+    # 長いので同期のinvokで呼ぶ（結果が欲しい）
+    slipStatusExhibiting(requestData['requestId'])
+    if slipStatusExhibiting != 200 :
+      print('Not_SlipStatusExhibiting_Failure')
+      return 400
+
+    print('LABEL_6')
+    # マイリストへのMsg登録
+    # 長いので同期のinvokで呼ぶ（結果が欲しい）
+    postMyListResult = postMyList(requestData['requestId'])
+    if postMyListResult != 200 :
+      print('PostMyList_Failure')
+      return 400
+
+
+
+    if serviceType == '0':
+      slip = getSlipDitail(key,serviceType)
+      # adminUser = slip[0]['slipAdminUserId']
+      adminMecha = '0'
+      adminOffice = '0'
+      serviceTitle = slip[0]['title']
+      # 必要データ取得後に伝票情報を論理削除
+      put_SlipDitail(slip)
+    else:
+      service = getSalesServiceInfo(key,serviceType)
+      # adminUser = service[0]['slipAdminUserId']
+      adminMecha = service[0]['slipAdminMechanicId']
+      adminOffice = service[0]['slipAdminOfficeId']
+      serviceTitle = service[0]['title']
+      # 必要データ取得後にサービス商品を論理削除
+      put_SalesServiceInfo(service)
+
+      id = str(uuid.uuid4())
+      PartitionKey = id
+      print('1A')
+      post_transactionRequest(PartitionKey, event, adminUser, confirmUser)
+      print('2B')
+      post_myList(PartitionKey, event, adminUser, confirmUser,adminMecha,adminOffice, serviceTitle)
+
+  except Exception as e:
+      print("Error Exception.")
+      print(e)
+
+
+
 # 取引依頼TBL
 def post_transactionRequest(PartitionKey, event, adminUser, confirmUser):
 
@@ -247,7 +341,7 @@ def postConfirmMylistRequest(item):
 
 
 # 伝票情報取得
-def getSlipDitail(PartitionKey,serviceKey):
+def getSlipDitail(PartitionKey,serviceType):
   queryData = slipDetailInfo.query(
       KeyConditionExpression = Key("slipNo").eq(PartitionKey) & Key("deleteDiv").eq("0")
   )
@@ -256,12 +350,12 @@ def getSlipDitail(PartitionKey,serviceKey):
     return queryData['Items']
   else:
     print('Post Successed : slipDetailInfo')
-    postTransactionSlip(queryData['Items'],serviceKey)
+    postTransactionSlip(queryData['Items'],serviceType)
     return queryData['Items']
 
 
 # サービス商品情報取得
-def getSalesServiceInfo(PartitionKey,serviceKey):
+def getSalesServiceInfo(PartitionKey,serviceType):
   queryData = salesServiceInfo.query(
       KeyConditionExpression = Key("slipNo").eq(PartitionKey) & Key("deleteDiv").eq("0")
   )
@@ -269,28 +363,28 @@ def getSalesServiceInfo(PartitionKey,serviceKey):
     return queryData['Items']
   else:
     print('Post Successed : salesServiceInfo')
-    postTransactionSlip(queryData['Items'],serviceKey)
+    postTransactionSlip(queryData['Items'],serviceType)
     return queryData['Items']
 
 
 
 # 取引中伝票情報追加
-def postTransactionSlip(queryData,serviceKey):
+def postTransactionSlip(queryData,serviceType):
 
   now = datetime.now()
   print('3A')
   print(queryData)
-  if serviceKey == '0':
+  if serviceType == '0':
     adminUser = queryData[0]['slipAdminUserId']
     adminMecha = '0'
     adminOffice = '0'
     adminId = queryData[0]['slipAdminUserId']
-  elif serviceKey == '1':
+  elif serviceType == '1':
     adminUser = queryData[0]['slipAdminUserId']
     adminMecha = queryData[0]['slipAdminMechanicId']
     adminOffice = queryData[0]['slipAdminOfficeId']
     adminId = queryData[0]['slipAdminOfficeId']
-  elif serviceKey == '2':
+  elif serviceType == '2':
     adminUser = queryData[0]['slipAdminUserId']
     adminMecha = queryData[0]['slipAdminMechanicId']
     adminOffice = queryData[0]['slipAdminOfficeId']
@@ -302,7 +396,7 @@ def postTransactionSlip(queryData,serviceKey):
   putResponse = transactionSlip.put_item(
     Item={
       'id' : str(uuid.uuid4()),
-      'serviceType' : serviceKey,
+      'serviceType' : serviceType,
       'userId' : adminUser,
       'mechanicId' : adminMecha,
       'officeId' : adminOffice,
@@ -439,43 +533,3 @@ def put_SalesServiceInfo(queryData):
   return 
   
 
-def lambda_handler(event, context):
-  print("Received event: " + json.dumps(event))
-  now = datetime.now()
-  print(now)
-  OperationType = event['OperationType']
-  adminUser = event['Keys']['adminUser']
-  confirmUser = event['Keys']['confirmUser']
-  serviceKey = event['Keys']['serviceUserType']
-  key = event['Keys']['slipNo']
-  
-  try:
-    if OperationType == 'CONFIRMTRANSACTION':
-
-      if serviceKey == '0':
-        slip = getSlipDitail(key,serviceKey)
-        # adminUser = slip[0]['slipAdminUserId']
-        adminMecha = '0'
-        adminOffice = '0'
-        serviceTitle = slip[0]['title']
-        # 必要データ取得後に伝票情報を論理削除
-        put_SlipDitail(slip)
-      else:
-        service = getSalesServiceInfo(key,serviceKey)
-        # adminUser = service[0]['slipAdminUserId']
-        adminMecha = service[0]['slipAdminMechanicId']
-        adminOffice = service[0]['slipAdminOfficeId']
-        serviceTitle = service[0]['title']
-        # 必要データ取得後にサービス商品を論理削除
-        put_SalesServiceInfo(service)
-
-      id = str(uuid.uuid4())
-      PartitionKey = id
-      print('1A')
-      post_transactionRequest(PartitionKey, event, adminUser, confirmUser)
-      print('2B')
-      post_myList(PartitionKey, event, adminUser, confirmUser,adminMecha,adminOffice, serviceTitle)
-
-  except Exception as e:
-      print("Error Exception.")
-      print(e)
