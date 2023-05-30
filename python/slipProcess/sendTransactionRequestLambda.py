@@ -48,11 +48,7 @@ def lambda_handler(event, context):
       print('TRANSACTIONREQUEST_Failure_2')
       return 404
     print('LABEL_3')
-    # 取引依頼TBLに登録
-    reqRes = post_transactionReq(userInfo[0], slip[0], serviceType, serviceUserType)
-    if reqRes == None :
-      print('TRANSACTIONREQUEST_Failure_3')
-      return 404
+    # 取引中伝票情報は廃止
     print('LABEL_4')
     # 管理者のマイリストTBLにMsg登録
     resAdminMyList = AdminMyListMsg(userInfo[0], slip[0], serviceUserType, serviceType)

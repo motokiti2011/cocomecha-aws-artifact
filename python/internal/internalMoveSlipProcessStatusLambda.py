@@ -1,6 +1,8 @@
 import json
 import boto3
 
+from datetime import datetime
+
 from boto3.dynamodb.conditions import Key
 # Keyオブジェクトを利用できるようにする
 
@@ -17,67 +19,97 @@ completionSlip = dynamodb.Table("completionSlip")
 def lambda_handler(event, context) :
   print("Received event: " + json.dumps(event))
 
-  # 操作ステータス
-  OperationStatus = event['OperationStatus']
   try:
-    # 取引開始（ステータス0→1）
-    if OperationStatus == 'StartTrading' :
-      print('LABEL_1')
-      startTramsaction(event)
-    # 取引完了（ステータス1→2）
-    elif OperationStatus == 'EndOfTransaction' :
-      print('LABEL_2')
-      endTransaction(event)
+    slipNo = event['slipNo']
+    serviceType = event['serviceType']
+    processStatus = event['processStatus']
+
+    print('LABEL_1')
+    # 対象伝票のステータスを更新する
+    slip = moveProcessStatus(slipNo, serviceType, processStatus)
+    if slip == None :
+      print('moveprocess_Failure')
+      return
+    print('LABEL_2')
+    return 200
 
   except Exception as e:
       print("Error Exception.")
       print(e)
 
 
-
-# 取引開始処理
-def startTramsaction(event) :
-  
-  processStatus = '1'
-  slipNo = event['slipNo']
-  serviceType = event['serviceType']
-
-  # 対象伝票のステータスを更新する
-  slip = moveProcessStatus(slipNo, serviceType, processStatus)
-
-  # 取引伝票情報を作成する
-  postTransaction_query(slip)
-
-
-# 取引完了処理
-def endTransaction(event)
-
-  processStatus = '1'
-  slipNo = event['slipNo']
-  serviceType = event['serviceType']
-
-  # 対象伝票のステータスを更新する
-  slip = moveProcessStatus(slipNo, serviceType, processStatus)
-
-  # 取引伝票情報を論理削除する
-  deleteTransaction_query(slip)
-
-  # 完了済伝票情報を作成する
-  postCompletionSlip(slip)
-
-
-
 # 対象の伝票情報を取得
 def moveProcessStatus(slipNo, serviceType, processStatus):
 
-  if serviceType = '0' :
-    slipDitailStatusMove_query(slipNo, processStatus)
+  if serviceType == '0' :
+    print('LABEL_3')
+    return slipDitailStatusMove_query(slipNo, processStatus)
   else :
-    salesServiceStatusMove_query(slipNo, processStatus)
+    print('LABEL_4')
+    return salesServiceStatusMove_query(slipNo, processStatus)
 
 
 # 伝票情報のステータス操作
 def slipDitailStatusMove_query(slipNo, processStatus) :
-  
+  # 対象の伝票情報取得
+  queryData = slipDetailInfo.query(
+      KeyConditionExpression = Key("slipNo").eq(slipNo) & Key("deleteDiv").eq("0")
+  )
+  print('LABEL_5')
+  items = queryData['Items']
+  if len(items) == 0 :
+    print('Not_Target_Slip')
+    return None
+  print('LABEL_6')
+  slip = items[0]
+  slip['processStatus'] = processStatus
+  slip['updated'] = datetime.now().strftime('%x %X')
+  print('LABEL_7')
+  # ステータスを更新
+  putResponse = slipDetailInfo.put_item(
+    Item= slip
+  )
+  print('LABEL_8')
+  # putResponse = slipDetailInfo.put_item(slip)
+
+  if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+    print('LABEL_9')
+    print(putResponse)
+    return None
+  else:
+    print('Post Successed.')
+  print('LABEL_10')
+  return slip
 
 
+# サービス商品のステータス操作
+def salesServiceStatusMove_query(slipNo, processStatus) :
+  # 対象の伝票情報取得
+  queryData = salesServiceInfo.query(
+      KeyConditionExpression = Key("slipNo").eq(slipNo) & Key("deleteDiv").eq("0")
+  )
+  print('LABEL_11')
+  items = queryData['Items']
+  if len(items) == 0 :
+    print('Not_Target_SalesService')
+    return None
+  print('LABEL_12')
+  salesService = items[0]
+  salesService['processStatus'] = processStatus
+  salesService['updated'] = datetime.now().strftime('%x %X')
+  print('LABEL_13')
+  # ステータスを更新
+  putResponse = slipDetailInfo.put_item(
+    Item= salesService
+  )
+  print('LABEL_14')
+  # putResponse = slipDetailInfo.put_item(salesService)
+
+  if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+    print('LABEL_15')
+    print(putResponse)
+    return None
+  else:
+    print('Post Successed.')
+  print('LABEL_16')
+  return salesService
