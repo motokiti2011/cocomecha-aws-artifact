@@ -118,7 +118,7 @@ def setItems(itemList) :
         'bidderId' : '',
         'bidEndDate' : item['bidEndDate'],
         'explanation' : item['explanation'],
-        'targetService' : item['targetService'],
+        'serviceType' : item['serviceType'],
         'targetVehicleId' : '',
         'targetVehicleName' : item['targetVehicleName'],
         'targetVehicleInfo' : None,

@@ -61,7 +61,7 @@ def post_product(PartitionKey, event):
       'explanation' : event['Keys']['explanation'],
       'displayDiv' : event['Keys']['displayDiv'],
       'processStatus' : '0',
-      'targetService' : event['Keys']['targetService'],
+      'serviceType' : event['Keys']['serviceType'],
       'targetVehicleId' : event['Keys']['targetVehicleId'],
       'targetVehicleDiv' : event['Keys']['targetVehicleDiv'],
       'targetVehicleName' : event['Keys']['targetVehicleName'],

@@ -57,7 +57,7 @@ Resources:
               - bidMethod
               - bidEndDate
               - processStatus
-              - targetService
+              - serviceType
               - targetVehicleName
               - targetVehicleInfo
               - workAreaInfo
@@ -86,7 +86,7 @@ Resources:
               - bidMethod
               - bidEndDate
               - processStatus
-              - targetService
+              - serviceType
               - targetVehicleName
               - targetVehicleInfo
               - workAreaInfo
@@ -114,7 +114,7 @@ Resources:
               - bidMethod
               - bidEndDate
               - processStatus
-              - targetService
+              - serviceType
               - targetVehicleName
               - targetVehicleInfo
               - workAreaInfo

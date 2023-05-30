@@ -57,7 +57,7 @@ def operation_query(partitionKey):
       'explanation' :items[0]['explanation'],
       'displayDiv' :items[0]['displayDiv'],
       'processStatus' :items[0]['processStatus'],
-      'targetService' :items[0]['targetService'],
+      'serviceType' :items[0]['serviceType'],
       'targetVehicleId' :items[0]['targetVehicleId'],
       'targetVehicleDiv' :items[0]['targetVehicleDiv'],
       'targetVehicleName' :items[0]['targetVehicleName'],

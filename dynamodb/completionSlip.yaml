@@ -39,7 +39,7 @@ Resources:
               - bidEndDate
               - explanation
               - displayDiv
-              - targetService
+              - serviceType
               - targetVehicleName
               - workAreaInfo
               - preferredDate
@@ -65,7 +65,7 @@ Resources:
               - bidEndDate
               - explanation
               - displayDiv
-              - targetService
+              - serviceType
               - targetVehicleName
               - workAreaInfo
               - preferredDate
@@ -91,7 +91,7 @@ Resources:
               - bidEndDate
               - explanation
               - displayDiv
-              - targetService
+              - serviceType
               - targetVehicleName
               - workAreaInfo
               - preferredDate

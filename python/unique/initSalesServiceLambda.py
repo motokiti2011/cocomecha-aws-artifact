@@ -92,7 +92,7 @@ def post_product(PartitionKey, event):
       'explanation' : event['Keys']['explanation'],
       'displayDiv' : event['Keys']['displayDiv'],
       'processStatus' : '0',
-      'targetService' : event['Keys']['targetService'],
+      'serviceType' : event['Keys']['serviceType'],
       'targetVehicleId' : event['Keys']['targetVehicleId'],
       'targetVehicleDiv' : event['Keys']['targetVehicleDiv'],
       'targetVehicleName' : event['Keys']['targetVehicleName'],
@@ -167,7 +167,7 @@ def post_product(PartitionKey, event):
       'userId' : event['Keys']['slipAdminUserId'],
       'mechanicId' : mechanicId,
       'officeId' : officeId,
-      'serviceType' : event['Keys']['targetService'],
+      'serviceType' : event['Keys']['serviceType'],
       'slipNo' :PartitionKey,
       'serviceTitle' : event['Keys']['title'],
       'category' : '9',
@@ -184,7 +184,7 @@ def post_product(PartitionKey, event):
   )
   
   # 工場メカニックアイテムの登録
-  if event['Keys']['targetService'] == '1':
+  if event['Keys']['serviceType'] == '1':
     fcmcId = officeId
   else :
     fcmcId = mechanicId
@@ -194,7 +194,7 @@ def post_product(PartitionKey, event):
       'serviceId' : PartitionKey,
       'serviceName' : event['Keys']['title'],
       'factoryMechanicId' : fcmcId,
-      'serviceType' : event['Keys']['targetService'],
+      'serviceType' : event['Keys']['serviceType'],
       'transactionStatus' : '1',
       'browsingCount' : 0,
       'favoriteCount' : 0

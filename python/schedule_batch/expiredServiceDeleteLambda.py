@@ -79,7 +79,7 @@ def delete_query(service):
       'explanation' : service['explanation'],
       'displayDiv' : service['displayDiv'],
       'processStatus' : service['processStatus'],
-      'targetService' : service['targetService'],
+      'serviceType' : service['serviceType'],
       'targetVehicleId' : service['targetVehicleId'],
       'targetVehicleName' : service['targetVehicleName'],
       'targetVehicleInfo' : service['targetVehicleInfo'],

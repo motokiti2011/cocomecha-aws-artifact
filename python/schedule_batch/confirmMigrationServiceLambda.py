@@ -126,15 +126,15 @@ def slipconfirm_post(slip):
 def serviceconfirm_post(service):
 
   adminId = service['slipAdminUserId']
-  if  service['targetService'] == 2:
+  if  service['serviceType'] == 2:
     adminId = service['slipAdminOfficeId']
-  elif service['targetService'] == 3:
+  elif service['serviceType'] == 3:
     adminId = service['slipAdminMechanicId']
 
   putResponse = transactionSlip.put_item(
     Item={
       'id' : str(uuid.uuid4()),
-      'serviceType' : service['targetService'],
+      'serviceType' : service['serviceType'],
       'userId' : service['slipAdminUserId'],
       'mechanicId' : service['slipAdminMechanicId'],
       'officeId' : service['slipAdminOfficeId'],
