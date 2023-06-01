@@ -13,7 +13,37 @@ dynamodb = boto3.resource('dynamodb')
 transactionSlip = dynamodb.Table("transactionSlip")
 userMyList = dynamodb.Table("userMyList")
 
+# 取引終了Lambda
+def lambda_handler(event, context):
+  print("Received event: " + json.dumps(event))
+  now = datetime.now()
+  print(now)
+  OperationType = event['OperationType']
 
+  try:
+    if OperationType == 'TRANSACTIONEND':
+      PartitionKey = event['Keys']['id']
+      PartitionKey = id
+
+    post_transaction(PartitionKey, event)
+    put_adminMyList(PartitionKey, event)
+
+    # 取引中のマイリスト情報を取得
+    requestMyList = mylist_slipNo_query( event['Keys']['slipNo'])
+
+    for item in requestMyList :
+      # 管理ユーザー以外（依頼者）のステータス更新
+      if adminUser != item['requestId'] :
+        if confirmUser != item['requestId'] :
+          put_requestMyList(item)
+        elif confirmUser == item['requestId'] :
+          put_adminMyList(item)
+
+      return post_product(PartitionKey, event)
+
+  except Exception as e:
+      print("Error Exception.")
+      print(e)
 
 # 取引依頼TBLレコード登録
 def post_transaction(PartitionKey, event):
@@ -120,34 +150,3 @@ def mylist_slipNo_query(partitionKey):
     print(items)
     return items
 
-
-def lambda_handler(event, context):
-  print("Received event: " + json.dumps(event))
-  now = datetime.now()
-  print(now)
-  OperationType = event['OperationType']
-
-  try:
-    if OperationType == 'TRANSACTIONEND':
-      PartitionKey = event['Keys']['id']
-      PartitionKey = id
-
-    post_transaction(PartitionKey, event)
-    put_adminMyList(PartitionKey, event)
-
-    # 取引中のマイリスト情報を取得
-    requestMyList = mylist_slipNo_query( event['Keys']['slipNo'])
-
-    for item in requestMyList :
-      # 管理ユーザー以外（依頼者）のステータス更新
-      if adminUser != item['requestId'] :
-        if confirmUser != item['requestId'] :
-          put_requestMyList(item)
-        elif confirmUser == item['requestId'] :
-          put_adminMyList(item)
-
-      return post_product(PartitionKey, event)
-
-  except Exception as e:
-      print("Error Exception.")
-      print(e)

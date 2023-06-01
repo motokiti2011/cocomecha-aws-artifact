@@ -12,6 +12,7 @@ dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 userMyList = dynamodb.Table("userMyList")
 serviceTransactionRequest = dynamodb.Table("serviceTransactionRequest"
+transactionSlip = dynamodb.Table("transactionSlip")
 userInfo = dynamodb.Table("userInfo")
 officeInfo = dynamodb.Table("officeInfo")
 mechanicInfo = dynamodb.Table("mechanicInfo")
@@ -69,6 +70,11 @@ def approveRequestUserMsg(requestData, slipInfo) :
   if msgResult != 200 :
     return msgResult
   print('LABEL_6')
+  # 取引伝票TBLに新規登録
+  tranSlipRes = initTransactionSlip_query(userInfo[0], slipInfo)
+  if tranSlipRes != 200 :
+    return tranSlipRes
+
   return 200
 
 
@@ -202,3 +208,32 @@ def getMechanicUser(mechanicid) :
   if len(items) == 0 :
     return None
   return items[0]['adminUserId']
+
+
+
+# 取引中伝票情報新規登録（取引依頼の確定者）
+def initTransactionSlip_query(userInfo, slipInfo) :
+
+  putResponse = transactionSlip.put_item(
+    Item={
+      'id' : str(uuid.uuid4()),
+      'serviceType' : slipInfo['serviceType'],
+      'userId' : userInfo['userId'],
+      'mechanicId' : userInfo['mechanicId'],
+      'officeId' : userInfo['officeId'],
+      'slipNo' : slipInfo['slipNo'],
+      'serviceTitle' : slipInfo['title'],
+      'slipRelation' : '3',
+      'slipAdminId' : slipInfo['slipAdminUserId'],
+      'slipAdminName' : '',
+      'bidderId' : slipInfo['bidderId'],
+      'deleteDiv' : '0',
+      'completionScheduledDate' : 0,
+      'ttlDate' : 0,
+      'created' : datetime.now().strftime('%x %X'),
+      'updated' : datetime.now().strftime('%x %X')
+    }
+  )
+  
+  return putResponse['ResponseMetadata']['HTTPStatusCode']
+

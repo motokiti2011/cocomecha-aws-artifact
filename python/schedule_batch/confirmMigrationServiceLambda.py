@@ -15,7 +15,7 @@ slipDetailInfo = dynamodb.Table("slipDetailInfo")
 transactionSlip = dynamodb.Table("transactionSlip")
 
 
-# スケジュールバッチ 確定サービス移行
+# 【廃止予定】スケジュールバッチ 確定サービス移行
 def lambda_handler(event, context):
   print("Received event: " + json.dumps(event))
   now = datetime.now()

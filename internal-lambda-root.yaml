@@ -55,6 +55,57 @@ Resources:
           - '/internalFcMcItemLambda.zip'
 
 
+  InternalMoveSlipProcessStatusLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/internal/internalMoveSlipProcessStatusLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/internal/zip'
+          - '/internalMoveSlipProcessStatusLambda.zip'
+
+
+  InternalRequestMsgApproveAndOtherLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/internal/internalRequestMsgApproveAndOtherLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/internal/zip'
+          - '/internalRequestMsgApproveAndOtherLambda.zip'
+
+
+  InternalSendMsgMylistLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/internal/internalSendMsgMylistLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/internal/zip'
+          - '/internalSendMsgMylistLambda.zip'
+
+
 Outputs:
   # InternalAdminCheckLambda‚ÌARN
   InternalAdminCheckLambda:
@@ -63,4 +114,16 @@ Outputs:
   # InternalFcMcItemLambda‚ÌARN
   InternalFcMcItemLambda:
     Value: !GetAtt InternalFcMcItemLambda.Outputs.InternalFcMcItemLambda
+
+  # InternalMoveSlipProcessStatusLambda‚ÌARN
+  InternalMoveSlipProcessStatusLambda:
+    Value: !GetAtt InternalMoveSlipProcessStatusLambda.Outputs.InternalMoveSlipProcessStatusLambda
+
+  # InternalRequestMsgApproveAndOtherLambda‚ÌARN
+  InternalRequestMsgApproveAndOtherLambda:
+    Value: !GetAtt InternalRequestMsgApproveAndOtherLambda.Outputs.InternalRequestMsgApproveAndOtherLambda
+
+  # InternalSendMsgMylistLambda‚ÌARN
+  InternalSendMsgMylistLambda:
+    Value: !GetAtt InternalSendMsgMylistLambda.Outputs.InternalSendMsgMylistLambda
 
