@@ -26,21 +26,23 @@ def lambda_handler(event, context):
     if OperationType != 'CHECKACCESSUSERSLIP':
       print('OperationTypeFailure')
       return False
-
+    print('LABEL_1')
     slipNo = event['Keys']['slipNo']
     serviceType = event['Keys']['serviceType']
-
+    print('LABEL_2')
     # アクセスユーザー情報取得
     userInfo = userInfo_query(event['Keys']['userId'])
     if len(userInfo) == 0 :
       print('userQueryFailure')
       return False
-
+    print('LABEL_3')
     # 伝票情報取得
     if serviceType == 0 :
-      return checkSlip(slipNo, userInfo)
+      print('LABEL_4')
+      return checkSlip(slipNo, userInfo[0])
     else :
-      return checkService(slipNo, userInfo, serviceType)
+      print('LABEL_5')
+      return checkService(slipNo, userInfo[0], serviceType)
   except Exception as e:
       print("Error Exception.")
       print(e)
@@ -70,7 +72,7 @@ def userInfo_query(accessUser) :
   
   #ユーザーTBLを検索
   queryData = userInfo.query(
-      KeyConditionExpression = Key("userId").eq(partitionKey) & Key("userValidDiv").eq('0')
+      KeyConditionExpression = Key("userId").eq(userId) & Key("userValidDiv").eq('0')
   )
   return queryData['Items']
 
@@ -79,13 +81,14 @@ def userInfo_query(accessUser) :
 # 伝票情報から管理者反映を行う
 def checkSlip(slipNo, userInfo):
   queryData = slipDetailInfo.query(
-      KeyConditionExpression = Key("slipNo").eq(partitionKey) & Key("deleteDiv").eq('0')
+      KeyConditionExpression = Key("slipNo").eq(slipNo) & Key("deleteDiv").eq('0')
   )
   items=queryData['Items']
 
   if len(items) == 0 :
     return False
-  if items['0']['slipAdminUserId'] == userInfo['0']['userId'] :
+  print('LABEL_6')
+  if items[0]['slipAdminUserId'] == userInfo['userId'] :
     return True
   else :
     return False
@@ -101,14 +104,16 @@ def checkService(slipNo, userInfo, serviceType):
 
   if len(items) == 0 :
     return False
-
+  print('LABEL_7')
   if serviceType == '1' :
-    if items['0']['slipAdminOfficeId'] == userInfo['0']['officeId'] :
+    print('LABEL_8')
+    if items[0]['slipAdminOfficeId'] == userInfo['officeId'] :
       return True
     else :
       return False
   else :
-    if items['0']['slipAdminMechanicId'] == userInfo['0']['mechanicId'] :
+    print('LABEL_9')
+    if items[0]['slipAdminMechanicId'] == userInfo['mechanicId'] :
       return True
     else :
       return False

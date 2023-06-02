@@ -35,32 +35,44 @@ def lambda_handler(event, context):
     if OperationType != 'TRANSACTIONREQUEST':
       print('TRANSACTIONREQUEST_Failure_0')
       return 403
+
     print('LABEL_1')
     # ユーザー情報を取得
     userInfo = userInfo_query(requestUserId)
     if len(userInfo) == 0 :
       print('TRANSACTIONREQUEST_Failure_1')
       return 404
+
     print('LABEL_2')
     # 対象の伝票情報を取得
     slip = getSlip(slipNo, serviceType)
     if len(slip) == 0 :
       print('TRANSACTIONREQUEST_Failure_2')
       return 404
+      
     print('LABEL_3')
+    # 取引依頼情報を作成
+    reqRes =  post_transactionReq(userInfo[0], slip[0], serviceType, serviceUserType)
+    if reqRes == None :
+      print('TRANSACTIONREQUEST_Failure_3')
+      return 404      
+    
     # 取引中伝票情報は廃止
+
     print('LABEL_4')
     # 管理者のマイリストTBLにMsg登録
     resAdminMyList = AdminMyListMsg(userInfo[0], slip[0], serviceUserType, serviceType)
     if resAdminMyList != 200 :
       print('TRANSACTIONREQUEST_Failure_4')
       return 404
+
     print('LABEL_5')
     # 取引依頼者のマイリストTBLにMsg登録
     resReqMyList = requestMyListMsg(userInfo[0], slip[0], serviceUserType, reqRes, serviceType)
     if resReqMyList != 200 :
       print('TRANSACTIONREQUEST_Failure_5')
       return 404
+
     print('LABEL_6')    
     print('TRANSACTIONREQUEST_Successed')
     return 200
