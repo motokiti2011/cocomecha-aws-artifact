@@ -31,7 +31,7 @@ def put_product(PartitionKey, event):
     Item={
       'id' : PartitionKey,
       'slipNo' : event['Keys']['slipNo'],
-      'requestId' : event['Keys']['requestId'],
+      'requestUserId' : event['Keys']['requestUserId'],
       'requestUserName' : event['Keys']['requestUserName'],
       'serviceUserType' : event['Keys']['serviceUserType'],
       'requestType' : event['Keys']['requestType'],
@@ -60,7 +60,7 @@ def post_product(PartitionKey, event):
     Item={
       'id' : PartitionKey,
       'slipNo' : event['Keys']['slipNo'],
-      'requestId' : event['Keys']['requestId'],
+      'requestUserId' : event['Keys']['requestUserId'],
       'requestUserName' : event['Keys']['requestUserName'],
       'serviceUserType' : event['Keys']['serviceUserType'],
       'requestType' : event['Keys']['requestType'],

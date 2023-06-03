@@ -41,13 +41,13 @@ def lambda_handler(event, context):
     # 取引依頼者にユーザーが含まれるかをチェックする
     for data in transactionReqData :
       if item['serviceUserType'] == '0' :
-        if item['requestId'] == userData['useId'] :
+        if item['requestUserId'] == userData['useId'] :
           return True
       if item['serviceUserType'] == '1' :
-        if item['requestId'] == userData['officeId'] :
+        if item['requestUserId'] == userData['officeId'] :
           return True
       if item['serviceUserType'] == '2' :
-        if item['requestId'] == userData['mechanicId'] :
+        if item['requestUserId'] == userData['mechanicId'] :
           return True
 
     # 含まれない場合は申請者以外として判断する

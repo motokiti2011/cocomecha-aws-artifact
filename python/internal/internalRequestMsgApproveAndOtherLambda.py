@@ -11,7 +11,7 @@ from boto3.dynamodb.conditions import Key
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 userMyList = dynamodb.Table("userMyList")
-serviceTransactionRequest = dynamodb.Table("serviceTransactionRequest"
+serviceTransactionRequest = dynamodb.Table("serviceTransactionRequest")
 transactionSlip = dynamodb.Table("transactionSlip")
 userInfo = dynamodb.Table("userInfo")
 officeInfo = dynamodb.Table("officeInfo")
@@ -34,7 +34,7 @@ def lambda_handler(event, context) :
 
     # その他の依頼情報を取得
     print('LABEL_2')
-    requestList = transactionSlipNo_query(slipInfo['slipNo']) 
+    requestList = transactionReqSlipNo_query(slipInfo['slipNo']) 
     if len(requestList) == 0 :
       print('transactionSlipNo_query_Failure')
       return 400
@@ -43,7 +43,7 @@ def lambda_handler(event, context) :
 
     for req in requestList :
       # 承認者を除く依頼のみ処理
-      if req['requestId'] != requestData['requestId'] :
+      if req['requestUserId'] != requestData['requestUserId'] :
         otherReqMsg(req, slipInfo) 
 
 
@@ -79,7 +79,7 @@ def approveRequestUserMsg(requestData, slipInfo) :
 
 
 # 伝票番号に紐づく取引依頼TBL情報取得
-def transactionSlipNo_query(partitionKey) :
+def transactionReqSlipNo_query(partitionKey) :
   print('LABEL_7')
   queryData = serviceTransactionRequest.query(
       IndexName = 'slipNo-index',
@@ -115,29 +115,40 @@ def otherReqMsg(req, slipInfo) :
 # ユーザーマイリストTBLメッセージ登録
 def sendMsg_query(request, userInfo, slipInfo, msg ,category):
 
-  mechenicId = userInfo['mechenicId']
-  if mechenicId == None :
-    mechenicId = '0'
+
+  # マイリスト用のリクエスト情報生成
+  requestInfo = {
+    "requestId": request['id'],
+    "requestType": '0',
+    "requestTargetId": request['slipNo'],
+    "requestTargetName": slipInfo['title'],
+  }
+
+
+  mechanicId = userInfo['mechanicId']
+  if mechanicId == None :
+    mechanicId = '0'
 
   officeId = userInfo['officeId']
   if officeId == None :
     officeId = '0'
+  print(request)
 
   putResponse = userMyList.put_item(
     Item={
       'id' : str(uuid.uuid4()),
       'userId' : userInfo['userId'],
-      'mechanicId' : mechenicId,
+      'mechanicId' : mechanicId,
       'officeId' : officeId,
       'serviceType' : slipInfo['serviceType'],
       'slipNo' : slipInfo['slipNo'],
-      'serviceTitle' : slipInfo['serviceTitle'],
+      'serviceTitle' : slipInfo['title'],
       'category' : category,
       'message' : msg,
       'readDiv' : '0',
       'messageDate' : datetime.now().strftime('%x %X'),
       'messageOrQuastionId' : '' ,
-      'requestInfo' : request['requestInfo'],
+      'requestInfo' : requestInfo,
       'deleteDiv' : '0',
       'created' : datetime.now().strftime('%x %X'),
       'updated' : datetime.now().strftime('%x %X')
@@ -148,7 +159,8 @@ def sendMsg_query(request, userInfo, slipInfo, msg ,category):
 
 # 取引依頼TBL(依頼者(確定以外)データ更新)
 def putOtherReq_query(item):
-
+  print('BUG_CHECK')
+  print(item)
   # 取引依頼TBL(管理者)
   putResponse = serviceTransactionRequest.put_item(
     Item={
@@ -166,24 +178,26 @@ def putOtherReq_query(item):
       'updated' : datetime.now().strftime('%x %X')
     }
   )
-  return putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+  return putResponse['ResponseMetadata']['HTTPStatusCode'] 
 
 
 # ユーザー情報を取得する
 def getUserInfo(requestData) :
+  print('BUG_CHECK_2')
+  print(requestData)
   if requestData['serviceUserType'] == '0' :
-    userId = requestData['requestId']
+    userId = requestData['requestUserId']
   elif requestData['serviceUserType'] == '1' :
-    userId = getOfficeUser(requestData['requestId'])
+    userId = getOfficeUser(requestData['requestUserId'])
   else:
-    userId = getMechanicUser(requestData['requestId'])    
+    userId = getMechanicUser(requestData['requestUserId'])    
 
-    # ユーザー情報を取得
-    queryData = userInfo.query(
-        KeyConditionExpression = Key("userId").eq(userId) & Key("userValidDiv").eq('0')
-    )
-    items=queryData['Items']
-    return items
+  # ユーザー情報を取得
+  queryData = userInfo.query(
+      KeyConditionExpression = Key("userId").eq(userId) & Key("userValidDiv").eq('0')
+  )
+  items=queryData['Items']
+  return items
 
 
 # 工場情報からユーザーIDを取得する

@@ -3,6 +3,7 @@ import boto3
 import uuid
 
 from datetime import datetime
+from decimal import Decimal
 
 from boto3.dynamodb.conditions import Key
 # Keyオブジェクトを利用できるようにする
@@ -26,7 +27,7 @@ def lambda_handler(event, context):
   OperationType = event['OperationType']
   requestData = event['Keys']['serviceTransactionRequest']
   adminUserId = event['Keys']['userId']
-  serviceType = event['Keys']['serviceUserType']
+  serviceType = event['Keys']['serviceType']
  
   try:
     if OperationType != 'CONFIRMTRANSACTION':
@@ -42,14 +43,14 @@ def lambda_handler(event, context):
 
     print('LABEL_2')
     # 対象伝票取得
-    slipData = getSlip(requestData['requestId'], serviceType)
+    slipData = getSlip(requestData['slipNo'], serviceType)
     if len(slipData) == 0 :
       print('Not_Slip_Failure')
       return 400
 
     print('LABEL_3')
     # 伝票管理者チェック
-    if  userInfo[0]['userId'] != slipData[0]['slipAdminUserId'] :
+    if  userInfo['userId'] != slipData[0]['slipAdminUserId'] :
       print('Not_ADMIN_Failure')
       return 400
 
@@ -63,27 +64,30 @@ def lambda_handler(event, context):
 
     print('LABEL_5')
     # 対象伝票のステータス更新 「0」(出品中) → 「1」(取引中)
-    statusResult = slipStatusExhibiting(requestData['requestId'])
+    statusResult = slipStatusExhibiting(requestData['slipNo'],serviceType)
     if statusResult != 200 :
       print('Not_SlipStatusExhibiting_Failure')
       return 400
 
     print('LABEL_6')
     # 管理者へのマイリストへのMsg登録
-    postMyListResult = postAdminMyList(requestData, userInfo , slipData[0])
+    postMyListResult = postAdminMyList(requestData, userInfo , slipData[0]) 
     if postMyListResult != 200 :
       print('PostMyList_Failure')
       return 400
     
     # 承認した依頼者、その他の依頼者へのMsg処理
     print('LABEL_7')
-    postResult = requestMsgApproveAndOther(requestData, slipData[0])
+    postResult = requestMsgApproveAndOther(requestData, slipData[0]) 
+    print('BUG_CHACK_END')
     if postResult != 200 :
       print('PostMyList_Failure')
       return 400
     
-
-
+    # ここまで到達できれば正常終了
+    print('LABEL_8')
+    print('CONFIRMTRANSACTIONLAMBDA_SUCCESS')
+    return 200
 
   except Exception as e:
       print("Error Exception.")
@@ -96,7 +100,8 @@ def userInfo_query(adminUserId) :
   input_event = {
     "OperationType" : 'QUERY',
     "Keys" : {
-      "userId": adminUserId
+      "userId": adminUserId,
+      "userValidDiv" : '0'
     }
   }
   Payload = json.dumps(input_event) # jsonシリアライズ
@@ -113,7 +118,7 @@ def userInfo_query(adminUserId) :
     return body[0]
   else :
     print('NOT-CERTIFICATION')
-    return None
+    return []
 
 # 取引依頼対象の伝票情報を取得する
 def getSlip(slipNo, serviceType) :
@@ -143,24 +148,10 @@ def approvalRequest_query(requestData):
 
   requestData['confirmDiv'] = '1'
   requestData['updated'] = datetime.now().strftime('%x %X')
+  print(requestData)
 
-  putResponse = serviceTransactionRequest.put_item(requestData)
-  # putResponse = serviceTransactionRequest.put_item(
-  #   Item={
-  #     'id' : PartitionKey,
-  #     'slipNo' : event['Keys']['slipNo'],
-  #     'requestId' : event['Keys']['requestId'],
-  #     'requestUserName' : event['Keys']['requestUserName'],
-  #     'serviceUserType' : event['Keys']['serviceUserType'],
-  #     'requestType' : event['Keys']['requestType'],
-  #     'files' : event['Keys']['files'],
-  #     'requestStatus' : event['Keys']['requestStatus'],
-  #     'confirmDiv' : '1',
-  #     'deadline' : event['Keys']['deadline'],
-  #     'created' : now.strftime('%x %X'),
-  #     'updated' : now.strftime('%x %X')
-  #   }
-  # )  
+  putResponse = serviceTransactionRequest.put_item(Item=requestData)
+
   return putResponse['ResponseMetadata']['HTTPStatusCode']
 
 # 伝票の取引開始を行う
@@ -168,7 +159,7 @@ def slipStatusExhibiting(slipNo, serviceType) :
   input_event = {
     "slipNo": slipNo,
     "serviceType": serviceType,
-    "processStatus": '2',
+    "processStatus": '1',
   }
   Payload = json.dumps(input_event) # jsonシリアライズ
   # 同期処理で呼び出し
@@ -188,29 +179,45 @@ def slipStatusExhibiting(slipNo, serviceType) :
 
 
 # 管理者のマイリストTBLにMsg登録
-def postAdminMyList(requestData, userInfo, slipData)
+def postAdminMyList(requestData, userInfo, slipData) :
+  
+
+  # マイリスト用のリクエスト情報生成
+  requestInfo = {
+    "requestId": requestData['id'],
+    "requestType": '0',
+    "requestTargetId": requestData['slipNo'],
+    "requestTargetName": slipData['title'],
+  }
+  userList = []
+  userList.append(userInfo)
+
   input_event = {
-    "userList": userInfo,
+    "userList": userList,
     "slipInfo": slipData,
     "category": '10',
     "message": 'TRAN_ST',
-    "requestInfo": requestData['requestInfo'],
+    "requestInfo": requestInfo,
   }
-  Payload = json.dumps(input_event) # jsonシリアライズ
+  
+  Payload = json.dumps(input_event, cls=DecimalEncoder) # jsonシリアライズ
   # 同期処理で呼び出し
   response = boto3.client('lambda').invoke(
-      FunctionName='internalMoveSlipProcessStatusLambda',
+      FunctionName='internalSendMsgMylistLambda',
       InvocationType='RequestResponse',
       Payload=Payload
   )
+
   body = json.loads(response['Payload'].read())
   print(body)
-  # ユーザー情報のユーザーIDを取得
+
   if body != None :
     return body
   else :
     print('NOT-CERTIFICATION')
     return None
+
+
 
 
 # 承認した依頼者、その他の依頼者へのMsg処理
@@ -220,7 +227,8 @@ def requestMsgApproveAndOther(requestData, slipData) :
     "slipInfo": slipData,
 
   }
-  Payload = json.dumps(input_event) # jsonシリアライズ
+
+  Payload = json.dumps(input_event, cls=DecimalEncoder) # jsonシリアライズ
   # 同期処理で呼び出し
   response = boto3.client('lambda').invoke(
       FunctionName='internalRequestMsgApproveAndOtherLambda',
@@ -236,7 +244,11 @@ def requestMsgApproveAndOther(requestData, slipData) :
     print('NOT-CERTIFICATION')
     return None
 
-
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+       if isinstance(obj, Decimal):
+           return int(obj)
+       return json.JSONEncoder.default(self, obj)
 
 
 
