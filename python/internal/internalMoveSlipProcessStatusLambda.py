@@ -30,6 +30,8 @@ def lambda_handler(event, context) :
     if slip == None :
       print('moveprocess_Failure')
       return
+    
+    print('INTERNALMOVESLIPPROCESSSTATUSLAMBDA_Successed')
     print('LABEL_2')
     return 200
 
@@ -70,7 +72,6 @@ def slipDitailStatusMove_query(slipNo, processStatus) :
     Item= slip
   )
   print('LABEL_8')
-  # putResponse = slipDetailInfo.put_item(slip)
 
   if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
     print('LABEL_9')
@@ -94,12 +95,14 @@ def salesServiceStatusMove_query(slipNo, processStatus) :
     print('Not_Target_SalesService')
     return None
   print('LABEL_12')
+
   salesService = items[0]
   salesService['processStatus'] = processStatus
   salesService['updated'] = datetime.now().strftime('%x %X')
+
   print('LABEL_13')
   # ステータスを更新
-  putResponse = slipDetailInfo.put_item(
+  putResponse = salesServiceInfo.put_item(
     Item= salesService
   )
   print('LABEL_14')
@@ -107,7 +110,6 @@ def salesServiceStatusMove_query(slipNo, processStatus) :
 
   if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
     print('LABEL_15')
-    print(putResponse)
     return None
   else:
     print('Post Successed.')
