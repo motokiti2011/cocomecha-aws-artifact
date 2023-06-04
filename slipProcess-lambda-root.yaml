@@ -87,6 +87,23 @@ Resources:
           - '/slipProcess/zip'
           - '/relistedServiceLambda.zip'
 
+  ScheduledCompletionSettingLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/slipProcess/scheduledCompletionSettingLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/slipProcess/zip'
+          - '/scheduledCompletionSettingLambda.zip'
+
+
 
 Outputs:
 
@@ -105,4 +122,8 @@ Outputs:
   # RelistedServiceLambda‚ÌARN
   RelistedServiceLambda:
     Value: !GetAtt RelistedServiceLambda.Outputs.RelistedServiceLambda
+
+  # ScheduledCompletionSettingLambda‚ÌARN
+  ScheduledCompletionSettingLambda:
+    Value: !GetAtt ScheduledCompletionSettingLambda.Outputs.ScheduledCompletionSettingLambda
 
