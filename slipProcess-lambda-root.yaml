@@ -103,7 +103,21 @@ Resources:
           - '/slipProcess/zip'
           - '/scheduledCompletionSettingLambda.zip'
 
-
+  CompletedTransactionLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - !Ref TemplateUrl
+          - 'lambda/slipProcess/completedTransactionLambda.yaml'
+      Parameters:
+        LambdaRoleArn: !Ref LambdaRoleArn
+        S3Buket: !Ref S3Buket
+        S3Key: !Join 
+        - ''
+        - - !Ref LambdaCodeDirectory
+          - '/slipProcess/zip'
+          - '/completedTransactionLambda.zip'
 
 Outputs:
 
@@ -126,4 +140,8 @@ Outputs:
   # ScheduledCompletionSettingLambda‚ÌARN
   ScheduledCompletionSettingLambda:
     Value: !GetAtt ScheduledCompletionSettingLambda.Outputs.ScheduledCompletionSettingLambda
+
+  # CompletedTransactionLambda‚ÌARN
+  CompletedTransactionLambda:
+    Value: !GetAtt CompletedTransactionLambda.Outputs.CompletedTransactionLambda
 

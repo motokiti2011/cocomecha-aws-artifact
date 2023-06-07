@@ -14,12 +14,25 @@ Resources:
           AttributeType: S
         - AttributeName: slipAdminMechanicId
           AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: serviceType
+          AttributeType: S
 
       KeySchema:
         - AttributeName: slipNo
           KeyType: HASH
 
       GlobalSecondaryIndexes:
+
+        - IndexName: userId-index
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+            - AttributeName: serviceType
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
 
         - IndexName: slipAdminUserId-index
           KeySchema:
@@ -46,6 +59,7 @@ Resources:
               - preferredTime
               - imageUrlList
             ProjectionType: INCLUDE
+
 
         - IndexName: slipAdminOfficeId-index
           KeySchema:

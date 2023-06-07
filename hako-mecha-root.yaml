@@ -306,6 +306,7 @@ Resources:
         TransactionEndLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.TransactionEndLambda
         RelistedServiceLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.RelistedServiceLambda
         ScheduledCompletionSettingLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.ScheduledCompletionSettingLambda
+        CompletedTransactionLambdaArn: !GetAtt SlipProcessLambdaRoot.Outputs.CompletedTransactionLambda
 
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 

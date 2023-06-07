@@ -21,6 +21,9 @@ Parameters:
   ScheduledCompletionSettingLambdaArn:
     Type: String
 
+  # CompletedTransactionLambdaのARN
+  CompletedTransactionLambdaArn:
+    Type: String
 
   # CognitoUserPoolのARN
   UserPoolArn:
@@ -289,6 +292,48 @@ Resources:
     DependsOn: LambdaPermission5
 
 
+  # CompletedTransactionリソース
+  CompletedTransactionResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref SlipProcessResource
+      PathPart: completiontransaction
+      RestApiId: !Ref ApiGwRestAPI
+  # CompletedTransactionメソッド
+  CompletedTransactionMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref CompletedTransactionResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref CompletedTransactionLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission6
+
+
+
+
   # LambdaPermission
   LambdaPermission1:
     Type: 'AWS::Lambda::Permission'
@@ -325,3 +370,11 @@ Resources:
       FunctionName: scheduledCompletionSettingLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
+
+  LambdaPermission6:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: completedTransactionLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+

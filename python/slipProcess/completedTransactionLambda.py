@@ -99,35 +99,17 @@ def lambda_handler(event, context):
 
     print('LABEL_7')
     # 完了済伝票情報の登録
+    # 管理者
     compRes = compSlip_query(slipData[0], adminUserInfo)
     if compRes != 200 :
       print('Not_compRes_Failure')
       return 400
 
+    # 取引者
     comptranRes = compSlip_query(requestData, transactionUserInfo)
     if comptranRes != 200 :
       print('Not_compRes_Failure')
       return 400
-
-
-
-    # 取引中伝票情報の論理削除
-    print('LABEL_8')
-    postResult = requestMsgApproveAndOther(requestData, slipData[0]) 
-    print('BUG_CHACK_END')
-    if postResult != 200 :
-      print('PostMyList_Failure')
-      return 400
-
-
-    # 取引中伝票情報の論理削除
-    print('LABEL_9')
-    postResult = requestMsgApproveAndOther(requestData, slipData[0]) 
-    print('BUG_CHACK_END')
-    if postResult != 200 :
-      print('PostMyList_Failure')
-      return 400
-
 
 
 
@@ -387,6 +369,8 @@ def compSlip_query(slip, userInfo):
   putResponse = completionSlip.put_item(
     Item={
       'slipNo' : slip['slipNo'],
+      'userId' : userInfo['userId'],
+      'serviceType' : slip['serviceType'],
       'slipAdminUserId' : slip['slipAdminUserId'],
       'slipAdminOfficeId' : slip['slipAdminOfficeId'],
       'slipAdminMechanicId' : slip['slipAdminMechanicId'],
