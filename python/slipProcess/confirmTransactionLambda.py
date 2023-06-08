@@ -12,7 +12,6 @@ from boto3.dynamodb.conditions import Key
 dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 serviceTransactionRequest = dynamodb.Table("serviceTransactionRequest")
-userMyList = dynamodb.Table("userMyList")
 slipDetailInfo = dynamodb.Table("slipDetailInfo")
 salesServiceInfo = dynamodb.Table("salesServiceInfo")
 transactionSlip = dynamodb.Table("transactionSlip")

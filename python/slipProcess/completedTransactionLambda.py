@@ -53,16 +53,17 @@ def lambda_handler(event, context):
       return 400
 
     print('LABEL_3')
+    adminDiv = False
+    requestDiv = False
     # 伝票管理者チェック
     if  userInfo['userId'] != slipData[0]['slipAdminUserId'] :
       # アクセス者が管理者でない場合、依頼者チェックを行う
       requestDiv = requestAcceseCheck(slipNo, userInfo)
-      if !requestDiv :
+      if requestDiv :
         print('Not_ADMIN_Failure')
         return None
     else :
       adminDiv = True
-
 
     print('LABEL_4')
     # 対象伝票のステータス更新 「1」(取引中) → 「2」(取引完了)
@@ -71,27 +72,28 @@ def lambda_handler(event, context):
       print('Not_SlipStatusExhibiting_Failure')
       return 400
 
-
-   # 管理者、取引者のユーザー情報取得
-   if adminDiv :
-     adminUserInfo = userInfo
-     transactionUserInfo = transactionUser_query(slipNo)
-   else :
-     transactionUserInfo = userInfo
-     adminUserInfo = userId_query(slipData[0]['slipAdminUserId'])
-
+    # 管理者、取引者のユーザー情報取得
+    if adminDiv :
+      print('BUG_1')
+      adminUserInfo = userInfo
+      transactionUserInfo = transactionUser_query(slipNo)
+    else :
+      print('BUG_2')
+      transactionUserInfo = userInfo
+      adminUserInfo = userId_query(slipData[0]['slipAdminUserId'])
 
     print('LABEL_5')
+    print(adminUserInfo)
     # 管理者へのマイリストへのMsg登録
-    postMyListResult = postAdminMyList(requestData, adminUserInfo , slipData[0]) 
+    postMyListResult = postAdminMyList(adminUserInfo , slipData[0]) 
     if postMyListResult != 200 :
       print('PostMyList_Failure')
       return 400
 
-
     print('LABEL_6')
+    print(transactionUserInfo)
     # 取引者へのマイリストへのMsg登録
-    postTranMyListResult = postAdminMyList(requestData, transactionUserInfo, slipData[0]) 
+    postTranMyListResult = postAdminMyList(transactionUserInfo, slipData[0]) 
     if postTranMyListResult != 200 :
       print('PostMyList_Failure')
       return 400
@@ -105,8 +107,9 @@ def lambda_handler(event, context):
       print('Not_compRes_Failure')
       return 400
 
+    print('LABEL_8')
     # 取引者
-    comptranRes = compSlip_query(requestData, transactionUserInfo)
+    comptranRes = compSlip_query(slipData[0], transactionUserInfo)
     if comptranRes != 200 :
       print('Not_compRes_Failure')
       return 400
@@ -213,13 +216,13 @@ def slipStatusExhibiting(slipNo, serviceType) :
 
 
 # 管理者のマイリストTBLにMsg登録
-def postAdminMyList(requestData, userInfo, slipData) :
+def postAdminMyList(userInfo, slipData) :
 
   # マイリスト用のリクエスト情報生成
   requestInfo = {
-    "requestId": requestData['id'],
+    "requestId": slipData['slipNo'],
     "requestType": '0',
-    "requestTargetId": requestData['slipNo'],
+    "requestTargetId": slipData['slipNo'],
     "requestTargetName": slipData['title'],
   }
   userList = []
@@ -256,8 +259,10 @@ def postAdminMyList(requestData, userInfo, slipData) :
 def requestAcceseCheck(slipNo, userInfo):
   # 取引依頼情報取得
   res = transactionRequest_query(slipNo)
+
   # 取得できない場合エラー
   if len(res) == 0 :
+    print('transactionRequest_query_None')
     return None
   tranReqest = False
 
@@ -308,22 +313,30 @@ class DecimalEncoder(json.JSONEncoder):
 
 # 取引者のユーザー情報を取得する
 def transactionUser_query(slipNo) :
-  tranReqList = transactionRequest_query(slipNo):
-  
-  if reqId = None
+  print('BUG_3_1')
+  print(slipNo)
+  tranReqList = transactionRequest_query(slipNo)
+
+  print('BUG_3')
+  print(slipNo)
+  print(tranReqList)
+
+  reqId = None
+
   for item in tranReqList :
-    if item['requestStatus'] == '1' :
+    if item['confirmDiv'] == '1' :
       reqId = item['requestUserId']
       userType = item['serviceUserType']
-  if reqId == None :
-    retrn None
 
-  if userType == '0' :
-    return userId_query(reqId)
-  elif userType == '1' :
-    return officeId_query(reqId)
-  else :
-    return mechanicId_query(reqId)
+    if reqId == None :
+      return None
+    if userType == '0' :
+      return userId_query(reqId)
+    elif userType == '1' :
+      return officeId_query(reqId)
+    else :
+      return mechanicId_query(reqId)
+
 
 # 変換なしのユーザーIDからユーザー情報を取得する。
 def userId_query(userId) :
@@ -386,7 +399,7 @@ def compSlip_query(slip, userInfo):
       'targetVehicleName' : slip['targetVehicleName'],
       'targetVehicleInfo' : slip['targetVehicleInfo'],
       'workAreaInfo' : slip['workAreaInfo'],
-      'evaluationId' : slip['evaluationId'],
+      'evaluationId' : '0',
       'completionDate' : slip['completionDate'],
       'transactionCompletionDate' : slip['transactionCompletionDate'],
       'thumbnailUrl' : slip['thumbnailUrl'],
@@ -400,4 +413,4 @@ def compSlip_query(slip, userInfo):
     print(putResponse)
   else:
     print('Post Successed.')
-  return putResponse
+  return putResponse['ResponseMetadata']['HTTPStatusCode']
