@@ -102,19 +102,10 @@ def lambda_handler(event, context):
     print('LABEL_7')
     # 完了済伝票情報の登録
     # 管理者
-    compRes = compSlip_query(slipData[0], adminUserInfo)
+    compRes = compSlip_query(slipData[0], adminUserInfo, transactionUserInfo)
     if compRes != 200 :
       print('Not_compRes_Failure')
       return 400
-
-    print('LABEL_8')
-    # 取引者
-    comptranRes = compSlip_query(slipData[0], transactionUserInfo)
-    if comptranRes != 200 :
-      print('Not_compRes_Failure')
-      return 400
-
-
 
     # ここまで到達できれば正常終了
     print('LABEL_11')
@@ -375,7 +366,7 @@ def mechanicId_query(mechanicid) :
 
 
 # レコード追加
-def compSlip_query(slip, userInfo):
+def compSlip_query(slip, userInfo, transactionUserInfo):
 
   now = datetime.now()
 
@@ -391,7 +382,8 @@ def compSlip_query(slip, userInfo):
       'title' : slip['title'],
       'price' : slip['price'],
       'bidMethod' : slip['bidMethod'],
-      'bidderId' : slip['bidderId'],
+      'bidUserType':  slip['bidUserType'],
+      'bidderId' : transactionUserInfo['userId'],
       'bidEndDate' : slip['bidEndDate'],
       'explanation' : slip['explanation'],
       'serviceType' : slip['serviceType'],

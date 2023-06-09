@@ -63,7 +63,7 @@ def lambda_handler(event, context):
 
     print('LABEL_5')
     # 対象伝票のステータス更新 「0」(出品中) → 「1」(取引中)
-    statusResult = slipStatusExhibiting(requestData['slipNo'],serviceType)
+    statusResult = slipStatusExhibiting(requestData['slipNo'],serviceType, requestData)
     if statusResult != 200 :
       print('Not_SlipStatusExhibiting_Failure')
       return 400
@@ -154,11 +154,12 @@ def approvalRequest_query(requestData):
   return putResponse['ResponseMetadata']['HTTPStatusCode']
 
 # 伝票の取引開始を行う
-def slipStatusExhibiting(slipNo, serviceType) :
+def slipStatusExhibiting(slipNo, serviceType, reqDate) :
   input_event = {
     "slipNo": slipNo,
     "serviceType": serviceType,
     "processStatus": '1',
+    "transactionReq": reqDate
   }
   Payload = json.dumps(input_event) # jsonシリアライズ
   # 同期処理で呼び出し

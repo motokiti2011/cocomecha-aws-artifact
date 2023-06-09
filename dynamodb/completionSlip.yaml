@@ -18,7 +18,8 @@ Resources:
           AttributeType: S
         - AttributeName: serviceType
           AttributeType: S
-
+        - AttributeName: bidderId
+          AttributeType: S
       KeySchema:
         - AttributeName: slipNo
           KeyType: HASH
@@ -33,6 +34,14 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+
+        - IndexName: bidderId-index
+          KeySchema:
+            - AttributeName: bidderId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
 
         - IndexName: slipAdminUserId-index
           KeySchema:

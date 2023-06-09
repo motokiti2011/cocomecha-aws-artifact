@@ -35,6 +35,7 @@ def post_product(PartitionKey, event):
       'areaNo2' : event['Keys']['areaNo2'],
       'price' : event['Keys']['price'],
       'bidMethod' : event['Keys']['bidMethod'],
+      'bidUserType':  event['Keys']['bidUserType'],
       'bidderId' : event['Keys']['bidderId'],
       'bidEndDate' : event['Keys']['bidEndDate'],
       'explanation' : event['Keys']['explanation'],
