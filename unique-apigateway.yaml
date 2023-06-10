@@ -82,6 +82,10 @@ Parameters:
   FcmcItemSerchLambdaArn:
     Type: String
 
+  # SerchCompletionSlipLambdaのARN
+  SerchCompletionSlipLambdaArn:
+    Type: String
+
 
   # CognitoUserPoolのARN
   UserPoolArn:
@@ -128,6 +132,7 @@ Resources:
       - EditConnectionOfficeStatusResource
       - SerchFcMcInfoResource
       - FcmcItemSerchResource
+      - SerchCompletionSlipResource
 
       - GetSlipMethod
       - GetSalesServiceMethod
@@ -149,6 +154,7 @@ Resources:
       - EditConnectionOfficeStatusMethod
       - SerchFcMcInfoMethod
       - FcmcItemSerchMethod
+      - SerchCompletionSlipMethod
 
   # ステージ
   ApiGwStage:
@@ -990,6 +996,48 @@ Resources:
 
 
 
+  # SerchCompletionSlipリソース
+  SerchCompletionSlipResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !Ref UnitOptionResource
+      PathPart: serchcompletionslip
+      RestApiId: !Ref ApiGwRestAPI
+  # SerchCompletionSlipメソッド
+  SerchCompletionSlipMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref SerchCompletionSlipResource
+      RestApiId: !Ref ApiGwRestAPI
+      AuthorizerId: !Ref Authorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri:  !Join 
+         - ''
+         - - 'arn:aws:apigateway:'
+           - !Ref AWS::Region
+           - ':lambda:path/2015-03-31/functions/'
+           - !Ref SerchCompletionSlipLambdaArn
+           - '/invocations'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: $input.json('$')
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseTemplates:
+              application/json;charset=UTF-8: $input.json('$')
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseModels:
+            application/json;charset=UTF-8: Empty
+    DependsOn: LambdaPermission21
+
+
+
+
   # LambdaPermission
   LambdaPermission1:
     Type: 'AWS::Lambda::Permission'
@@ -1128,6 +1176,14 @@ Resources:
     Type: 'AWS::Lambda::Permission'
     Properties:
       FunctionName: fcmcItemSerchLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+
+
+  LambdaPermission21:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: serchCompletionSlipLambda
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
 

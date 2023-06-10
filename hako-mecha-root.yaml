@@ -290,6 +290,8 @@ Resources:
         EditConnectionOfficeStatusLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.EditConnectionOfficeStatusLambda
         SerchFcMcInfoLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SerchFcMcInfoLambda
         FcmcItemSerchLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.FcmcItemSerchLambda
+        SerchCompletionSlipLambdaArn: !GetAtt UniqueLambdaRoot.Outputs.SerchCompletionSlipLambda
+
         UserPoolArn: !GetAtt Cognito.Outputs.UserPoolArn
 
 

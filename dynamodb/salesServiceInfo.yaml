@@ -66,6 +66,7 @@ Resources:
               - preferredDate
               - preferredTime
               - thumbnailUrl
+              - created
             ProjectionType: INCLUDE
 
         - IndexName: areaNo1AndAreaNo2-index
@@ -95,6 +96,7 @@ Resources:
               - preferredDate
               - preferredTime
               - thumbnailUrl
+              - created
             ProjectionType: INCLUDE
 
         - IndexName: slipAdminOfficeId-index
@@ -124,6 +126,7 @@ Resources:
               - preferredDate
               - preferredTime
               - thumbnailUrl
+              - created
             ProjectionType: INCLUDE
 
         - IndexName: slipAdminMechanic-index
@@ -153,6 +156,7 @@ Resources:
               - preferredDate
               - preferredTime
               - thumbnailUrl
+              - created
             ProjectionType: INCLUDE
 
         - IndexName: processStatus-index

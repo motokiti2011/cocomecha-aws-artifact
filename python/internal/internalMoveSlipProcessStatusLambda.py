@@ -37,12 +37,15 @@ def lambda_handler(event, context) :
     print('LABEL_2')
     # 取引開始の場合は購入者情報に取引者のIDを登録
     if processStatus == '1' :
+      print('LABEL_2.5')
       reqData = event['transactionReq']
       if reqData == None :
         print('None_reqData_moveprocess_Failure')
         return 500
+      print('LABEL_2.6')
       tranSlip = setBidUser(slip, serviceType, reqData)
       if tranSlip != 200 :
+        print('LABEL_2.7')
         print('setBidUser_moveprocess_Failure')
         return 500
 

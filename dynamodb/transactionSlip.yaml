@@ -22,6 +22,9 @@ Resources:
           AttributeType: N
         - AttributeName: ttlDate
           AttributeType: N
+        - AttributeName: slipNo
+          AttributeType: S
+          
 
       KeySchema:
         - AttributeName: slipNo
@@ -80,5 +83,15 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+
+        - IndexName: slipNo-index
+          KeySchema:
+            - AttributeName: slipNo
+              KeyType: HASH
+            - AttributeName: serviceType
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
 
       TableName: transactionSlip

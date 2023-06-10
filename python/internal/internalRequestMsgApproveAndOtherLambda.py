@@ -228,13 +228,21 @@ def getMechanicUser(mechanicid) :
 # 取引中伝票情報新規登録（取引依頼の確定者）
 def initTransactionSlip_query(userInfo, slipInfo) :
 
+  mechanicId = '0'
+  if userInfo['mechanicId'] != None and userInfo['mechanicId'] !=  '0' :
+    mechanicId = userInfo['mechanicId']
+
+  officeId = '0'
+  if userInfo['officeId'] != None and userInfo['officeId'] !=  '0' :
+    officeId = userInfo['officeId']
+
   putResponse = transactionSlip.put_item(
     Item={
       'id' : str(uuid.uuid4()),
       'serviceType' : slipInfo['serviceType'],
       'userId' : userInfo['userId'],
-      'mechanicId' : userInfo['mechanicId'],
-      'officeId' : userInfo['officeId'],
+      'mechanicId' : mechanicId,
+      'officeId' : officeId,
       'slipNo' : slipInfo['slipNo'],
       'serviceTitle' : slipInfo['title'],
       'slipRelation' : '3',

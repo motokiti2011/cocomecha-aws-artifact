@@ -106,6 +106,20 @@ def lambda_handler(event, context):
     if compRes != 200 :
       print('Not_compRes_Failure')
       return 400
+    
+    print('LABEL_8')
+    # 取引中伝票を取得
+    queryResult = tran_query(slipNo, serviceType)
+    if len(queryResult) == 0 :
+      print('Not_compRes_Failure')
+      return 400
+
+    # 取引中伝票を論理削除
+    print('LABEL_9')
+    res = tran_logcal_del(queryResult)
+    if res != 200 :
+      print('Not_compRes_Failure')
+      return 400
 
     # ここまで到達できれば正常終了
     print('LABEL_11')
@@ -393,7 +407,7 @@ def compSlip_query(slip, userInfo, transactionUserInfo):
       'workAreaInfo' : slip['workAreaInfo'],
       'evaluationId' : '0',
       'completionDate' : slip['completionDate'],
-      'transactionCompletionDate' : slip['transactionCompletionDate'],
+      'transactionCompletionDate' : now.strftime('%Y%m%d') ,
       'thumbnailUrl' : slip['thumbnailUrl'],
       'imageUrlList' : slip['imageUrlList'],
       'created' : now.strftime('%x %X'),
@@ -406,3 +420,31 @@ def compSlip_query(slip, userInfo, transactionUserInfo):
   else:
     print('Post Successed.')
   return putResponse['ResponseMetadata']['HTTPStatusCode']
+
+
+
+
+# 取引中の伝票情報を取得
+def tran_query(slipNo, serviceType) :
+  queryData = transactionSlip.query(
+      IndexName = 'slipNo-index',
+      KeyConditionExpression = Key("slipNo").eq(slipNo) & Key("serviceType").eq(serviceType)
+  )
+  items=queryData['Items']
+  print(items)
+  return items
+
+
+# 取引中伝票情報を論理削除する
+def tran_logcal_del(queryResult) :
+  for item in queryResult :
+    item['deleteDiv'] = '1'
+    item['updated'] = datetime.now().strftime('%x %X')
+    putResponse = transactionSlip.put_item(Item=item)
+    
+    # 問題発生時途中で処理終了
+    if putResponse['ResponseMetadata']['HTTPStatusCode'] != 200:
+      return putResponse['ResponseMetadata']['HTTPStatusCode']
+
+  return putResponse['ResponseMetadata']['HTTPStatusCode']
+

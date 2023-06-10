@@ -64,6 +64,7 @@ Resources:
               - preferredDate
               - preferredTime
               - thumbnailUrl
+              - created
             ProjectionType: INCLUDE
 
         - IndexName: areaNo1AndAreaNo2-index
@@ -93,6 +94,7 @@ Resources:
               - preferredDate
               - preferredTime
               - thumbnailUrl
+              - created
             ProjectionType: INCLUDE
 
 
@@ -121,6 +123,7 @@ Resources:
               - preferredDate
               - preferredTime
               - thumbnailUrl
+              - created
             ProjectionType: INCLUDE
 
         - IndexName: processStatus-index

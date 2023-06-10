@@ -181,6 +181,7 @@ def slipStatusExhibiting(slipNo, serviceType, reqDate) :
 # 管理者のマイリストTBLにMsg登録
 def postAdminMyList(requestData, userInfo, slipData) :
   
+  print('bug_1')
 
   # マイリスト用のリクエスト情報生成
   requestInfo = {
@@ -191,14 +192,16 @@ def postAdminMyList(requestData, userInfo, slipData) :
   }
   userList = []
   userList.append(userInfo)
-
+  print('bug_2')
   input_event = {
     "userList": userList,
     "slipInfo": slipData,
     "category": '10',
     "message": 'TRAN_ST',
+    "requestData": requestData,
     "requestInfo": requestInfo,
   }
+  print('bug_3')
   
   Payload = json.dumps(input_event, cls=DecimalEncoder) # jsonシリアライズ
   # 同期処理で呼び出し
@@ -209,6 +212,7 @@ def postAdminMyList(requestData, userInfo, slipData) :
   )
 
   body = json.loads(response['Payload'].read())
+  print('bug_4')
   print(body)
 
   if body != None :
@@ -250,9 +254,4 @@ class DecimalEncoder(json.JSONEncoder):
            return int(obj)
        return json.JSONEncoder.default(self, obj)
 
-
-
-
-
-  
 
