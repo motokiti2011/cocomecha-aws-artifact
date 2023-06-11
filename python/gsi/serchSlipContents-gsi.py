@@ -9,6 +9,31 @@ dynamodb = boto3.resource('dynamodb')
 # 指定テーブルのアクセスオブジェクト取得
 table = dynamodb.Table("slipDetailInfo")
 
+
+# 伝票情報検索Lambda
+def lambda_handler(event, context):
+    print("Received event: " + json.dumps(event))
+    IndexType = event['IndexType']
+    try:
+
+        # インデックスタイプチェック
+        if IndexType == 'SERCH-SLIP-INDEX':
+            area2 = event['Keys']['area2']
+            # 検索値「エリア2のチェック」
+            if area2 == 0:
+                return areaNo1_query(event)
+            else:
+                return areaNo1AndAreaNo2_query(event)
+        else:
+          return 500
+
+    except Exception as e:
+        print("Error Exception.")
+        print(e)
+
+
+
+
 # 地域1検索 areaNo1-index
 def areaNo1_query(event):
 
@@ -75,45 +100,29 @@ def createFilter(event):
     amount2 = event['Keys']['amount2']
     amountSerchDiv = event['Keys']['amountSerchDiv']
 
+    if not(category) :
+      print('1222')
+      category = '0'
+
+    print(category)
     # その他検索条件がなし
-    if category == '0' and amountSerchDiv == True :
+    if category == '0' and amountSerchDiv == False :
       print('1')
       return ''
     # カテゴリーのみ
-    if category != '0' and amountSerchDiv == True :
+    if category != '0' and amountSerchDiv == False :
       print('2')
       return Attr('category').eq(category)
     # 金額のみ
-    if category == '0' and amountSerchDiv == False :
+    if category == '0' and amountSerchDiv == True :
       print('3')
-      return Attr('amount').GE(amount1) & Attr('amount').LE(amount2)
+      return Attr('price').between(amount1, amount2)
     # カテゴリー,金額
-    if category != '0' and amountSerchDiv == False :
+    if category != '0' and amountSerchDiv == True :
       print('4')
-      return Attr('category').eq(category) & Attr('amount').GE(amount1) & Attr('amount').LE(amount2)
+      return Attr('category').eq(category) & Attr('price').between(amount1, amount2)
     # カテゴリー,金額
     print('5')
     return ''
 
 
-def lambda_handler(event, context):
-    print("Received event: " + json.dumps(event))
-    IndexType = event['IndexType']
-    try:
-
-        # インデックスタイプチェック
-        if IndexType == 'SERCH-SLIP-INDEX':
-            area2 = event['Keys']['area2']
-            # 検索値「エリア2のチェック」
-            if area2 == 0:
-                return areaNo1_query(event)
-            else:
-                return areaNo1AndAreaNo2_query(event)
-        else:
-          return 500
-
-
-
-    except Exception as e:
-        print("Error Exception.")
-        print(e)

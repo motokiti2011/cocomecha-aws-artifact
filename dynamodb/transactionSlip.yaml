@@ -22,9 +22,7 @@ Resources:
           AttributeType: N
         - AttributeName: ttlDate
           AttributeType: N
-        - AttributeName: slipNo
-          AttributeType: S
-          
+
 
       KeySchema:
         - AttributeName: slipNo
