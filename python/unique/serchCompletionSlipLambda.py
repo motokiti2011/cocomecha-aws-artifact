@@ -61,7 +61,7 @@ def lambda_handler(event, conte):
     # 工場IDに紐づく情報取得
     if officeId != '0': 
       print('LABEL_9')
-      fcList + slipAdminOffice_query(officeId)
+      fcList = slipAdminOffice_query(officeId)
       resultData = listAppend(resultData, fcList)
       print(resultData)
 
@@ -108,7 +108,7 @@ def slipAdminUserId_query(partitionKey):
 # officeId-indexレコード検索 slipAdminOfficeId-index
 def slipAdminOffice_query(partitionKey):
     queryData = completionSlip.query(
-        IndexName = 'slipAdminOffice-index',
+        IndexName = 'slipAdminOfficeId-index',
         KeyConditionExpression = Key("slipAdminOfficeId").eq(partitionKey)
     )
     items=queryData['Items']
