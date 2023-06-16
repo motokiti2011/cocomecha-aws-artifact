@@ -63,20 +63,20 @@ def put_product(PartitionKey, event):
   putResponse = table.put_item(
     Item={
       'id' : PartitionKey,
-      'userId' : event['Keys']['userId'],
-      'mechanicId' : event['Keys']['mechanicId'],
-      'officeId' : event['Keys']['officeId'],
-      'serviceType' : event['Keys']['serviceType'],
-      'slipNo' : event['Keys']['slipNo'],
-      'serviceTitle' : event['Keys']['serviceTitle'],
-      'category' : event['Keys']['category'],
-      'message' : event['Keys']['message'],
-      'readDiv' : event['Keys']['readDiv'],
-      'messageDate' : event['Keys']['messageDate'],
-      'messageOrQuastionId' : event['Keys']['messageOrQuastionId'],
-      'requestInfo' : event['Keys']['requestInfo'],
-      'deleteDiv' : event['Keys']['deleteDiv'],
-      'created' : event['Keys']['created'],
+      'userId' : event['Keys']['data']['userId'],
+      'mechanicId' : event['Keys']['data']['mechanicId'],
+      'officeId' : event['Keys']['data']['officeId'],
+      'serviceType' : event['Keys']['data']['serviceType'],
+      'slipNo' : event['Keys']['data']['slipNo'],
+      'serviceTitle' : event['Keys']['data']['serviceTitle'],
+      'category' : event['Keys']['data']['category'],
+      'message' : event['Keys']['data']['message'],
+      'readDiv' : event['Keys']['data']['readDiv'],
+      'messageDate' : event['Keys']['data']['messageDate'],
+      'messageOrQuastionId' : event['Keys']['data']['messageOrQuastionId'],
+      'requestInfo' : event['Keys']['data']['requestInfo'],
+      'deleteDiv' : event['Keys']['data']['deleteDiv'],
+      'created' : event['Keys']['data']['created'],
       'updated' :  datetime.now().strftime('%x %X')
     }
   )
@@ -85,7 +85,7 @@ def put_product(PartitionKey, event):
     print(putResponse)
   else:
     print('Post Successed.')
-  return putResponse
+  return putResponse['ResponseMetadata']['HTTPStatusCode']
   
 # レコード削除
 def operation_delete(partitionKey):
@@ -98,7 +98,7 @@ def operation_delete(partitionKey):
         print(delResponse)
     else:
         print('DEL Successed.')
-    return delResponse['ResponseMetadata']['HTTPStatusCode']
+    return delResponse
 
 # レコード追加
 def post_product(PartitionKey, event):
@@ -135,7 +135,7 @@ def post_product(PartitionKey, event):
     print(putResponse)
   else:
     print('Post Successed.')
-  return putResponse['ResponseMetadata']['HTTPStatusCode']
+  return putResponse
 
 
 
