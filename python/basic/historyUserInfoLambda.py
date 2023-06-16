@@ -46,7 +46,7 @@ def post_product(PartitionKey, event):
     print(putResponse)
   else:
     print('Post Successed.')
-  return putResponse
+  return putResponse['ResponseMetadata']['HTTPStatusCode']
 
 
 # レコード追加
@@ -74,7 +74,7 @@ def operation_post(PartitionKey, event):
     print(putResponse)
   else:
     print('Post Successed.')
-  return putResponse
+  return putResponse['ResponseMetadata']['HTTPStatusCode']
 
 
 
@@ -89,7 +89,7 @@ def operation_delete(partitionKey):
         print(delResponse)
     else:
         print('DEL Successed.')
-    return delResponse['Items']
+    return delResponse['ResponseMetadata']['HTTPStatusCode']
 
 
 def lambda_handler(event, context):

@@ -82,7 +82,7 @@ def operation_delete(partitionKey):
         print(delResponse)
     else:
         print('DEL Successed.')
-    return delResponse
+    return delResponse['ResponseMetadata']['HTTPStatusCode']
 
 
 def lambda_handler(event, context):

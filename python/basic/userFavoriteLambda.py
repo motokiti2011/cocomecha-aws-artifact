@@ -114,7 +114,7 @@ def put_product(PartitionKey, event):
     print(putResponse)
   else:
     print('Post Successed.')
-  return putResponse
+  return putResponse['ResponseMetadata']['HTTPStatusCode']
   
   # レコード削除
 def operation_delete(partitionKey):
@@ -127,7 +127,7 @@ def operation_delete(partitionKey):
         print(delResponse)
     else:
         print('DEL Successed.')
-    return delResponse
+    return delResponse['ResponseMetadata']['HTTPStatusCode']
 
 # レコード追加
 def post_product(PartitionKey, event):
@@ -159,7 +159,7 @@ def post_product(PartitionKey, event):
     print(putResponse)
   else:
     print('Post Successed.')
-  return putResponse
+  return putResponse['ResponseMetadata']['HTTPStatusCode']
 
 
 # 認証情報からユーザー情報取得
