@@ -22,38 +22,34 @@ def lambda_handler(event, context):
       requestUserId = event['Keys']['requestUserId']
       serviceType = event['Keys']['serviceType']
 
-    print('LABEL_1')
     # 伝票番号から伝票取引依頼情報を取得
     transactionReqData = serviceTransactionRequest_query(slipNo)
-
-    print('LABEL_2')    
+    
     # 取引依頼がない場合処理を終了
     if len(transactionReqData) == 0 :
       return False
 
     # 取引依頼がある場合チェックを続行
     
-    print('LABEL_3')
     # ユーザー情報を取得
     userInfo = userInfo_query(requestUserId)
     if len(userInfo) == 0 :
       return False
 
-    print('LABEL_4')
     userData = userInfo[0]
 
     # 取引依頼者にユーザーが含まれるかをチェックする
-    for item in transactionReqData :
-      if item['serviceUserType'] == '0' :
-        if item['requestUserId'] == userData['userId'] :
+    for data in transactionReqData :
+      if data['serviceUserType'] == '0' :
+        if data['requestUserId'] == userData['userId'] :
           return True
-      if item['serviceUserType'] == '1' :
-        if item['requestUserId'] == userData['officeId'] :
+      if data['serviceUserType'] == '1' :
+        if data['requestUserId'] == userData['officeId'] :
           return True
-      if item['serviceUserType'] == '2' :
-        if item['requestUserId'] == userData['mechanicId'] :
+      if data['serviceUserType'] == '2' :
+        if data['requestUserId'] == userData['mechanicId'] :
           return True
-    print('LABEL_5')
+
     # 含まれない場合は申請者以外として判断する
     return False
 
@@ -61,8 +57,8 @@ def lambda_handler(event, context):
       print("Error Exception.")
       print(e)
 
-# 取引依頼情報レコード検索
-def serviceTransactionRequest_query(slipNo):
+# レコード検索
+def serviceTransactionRequest_query(slipNo) :
   queryData = serviceTransactionRequest.query(
       IndexName = 'slipNo-index',
       KeyConditionExpression = Key("slipNo").eq(slipNo)
