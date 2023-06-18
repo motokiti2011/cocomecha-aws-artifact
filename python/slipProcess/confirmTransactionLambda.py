@@ -15,7 +15,7 @@ serviceTransactionRequest = dynamodb.Table("serviceTransactionRequest")
 slipDetailInfo = dynamodb.Table("slipDetailInfo")
 salesServiceInfo = dynamodb.Table("salesServiceInfo")
 transactionSlip = dynamodb.Table("transactionSlip")
-
+userInfo = dynamodb.Table("userInfo")
 
 # 取引依頼確定Lambda
 def lambda_handler(event, context):
@@ -70,13 +70,21 @@ def lambda_handler(event, context):
 
     print('LABEL_6')
     # 管理者へのマイリストへのMsg登録
-    postMyListResult = postAdminMyList(requestData, userInfo , slipData[0]) 
+    postMyListResult = postAdminMyList(requestData, userInfo, slipData[0]) 
     if postMyListResult != 200 :
       print('PostMyList_Failure')
       return 400
     
-    # 承認した依頼者、その他の依頼者へのMsg処理
     print('LABEL_7')
+    # 依頼者確定者への取引中伝票情報登録
+    postTranRes = postTranResult(requestData, slipData[0]) 
+    if postTranRes != 200 :
+      print('PostMyList_Failure')
+      return 400
+    
+    
+    # 承認した依頼者、その他の依頼者へのMsg処理
+    print('LABEL_8')
     postResult = requestMsgApproveAndOther(requestData, slipData[0]) 
     print('BUG_CHACK_END')
     if postResult != 200 :
@@ -84,7 +92,7 @@ def lambda_handler(event, context):
       return 400
     
     # ここまで到達できれば正常終了
-    print('LABEL_8')
+    print('LABEL_9')
     print('CONFIRMTRANSACTIONLAMBDA_SUCCESS')
     return 200
 
@@ -180,8 +188,6 @@ def slipStatusExhibiting(slipNo, serviceType, reqDate) :
 
 # 管理者のマイリストTBLにMsg登録
 def postAdminMyList(requestData, userInfo, slipData) :
-  
-  print('bug_1')
 
   # マイリスト用のリクエスト情報生成
   requestInfo = {
@@ -192,7 +198,6 @@ def postAdminMyList(requestData, userInfo, slipData) :
   }
   userList = []
   userList.append(userInfo)
-  print('bug_2')
   input_event = {
     "userList": userList,
     "slipInfo": slipData,
@@ -201,7 +206,6 @@ def postAdminMyList(requestData, userInfo, slipData) :
     "requestData": requestData,
     "requestInfo": requestInfo,
   }
-  print('bug_3')
   
   Payload = json.dumps(input_event, cls=DecimalEncoder) # jsonシリアライズ
   # 同期処理で呼び出し
@@ -212,7 +216,6 @@ def postAdminMyList(requestData, userInfo, slipData) :
   )
 
   body = json.loads(response['Payload'].read())
-  print('bug_4')
   print(body)
 
   if body != None :
@@ -222,6 +225,52 @@ def postAdminMyList(requestData, userInfo, slipData) :
     return None
 
 
+
+# 承認した依頼者、の取引伝票情報の登録処理
+def postTranResult(requestData, slipData)  :
+
+  # 承認した依頼者情報のユーザーIDを取得
+  if requestData['serviceUserType'] == '0' :
+    userId = requestData['requestUserId']
+
+  # 承認する依頼者情報を取得
+  userInfo = userId_query(requestData['requestUserId'])
+  print(userInfo)
+  
+  if len(userInfo) == 0 :
+    return 500
+
+  mechanicId = 0
+  if userInfo[0]['mechanicId'] != None :
+    mechanicId = userInfo[0]['mechanicId']
+
+  officeId = 0
+  if userInfo[0]['officeId'] != None :
+    officeId = userInfo[0]['officeId']
+  
+
+  # 取引伝票情報の登録
+  transactionSlipResponse = transactionSlip.put_item(
+    Item={
+      'id' : str(uuid.uuid4()),
+      'serviceType' : slipData['serviceType'],
+      'userId' : userInfo[0]['userId'],
+      'mechanicId' : mechanicId,
+      'officeId' : officeId,
+      'slipNo' : slipData['slipNo'],
+      'serviceTitle' : slipData['title'],
+      'slipRelation' : '0',
+      'slipAdminId' : slipData['slipAdminUserId'],
+      'slipAdminName' : slipData['slipAdminUserName'],
+      'bidderId' : userInfo[0]['userId'],
+      'deleteDiv' : '0',
+      'completionScheduledDate' : slipData['completionDate'],
+      'created' : datetime.now().strftime('%x %X'),
+      'updated' : datetime.now().strftime('%x %X')
+    }
+  )
+  
+  return transactionSlipResponse['ResponseMetadata']['HTTPStatusCode']
 
 
 # 承認した依頼者、その他の依頼者へのMsg処理
@@ -255,3 +304,12 @@ class DecimalEncoder(json.JSONEncoder):
        return json.JSONEncoder.default(self, obj)
 
 
+
+# レコード検索
+def userId_query(userId):
+    queryData = userInfo.query(
+        KeyConditionExpression = Key("userId").eq(userId) & Key("userValidDiv").eq('0')
+    )
+    items=queryData['Items']
+    print(items)
+    return items

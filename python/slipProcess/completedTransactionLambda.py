@@ -230,33 +230,36 @@ def postAdminMyList(userInfo, slipData) :
     "requestTargetId": slipData['slipNo'],
     "requestTargetName": slipData['title'],
   }
-  userList = []
-  userList.append(userInfo)
 
-  input_event = {
-    "userList": userList,
-    "slipInfo": slipData,
-    "category": '10',
-    "message": 'TRAN_ST',
-    "requestInfo": requestInfo,
-  }
-  
-  Payload = json.dumps(input_event, cls=DecimalEncoder) # jsonシリアライズ
-  # 同期処理で呼び出し
-  response = boto3.client('lambda').invoke(
-      FunctionName='internalSendMsgMylistLambda',
-      InvocationType='RequestResponse',
-      Payload=Payload
+  mechanicId = userInfo['mechanicId']
+  if mechanicId == None :
+    mechanicId = '0'
+
+  officeId = userInfo['officeId']
+  if officeId == None :
+    officeId = '0'
+
+  putResponse = userMyList.put_item(
+    Item={
+      'id' : str(uuid.uuid4()),
+      'userId' : userInfo['userId'],
+      'mechanicId' : mechanicId,
+      'officeId' : officeId,
+      'serviceType' : slipData['serviceType'],
+      'slipNo' : slipData['slipNo'],
+      'serviceTitle' : slipData['title'],
+      'category' : '17',
+      'message' : 'TRAN_COMP',
+      'readDiv' : '0',
+      'messageDate' : datetime.now().strftime('%x %X'),
+      'messageOrQuastionId' : '' ,
+      'requestInfo' : requestInfo,
+      'deleteDiv' : '0',
+      'created' : datetime.now().strftime('%x %X'),
+      'updated' : datetime.now().strftime('%x %X')
+    }
   )
-
-  body = json.loads(response['Payload'].read())
-  print(body)
-
-  if body != None :
-    return body
-  else :
-    print('NOT-CERTIFICATION')
-    return None
+  return putResponse['ResponseMetadata']['HTTPStatusCode']
 
 
 

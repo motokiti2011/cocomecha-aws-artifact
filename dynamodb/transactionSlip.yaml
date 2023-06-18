@@ -34,8 +34,6 @@ Resources:
           KeySchema:
             - AttributeName: userId
               KeyType: HASH
-            - AttributeName: serviceType
-              KeyType: RANGE
           Projection:
             ProjectionType: ALL
 
@@ -43,8 +41,6 @@ Resources:
           KeySchema:
             - AttributeName: mechanicId
               KeyType: HASH
-            - AttributeName: serviceType
-              KeyType: RANGE
           Projection:
             ProjectionType: ALL
 
@@ -52,8 +48,6 @@ Resources:
           KeySchema:
             - AttributeName: officeId
               KeyType: HASH
-            - AttributeName: serviceType
-              KeyType: RANGE
           Projection:
             ProjectionType: ALL
 
