@@ -1,7 +1,7 @@
 import json
 import boto3
 
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 # Keyオブジェクトを利用できるようにする
 
 # Dynamodbアクセスのためのオブジェクト取得
@@ -59,10 +59,14 @@ def lambda_handler(event, context):
 
 # 1レコード検索 slipUserId-index
 def slipUser_query(partitionKey, sortKey):
-    queryData = table.query(
-        IndexName = 'userId-index',
-        KeyConditionExpression = Key("userId").eq(partitionKey)
-    )
+
+    options = {
+      'IndexName' : 'userId-index',
+      'KeyConditionExpression': Key("userId").eq(partitionKey),
+      'FilterExpression': Attr('deleteDiv').eq('0'),
+    }
+
+    queryData = table.query(**options)
     items=queryData['Items']
     print(items)
     return items

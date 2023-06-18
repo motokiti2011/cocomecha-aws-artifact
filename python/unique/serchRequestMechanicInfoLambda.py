@@ -1,7 +1,7 @@
 import json
 import boto3
 
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 # Keyオブジェクトを利用できるようにする
 
 # Dynamodbアクセスのためのオブジェクト取得
